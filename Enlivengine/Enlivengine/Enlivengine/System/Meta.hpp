@@ -4,10 +4,12 @@
 
 #ifdef ENLIVE_ENABLE_METADATA
 
-#include <Enlivengine/System/TypeTraits.hpp>
-#include <Enlivengine/System/PrimitiveTypes.hpp>
 #include <magic_enum/magic_enum.hpp>
 #include <MetaStuff/Meta.h>
+
+#include <Enlivengine/System/PrimitiveTypes.hpp>
+#include <Enlivengine/System/Hash.hpp>
+#include <Enlivengine/System/TypeTraits.hpp>
 
 namespace en
 {
@@ -24,11 +26,12 @@ template <typename E, typename T> constexpr auto EnumCast(T value) { return magi
 template <typename E> constexpr en::U32 GetEnumCount() { return static_cast<en::U32>(magic_enum::enum_count<E>()); }
 
 // Classes
-#define ENLIVE_META_CLASS_BEGIN(className) namespace meta { \
+#define ENLIVE_META_CLASS_FRIEND() template <typename T> friend auto meta::registerMembers(); // https://stackoverflow.com/questions/922545/how-to-allow-template-function-to-have-friend-like-access
+#define ENLIVE_META_CLASS_BEGIN(className) ENLIVE_DEFINE_TYPE_TRAITS_NAME(className) \
+	namespace meta { \
 		template <> inline auto registerName<className>() { return #className; } \
 		template <> inline auto registerMembers<className>() { return members(
-#define ENLIVE_META_CLASS_MEMBER(name, getter, setter) member(name, getter, setter)
-#define ENLIVE_META_CLASS_MEMBER_EX(name, ptr) member(name, ptr)
+#define ENLIVE_META_CLASS_MEMBER(name, ptr) member(name, ptr)
 #define ENLIVE_META_CLASS_END() ); } }
 
 template <typename T> constexpr bool IsRegistered() { return meta::isRegistered<T>(); }
@@ -66,6 +69,26 @@ template <typename MemberType, typename T, typename V>
 void SetMemberValue(T& obj, const char* name, V&& value)
 {
 	return meta::setMemberValue<MemberType>(obj, name, value);
+}
+
+template <typename T>
+U32 GetClassMembersHash()
+{
+	if constexpr (IsRegistered<T>())
+	{
+		U32 hash = 89;
+		en::Meta::ForAllMembers<T>(
+			[&hash](const auto& member)
+			{
+				hash = Hash::Combine32(hash, Hash::Meow32(member.getName()));
+			}
+		);
+		return hash;
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 } // namespace Meta

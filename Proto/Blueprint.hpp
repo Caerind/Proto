@@ -29,7 +29,7 @@ struct Block
 struct ConstantBlock : public Block
 {
 	static constexpr const char* GetStaticName() { return "Constant"; }
-	static en::U32 GetStaticTypeID() { return en::Hash::Meow32(GetStaticName()); }
+	static constexpr en::U32 GetStaticTypeID() { return en::Hash::ConstexprHash(GetStaticName()); }
 	static std::vector<ParamType> GetStaticInputs() { return {}; }
 	static std::vector<ParamType> GetStaticOutputs() { return { ParamType::Float }; }
 
@@ -57,7 +57,7 @@ struct ConstantBlock : public Block
 struct AddBlock : public Block
 {
 	static constexpr const char* GetStaticName() { return "AddBlock"; }
-	static en::U32 GetStaticTypeID() { return en::Hash::Meow32(GetStaticName()); }
+	static constexpr en::U32 GetStaticTypeID() { return en::Hash::ConstexprHash(GetStaticName()); }
 	static std::vector<ParamType> GetStaticInputs() { return { ParamType::Float, ParamType::Float }; }
 	static std::vector<ParamType> GetStaticOutputs() { return { ParamType::Float }; }
 
@@ -95,7 +95,7 @@ struct AddBlock : public Block
 struct Input2DBlock : public Block
 {
 	static constexpr const char* GetStaticName() { return "Input2D"; }
-	static en::U32 GetStaticTypeID() { return en::Hash::Meow32(GetStaticName()); }
+	static constexpr en::U32 GetStaticTypeID() { return en::Hash::ConstexprHash(GetStaticName()); }
 	static std::vector<ParamType> GetStaticInputs() { return {}; }
 	static std::vector<ParamType> GetStaticOutputs() { return { ParamType::Float, ParamType::Float }; }
 
@@ -135,7 +135,7 @@ struct Input2DBlock : public Block
 struct Noise2DBlock : public Block
 {
 	static constexpr const char* GetStaticName() { return "Noise2D"; }
-	static en::U32 GetStaticTypeID() { return en::Hash::Meow32(GetStaticName()); }
+	static constexpr en::U32 GetStaticTypeID() { return en::Hash::ConstexprHash(GetStaticName()); }
 	static std::vector<ParamType> GetStaticInputs() { return { ParamType::Float, ParamType::Float }; }
 	static std::vector<ParamType> GetStaticOutputs() { return { ParamType::Float }; }
 

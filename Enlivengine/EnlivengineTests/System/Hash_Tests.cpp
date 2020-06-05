@@ -2,6 +2,39 @@
 
 #include <doctest/doctest.h>
 
+#include <string_view>
+
+DOCTEST_TEST_CASE("Constexpr Hash")
+{
+	DOCTEST_SUBCASE("std::string_view == const char*")
+	{
+		std::string_view azertysv = "AZERTYUIOPQSDFGHJKLSWXCVGBHJGFCVBNJKIUYGHJDKIQUYGDHNJQKIDUYHGBN1234567890,;:!?.?./";
+		std::string_view asv = "A";
+		std::string_view bsv = "B";
+		std::string_view a_sv = "A "; 
+		const char* azertyc = "AZERTYUIOPQSDFGHJKLSWXCVGBHJGFCVBNJKIUYGHJDKIQUYGDHNJQKIDUYHGBN1234567890,;:!?.?./";
+		const char* ac = "A";
+		const char* bc = "B";
+		const char* a_c = "A ";
+
+		en::U32 a1 = en::Hash::ConstexprHash(azertysv);
+		en::U32 a2 = en::Hash::ConstexprHash(azertyc);
+		DOCTEST_CHECK(a1 == a2);
+
+		a1 = en::Hash::ConstexprHash(asv);
+		a2 = en::Hash::ConstexprHash(ac);
+		DOCTEST_CHECK(a1 == a2);
+
+		a1 = en::Hash::ConstexprHash(bsv);
+		a2 = en::Hash::ConstexprHash(bc);
+		DOCTEST_CHECK(a1 == a2);
+
+		a1 = en::Hash::ConstexprHash(a_sv);
+		a2 = en::Hash::ConstexprHash(a_c);
+		DOCTEST_CHECK(a1 == a2);
+	}
+}
+
 DOCTEST_TEST_CASE("Meow32")
 {
 	DOCTEST_SUBCASE("Bytes")

@@ -6,7 +6,6 @@
 #include <SFML/Graphics.hpp>
 
 #include "ColorGradient.hpp"
-#include "NoiseEditor.hpp"
 
 class GameState : public en::State
 {

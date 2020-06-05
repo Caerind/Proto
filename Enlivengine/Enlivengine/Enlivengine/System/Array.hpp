@@ -3,8 +3,10 @@
 #include <Enlivengine/System/Assert.hpp>
 #include <Enlivengine/System/Macros.hpp>
 #include <Enlivengine/System/TypeTraits.hpp>
+#include <Enlivengine/System/MemoryAllocator.hpp>
 
-#include <cstdlib> // malloc, realloc, free
+#include <cstdlib> // memcmp, memcpy // TODO : Move to Dyma ? MemoryAllocator ? new Memory.hpp ?
+
 #include <algorithm> // sort
 
 namespace en
@@ -17,16 +19,35 @@ public:
 	using Iterator = T*;
 	using ConstIterator = const T*;
 
-	constexpr Array() : mArray(nullptr), mSize(0), mCapacity(0) {}
-	constexpr Array(const Array& other) = delete;
-	constexpr Array(Array&& other) { Move(other); }
+	constexpr Array() 
+		: mArray(nullptr)
+		, mSize(0)
+		, mCapacity(0) 
+	{
+	}
+	constexpr Array(const Array& other) 
+		: mArray(nullptr)
+		, mSize(0)
+		, mCapacity(0)
+	{ 
+		Copy(other); 
+	}
+	constexpr Array(Array&& other) 
+		: mArray(other.mArray)
+		, mSize(other.mSize)
+		, mCapacity(other.mCapacity)
+	{  
+		other.mArray = nullptr;
+		other.mSize = 0;
+		other.mCapacity = 0;
+	}
 	~Array() 
 	{
 		Free();
 	}
 
-	constexpr Array& operator=(const Array& other) = delete;
-	constexpr Array& operator=(Array& other) { Move(other); return *this; }
+	constexpr Array& operator=(const Array& other) { Copy(other); return *this; }
+	constexpr Array& operator=(Array&& other) { Move(other); return *this; }
 
 	constexpr bool operator==(const Array& other) const { return Equals(other); }
 	constexpr bool operator!=(const Array& other) const { return !Equals(other); }
@@ -38,7 +59,6 @@ public:
 		}
 		else
 		{
-			// TODO : Optim memcmp ?
 			for (U32 i = 0; i < mSize; ++i)
 			{
 				if (mArray[i] != other.mArray[i])
@@ -70,18 +90,11 @@ public:
 			{
 				Reserve(other.mSize);
 			}
-			if constexpr (Traits::IsPOD<T>::value)
+			for (U32 i = 0; i < other.mSize; ++i)
 			{
-				std::memcpy((void*)mArray, (const void*)other.mArray, static_cast<U64>(other.mSize)* ENLIVE_SIZE_OF(T));
-				mSize = other.mSize;
+				Add(other.mArray[i]);
 			}
-			else
-			{
-				for (U32 i = 0; i < other.mSize; ++i)
-				{
-					Add(other.mArray[i]);
-				}
-			}
+			mSize = other.mSize;
 		}
 	}
 
@@ -110,7 +123,7 @@ public:
 			if (newSize > mSize)
 			{
 				Iterator itr = Begin() + mSize;
-				Iterator end = Begin() + newSize;
+				const Iterator end = Begin() + newSize;
 				for (; itr != end; ++itr)
 				{
 					new(itr) T;
@@ -122,7 +135,7 @@ public:
 				if constexpr (!Traits::IsTriviallyDestructible<T>::value)
 				{
 					Iterator itr = Begin() + mSize - newSize;
-					Iterator end = End();
+					const Iterator end = End();
 					for (; itr != end; ++itr)
 					{
 						itr->~T();
@@ -135,8 +148,9 @@ public:
 
 	void Reserve(U32 newCapacity)
 	{
+		// TODO : Remove the assert ? 
 		assert(newCapacity > mCapacity);
-		//if (newCapacity > mCapacity)
+		if (newCapacity > mCapacity)
 		{
 			Realloc(newCapacity);
 		}
@@ -144,37 +158,30 @@ public:
 
 	void Shrink(U32 newCapacity)
 	{
+		// TODO : Remove the assert ? 
 		assert(newCapacity >= mSize);
 		assert(newCapacity < mCapacity);
-		//if (newCapacity < mCapacity)
+		if (newCapacity < mCapacity)
 		{
 			Realloc(newCapacity);
 		}
 	}
 
-	void ShrinkToFit()
-	{
-		Shrink(mSize);
-	}
-
 	void Free()
 	{
 		Clear();
-		if (mArray != nullptr)
-		{
-			free(mArray);
-			mArray = nullptr;
-		}
-		mCapacity = 0;
+		Realloc(0);
 	}
 
 	constexpr void Clear()
 	{
 		if constexpr (!Traits::IsTriviallyDestructible<T>::value)
 		{
-			for (U32 i = 0; i < mSize; ++i)
+			Iterator itr = Begin();
+			const Iterator end = End();
+			for (; itr != end; ++itr)
 			{
-				mArray[i].~T();
+				itr->~T();
 			}
 		}
 		mSize = 0;
@@ -340,20 +347,16 @@ private:
 	void Realloc(U32 newCapacity)
 	{
 		mCapacity = newCapacity;
-		if (mArray == nullptr)
+		if (mArray != nullptr)
 		{
-			mArray = (T*)malloc(static_cast<U64>(mCapacity) * ENLIVE_SIZE_OF(T));
+			const bool result = MemoryAllocator::TypedDeallocate(mArray);
+			assert(result && mArray == nullptr);
 		}
-		else
+		if (mCapacity > 0)
 		{
-			void* currentArray = (void*)mArray;
-			mArray = (T*)realloc(currentArray, static_cast<U64>(mCapacity) * ENLIVE_SIZE_OF(T));
-			if (mArray == nullptr)
-			{
-				free(currentArray);
-			}
+			mArray = MemoryAllocator::TypedAllocate<T>(mCapacity);
+			assert(mArray != nullptr);
 		}
-		assert(mArray != nullptr); // OOM
 	}
 
 private:
@@ -361,5 +364,7 @@ private:
 	U32 mSize;
 	U32 mCapacity;
 };
+
+ENLIVE_DEFINE_TYPE_TRAITS_NAME_TEMPLATE_EN(en::Array)
 
 } // namespace en

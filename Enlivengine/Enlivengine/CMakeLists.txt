@@ -171,6 +171,8 @@ set(SRC_TOOLS
 	Enlivengine/Tools/ImGuiHelper.hpp
 	Enlivengine/Tools/ImGuiInputEditor.cpp
 	Enlivengine/Tools/ImGuiInputEditor.hpp
+	Enlivengine/Tools/ImGuiMemoryDebugger.cpp
+	Enlivengine/Tools/ImGuiMemoryDebugger.hpp
 	Enlivengine/Tools/ImGuiProfiler.cpp
 	Enlivengine/Tools/ImGuiProfiler.hpp
 	Enlivengine/Tools/ImGuiResourceBrowser.cpp

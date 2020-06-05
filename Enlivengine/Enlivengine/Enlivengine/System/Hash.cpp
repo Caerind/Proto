@@ -8,7 +8,7 @@ namespace en
 
 U32 Hash::Meow32(const void* buffer, U32 size)
 {
-	return MeowU32From(MeowHash(MeowDefaultSeed, size, (void*)buffer), 0);
+	return static_cast<U32>(MeowU32From(MeowHash(MeowDefaultSeed, size, (void*)buffer), 0));
 }
 
 U32 Hash::Meow32(const char* key)
@@ -28,7 +28,7 @@ U32 Hash::Meow32(std::string_view key)
 
 U64 Hash::Meow64(const void* buffer, U32 size)
 {
-	return MeowU64From(MeowHash(MeowDefaultSeed, size, (void*)buffer), 0);
+	return static_cast<U32>(MeowU64From(MeowHash(MeowDefaultSeed, size, (void*)buffer), 0));
 }
 
 U64 Hash::Meow64(const char* key)
@@ -44,16 +44,6 @@ U64 Hash::Meow64(const std::string& key)
 U64 Hash::Meow64(std::string_view key)
 {
 	return Meow64((const void*)key.data(), static_cast<U32>(key.size()));
-}
-
-U32 Hash::Combine32(U32 hash1, U32 hash2)
-{
-	return hash1 ^ (hash2 + 0x9e3779b9 + (hash1 << 6) + (hash1 >> 2));
-}
-
-U64 Hash::Combine64(U64 hash1, U64 hash2)
-{
-	return hash1 ^ (hash2 + 0x9e3779b9 + (hash1 << 6) + (hash1 >> 2));
 }
 
 } // namespace en

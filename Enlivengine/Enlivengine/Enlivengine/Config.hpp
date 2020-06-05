@@ -13,10 +13,12 @@
 #define ENLIVE_ENABLE_IMGUI
 #define ENLIVE_ENABLE_GRAPHICS_API_DEBUG
 #define ENLIVE_ENABLE_METADATA
+#define ENLIVE_ENABLE_DEBUG_MEMORY
 
 
 // Some more specific choices
 #define ENLIVE_ENABLE_DEFAULT_LOGGER
+#define ENLIVE_ENABLE_DEFAULT_MALLOCATOR // Define a default Mallocator
 //#define ENLIVE_NO_RENDER // No render
 //#define ENLIVE_ENABLE_DOUBLE_PRECISION // Define Real = float/double
 //#define ENLIVE_ENABLE_HASH_COLLISION_DETECTION // Check if hash is found for another different string

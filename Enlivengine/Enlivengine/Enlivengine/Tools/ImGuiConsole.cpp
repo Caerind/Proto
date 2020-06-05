@@ -56,7 +56,7 @@ void ImGuiConsole::Display()
 #endif // ENLIVE_COMPILER_MSVC
 	}
 	// Keep auto focus on the input box
-	if (ImGui::IsItemHovered() || (ImGui::IsRootWindowOrAnyChildFocused() && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0)))
+	if (ImGui::IsItemHovered() || (ImGui::IsAnyWindowFocused() && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0)))
 	{
 		ImGui::SetKeyboardFocusHere(-1); // Auto focus previous widget
 	}

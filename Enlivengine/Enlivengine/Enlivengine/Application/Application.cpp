@@ -17,6 +17,7 @@
 #include <Enlivengine/Tools/ImGuiResourceBrowser.hpp>
 #include <Enlivengine/Tools/ImGuiAnimationEditor.hpp>
 #include <Enlivengine/Tools/ImGuiInputEditor.hpp>
+#include <Enlivengine/Tools/ImGuiMemoryDebugger.hpp>
 #endif // ENLIVE_ENABLE_IMGUI
 
 // Resources
@@ -498,11 +499,15 @@ void Application::RegisterTools()
 	ImGuiDemoWindow::GetInstance().Register();
 	// Engine
 	ImGuiEntt::GetInstance().Register();
-
-	// Game
+#ifdef ENLIVE_ENABLE_DEBUG_MEMORY
+	ImGuiMemoryDebugger::GetInstance().Register();
+#endif // ENLIVE_ENABLE_DEBUG_MEMORY
 #ifdef ENLIVE_ENABLE_PROFILE
 	ImGuiProfiler::GetInstance().Register();
 #endif // ENLIVE_ENABLE_PROFILE
+
+	// Game
+	// ...
 #endif // ENLIVE_ENABLE_IMGUI
 }
 

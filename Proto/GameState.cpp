@@ -7,7 +7,7 @@
 
 #include <imgui/imgui.h>
 
-#include "NoiseEditor.hpp"
+#include "BlueprintEditor.hpp"
 
 GameState::GameState(en::StateManager& manager)
 	: en::State(manager)

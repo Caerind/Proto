@@ -36,6 +36,7 @@ bool limitSize(std::string& string, U32 size);
 bool limitSize(const std::string& string, std::string& result, U32 size);
 
 inline std::string toBoolString(bool value) { return (value) ? "true" : "false"; }
+inline bool fromBoolString(const std::string& string) { return string == "true" ? true : false; }
 
 template <typename T>
 std::string toString(const T& value)
@@ -76,20 +77,12 @@ template <> inline std::string fromString<std::string>(const std::string& string
 
 template <> inline bool fromString<bool>(const std::string& string)
 {
-	if (string == "true" || string == "1")
-	{
-		return true;
-	}
-	return false;
+	return (string == "1" || string == "true");
 }
 
 template <> inline char fromString<char>(const std::string& string)
 {
-	if (string.size() >= 1)
-	{
-		return string[0];
-	}
-	return '\0';
+	return (string.size() >= 1) ? string[0] : '\0';
 }
 
 // TODO : Fix string id hash

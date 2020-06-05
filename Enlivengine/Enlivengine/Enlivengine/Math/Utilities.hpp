@@ -44,7 +44,8 @@ public:
 	static inline F32 AngleBetween(F32 a, F32 b) { const F32 x = Abs(AngleMagnitude(a) - AngleMagnitude(b)); return (x < 180.0f) ? x : 360.0f - x; };
 	static inline F32 AngleOpposite(F32 value) { return AngleMagnitude(value - 180.0f); }
 
-	static inline F32 Sqr(F32 value) { return value * value; }
+	template <typename T>
+	static inline constexpr T Sqr(T value) { return value * value; }
 	static inline F32 Sqrt(F32 value) { return std::sqrt(value); }
 	static inline F32 InvSqrt(F32 value) { return 1 / Sqrt(value); }
 
@@ -53,11 +54,11 @@ public:
 	static inline F32 Pow(F32 value, F32 exponent) { return std::pow(value, exponent); }
 
 	template <typename T>
-	static inline constexpr T Ceil(T value) { return (value > 0 ? (int)value + 1 : (int)value); }
+	static inline T Ceil(T value) { return std::ceil(value); }
 	template <typename T>
-	static inline constexpr T Floor(T value) { return (value >= 0 ? (int)value : (int)value - 1); }
+	static inline T Floor(T value) { return std::floor(value); }
 	template <typename T>
-	static inline constexpr T Round(T value) { return (value >= 0 ? (int)(value + T(0.5)) : (int)(value - T(0.5))); }
+	static inline T Round(T value) { return std::round(value); }
 
 	template <typename T>
 	static inline constexpr T Min(T x, T y) { return (x <= y) ? x : y; }

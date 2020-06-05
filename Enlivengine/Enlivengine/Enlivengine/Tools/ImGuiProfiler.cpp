@@ -18,7 +18,7 @@ ImGuiProfiler::ImGuiProfiler()
 
 ImGuiToolTab ImGuiProfiler::GetTab() const
 {
-	return ImGuiToolTab::Game;
+	return ImGuiToolTab::Engine;
 }
 
 const char* ImGuiProfiler::GetName() const

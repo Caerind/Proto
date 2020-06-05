@@ -12,7 +12,7 @@ namespace en
 {
 
 // All std::type_traits are in this namespace (traits specific to the engine are not)
-// "Recreate" this might be a bad idea, but also might reveal useful for specific traits in the future
+// "Recreate" this might be a bad idea, but also might reveal useful for specific traits or override in the future
 namespace Traits
 {
 #define ENLIVE_DEFINE_TYPE_TRAITS_VALUE(name, expr) \
@@ -246,15 +246,17 @@ struct TypeName
 	static constexpr const char* name = "<Unknown>";
 	static U32 Hash() { return Hash::Meow32(name); }
 };
-#define ENLIVE_DEFINE_TYPE_TRAITS_NAME(type) \
+
+#define ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(type) \
 	template <> \
 	struct TypeName<type> \
 	{ \
 		static constexpr const char* name = #type; \
 		static U32 Hash() { return Hash::Meow32(name); } \
 	};
+#define ENLIVE_DEFINE_TYPE_TRAITS_NAME(type) namespace en { ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(type) }
 
-#define ENLIVE_DEFINE_TYPE_TRAITS_NAME_TEMPLATE(templateBase) \
+#define ENLIVE_DEFINE_TYPE_TRAITS_NAME_TEMPLATE_EN(templateBase) \
 	template <typename T> \
 	struct TypeName<templateBase<T>> \
 	{ \
@@ -265,18 +267,19 @@ struct TypeName
 		static constexpr const char* name = s_stringStorage.GetData(); \
 		static U32 Hash() { return Hash::Meow32(name); } \
 	};
+#define ENLIVE_DEFINE_TYPE_TRAITS_NAME_TEMPLATE(type) namespace en { ENLIVE_DEFINE_TYPE_TRAITS_NAME_TEMPLATE_EN(type) }
 
-ENLIVE_DEFINE_TYPE_TRAITS_NAME(bool)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME(I8)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME(U8)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME(I16)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME(U16)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME(I32)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME(U32)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME(I64)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME(U64)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME(F32)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME(F64)
+ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(bool)
+ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::I8)
+ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::U8)
+ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::I16)
+ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::U16)
+ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::I32)
+ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::U32)
+ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::I64)
+ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::U64)
+ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::F32)
+ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::F64)
 
 template <typename T>
 struct TypeSize

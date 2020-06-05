@@ -1,52 +1,115 @@
 #include <Enlivengine/System/MemoryAllocator.hpp>
 
+#include <Enlivengine/System/Assert.hpp>
+
 namespace en
 {
 
-dyma::Allocator* MemoryAllocator::sAllocator = nullptr;
+dyma::Allocator* MemoryAllocator::sEngineAllocator = nullptr;
+
 #ifdef ENLIVE_ENABLE_DEBUG_MEMORY
-dyma::Allocator* MemoryAllocator::sAllocatorToDebug = nullptr;
+MemoryAllocator::DebugAllocator MemoryAllocator::sDebugAllocator;
 #endif // ENLIVE_ENABLE_DEBUG_MEMORY
 
-bool MemoryAllocator::InitializeAllocator()
+#ifdef ENLIVE_ENABLE_DEFAULT_MALLOCATOR
+dyma::Mallocator MemoryAllocator::sDefaultMallocator;
+bool MemoryAllocator::sDefaultMallocatorInitialized = MemoryAllocator::InitializeEngineAllocator(&sDefaultMallocator);
+#endif // ENLIVE_ENABLE_DEFAULT_MALLOCATOR
+
+bool MemoryAllocator::InitializeEngineAllocator(dyma::Allocator* allocator)
 {
-#ifdef ENLIVE_ENABLE_DEBUG_MEMORY
-	sAllocatorToDebug = InitializeMainAllocator();
-	sAllocator = new MemoryAllocator::DebugAllocator(*sAllocatorToDebug);
+	if (allocator == nullptr)
+	{
+#ifdef ENLIVE_ENABLE_DEFAULT_MALLOCATOR
+		allocator = &sDefaultMallocator;
 #else
-	sAllocator = InitializeMainAllocator();
+		return false;
+#endif // ENLIVE_ENABLE_DEFAULT_MALLOCATOR
+	}
+
+	sEngineAllocator = allocator;
+
+#ifdef ENLIVE_ENABLE_DEBUG_MEMORY
+	sDebugAllocator.SetAllocatorToDebug(allocator);
 #endif // ENLIVE_ENABLE_DEBUG_MEMORY
-	return false;
+
+#ifdef ENLIVE_ENABLE_DEFAULT_MALLOCATOR
+	sDefaultMallocatorInitialized = (allocator == &sDefaultMallocator);
+#endif // ENLIVE_ENABLE_DEFAULT_MALLOCATOR
+
+	return true;
 }
 
 void* MemoryAllocator::Allocate(U32 size)
 {
-	return sAllocator->Allocate(static_cast<std::size_t>(size));
+#ifdef ENLIVE_ENABLE_DEBUG_MEMORY
+	assert(sDebugAllocator.GetAllocatorToDebug() != nullptr);
+	return sDebugAllocator.Allocate(static_cast<std::size_t>(size));
+#else
+	assert(sEngineAllocator != nullptr);
+	return sEngineAllocator->Allocate(static_cast<std::size_t>(size));
+#endif // ENLIVE_ENABLE_DEBUG_MEMORY
 }
 
-bool MemoryAllocator::Deallocate(void* ptr)
+bool MemoryAllocator::Deallocate(void*& ptr)
 {
+#ifdef ENLIVE_ENABLE_DEBUG_MEMORY
+	assert(sDebugAllocator.GetAllocatorToDebug() != nullptr);
+	return sDebugAllocator.Deallocate(ptr);
+#else
+	assert(sEngineAllocator != nullptr);
 	return sAllocator->Deallocate(ptr);
+#endif // ENLIVE_ENABLE_DEBUG_MEMORY
 }
 
 #ifdef ENLIVE_ENABLE_DEBUG_MEMORY
-
-MemoryAllocator::DebugAllocator::DebugAllocator(dyma::Allocator& allocatorToDebug)
-	: mAllocator(allocatorToDebug)
+MemoryAllocator::DebugAllocator::DebugAllocator()
+	: mAllocator(nullptr)
 	, mAllocationCount(0)
 	, mDeallocationCount(0)
 	, mUsedSize(0)
 	, mPeakSize(0)
+	, mBlocks()
 {
+}
+
+void MemoryAllocator::DebugAllocator::SetAllocatorToDebug(dyma::Allocator* allocator)
+{
+	assert(allocator != nullptr);
+
+	mAllocator = allocator;
+	mAllocationCount = 0;
+	mDeallocationCount = 0;
+	mUsedSize = 0;
+	mPeakSize = 0;
+	mBlocks.clear();
+}
+
+dyma::Allocator* MemoryAllocator::DebugAllocator::GetAllocatorToDebug()
+{
+	return mAllocator;
+}
+
+const dyma::Allocator* MemoryAllocator::DebugAllocator::GetAllocatorToDebug() const
+{
+	return mAllocator;
 }
 
 void* MemoryAllocator::DebugAllocator::Allocate(std::size_t size)
 {
-	void* ptr = mAllocator.Allocate(size);
+	assert(mAllocator != nullptr);
+
+	void* ptr = mAllocator->Allocate(size);
 	if (ptr != nullptr)
 	{
 		mAllocationCount++;
-		mUsedSize++;
+
+		DebugMemoryBlock block;
+		block.ptr = ptr;
+		block.size = static_cast<U32>(size);
+		mBlocks.push_back(block);
+
+		mUsedSize += static_cast<U32>(size);
 		if (mUsedSize > mPeakSize)
 		{
 			mPeakSize = mUsedSize;
@@ -57,26 +120,37 @@ void* MemoryAllocator::DebugAllocator::Allocate(std::size_t size)
 
 bool MemoryAllocator::DebugAllocator::Deallocate(void*& ptr)
 {
+	assert(mAllocator != nullptr);
+
 	const void* ptrBeforeDeallocation = ptr;
-	const bool result = mAllocator.Deallocate(ptr);
+	const bool result = mAllocator->Deallocate(ptr);
 	if (result)
 	{
 		mDeallocationCount++;
-		//mUsedSize -= blockSize;
+
+		U32 deallocationSize = 0;
+		const std::size_t blockCount = mBlocks.size();
+		for (std::size_t i = 0; i < blockCount; ++i)
+		{
+			if (ptrBeforeDeallocation == mBlocks[i].ptr)
+			{
+				deallocationSize = mBlocks[i].size;
+				mBlocks.erase(mBlocks.begin() + i);
+				break;
+			}
+		}
+
+		mUsedSize -= deallocationSize;
 	}
 	return result;
 }
 
 bool MemoryAllocator::DebugAllocator::Owns(const void* ptr) const
 {
-	return mAllocator.Owns(ptr);
-}
+	assert(mAllocator != nullptr);
 
+	return mAllocator->Owns(ptr);
+}
 #endif // ENLIVE_ENABLE_DEBUG_MEMORY
-
-dyma::Allocator* MemoryAllocator::InitializeMainAllocator()
-{
-	return new dyma::Mallocator();
-}
 
 } // namespace en

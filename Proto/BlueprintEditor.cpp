@@ -1,4 +1,4 @@
-#include "NoiseEditor.hpp"
+#include "BlueprintEditor.hpp"
 
 #ifdef ENLIVE_ENABLE_IMGUI
 
