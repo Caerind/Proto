@@ -254,6 +254,16 @@ struct TypeName
 	{ \
 		static constexpr const char* name = #type; \
 		static U32 Hash() { return Hash::Meow32(name); } \
+	}; \
+	template <> \
+	struct TypeName<type*> \
+	{ \
+	private: \
+		static constexpr en::U32 s_stringStorageSize = en::StringLength(#type) + en::StringLength("*") + 1; \
+		static constexpr en::ConstexprStringStorage s_stringStorage = en::ConstexprStringStorage<s_stringStorageSize>(#type, "*"); \
+	public: \
+		static constexpr const char* name = s_stringStorage.GetData(); \
+		static U32 Hash() { return Hash::Meow32(name); } \
 	};
 #define ENLIVE_DEFINE_TYPE_TRAITS_NAME(type) namespace en { ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(type) }
 

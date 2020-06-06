@@ -22,11 +22,12 @@ class ObjectEditor
 {
 public:
 	template <typename T>
-	static bool ImGuiEditor(T& object, const char* name)
+	static bool ImGuiEditorWindow(const char* windowName, T& object, const char* name)
 	{
+		assert(windowName != nullptr);
 		assert(name != nullptr);
 		bool modified = false;
-		if (ImGui::Begin("ObjectEditor"))
+		if (ImGui::Begin(windowName))
 		{
 			modified = ImGuiEditor_Common(object, name);
 			ImGui::End();
@@ -35,17 +36,27 @@ public:
 	}
 
 	template <typename T>
+	static bool ImGuiEditorWindow(const char* windowName, T* object, const char* name)
+	{
+		assert(windowName != nullptr);
+		assert(object != nullptr);
+		assert(name != nullptr);
+		return ImGuiEditorWindow(windowName, *object, name);
+	}
+
+	template <typename T>
+	static bool ImGuiEditor(T& object, const char* name)
+	{
+		assert(name != nullptr);
+		return ImGuiEditor_Common(object, name);
+	}
+
+	template <typename T>
 	static bool ImGuiEditor(T* object, const char* name)
 	{
 		assert(name != nullptr);
 		assert(object != nullptr);
-		bool modified = false;
-		if (ImGui::Begin("ObjectEditor"))
-		{
-			modified = ImGuiEditor_Common(*object, name);
-			ImGui::End();
-		}
-		return modified;
+		return ImGuiEditor_Common(*object, name);
 	}
 
 	template <typename T>

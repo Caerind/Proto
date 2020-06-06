@@ -686,6 +686,7 @@ void Window::targetSignals(const sf::Event& event)
 	if (event.type == sf::Event::Closed)
 	{
 		onWindowClosed(this);
+		return;
 	}
 
 	// Gained Focus

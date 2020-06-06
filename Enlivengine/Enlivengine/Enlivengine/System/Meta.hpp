@@ -86,12 +86,7 @@ template <typename T> constexpr auto GetClassName() { return meta::getName<T>();
 template <typename T> constexpr auto GetClassMembers() { return meta::getMembers<T>(); }
 template <typename T> constexpr en::U32 GetClassMemberCount() { return static_cast<en::U32>(meta::getMemberCount<T>()); }
 
-template <typename T, typename F, typename = EnableIfRegistered<T>::type> 
-void ForAllMembers(F&& f)
-{
-	meta::doForAllMembers<T>(f);
-}
-template <typename T, typename F, typename = EnableIfNotRegistered<T>::type, typename = void>
+template <typename T, typename F> 
 void ForAllMembers(F&& f)
 {
 	meta::doForAllMembers<T>(f);

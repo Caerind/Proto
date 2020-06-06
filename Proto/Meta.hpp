@@ -101,7 +101,7 @@ public:
 	bool GetD() const { return d; }
 	MyEnum GetE() const { return e; }
 	en::Time GetF() const { return f; }
-	const en::Array<en::U32>& GetG() const { return g; }
+	en::Array<en::U32>& GetG() { return g; }
 	const Vector2Test& GetH() const { return h; }
 	const std::string& GetI() const { return i; }
 	const std::array<Vector2Test, 2> GetJ() const { return j; }

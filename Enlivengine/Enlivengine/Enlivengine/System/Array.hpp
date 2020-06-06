@@ -22,13 +22,30 @@ public:
 	constexpr Array() 
 		: mArray(nullptr)
 		, mSize(0)
-		, mCapacity(0) 
+		, mCapacity(0)
+#ifdef ENLIVE_ENABLE_DEBUG_MEMORY
+		, mDebugMemoryContext(en::TypeName<en::Array<T>>::name)
+#endif // ENLIVE_ENABLE_DEBUG_MEMORY
 	{
 	}
+
+#ifdef ENLIVE_ENABLE_DEBUG_MEMORY
+	constexpr Array(const char* debugMemoryContext) 
+		: mArray(nullptr)
+		, mSize(0)
+		, mCapacity(0)
+		, mDebugMemoryContext(debugMemoryContext)
+	{
+	}
+#endif // ENLIVE_ENABLE_DEBUG_MEMORY
+
 	constexpr Array(const Array& other) 
 		: mArray(nullptr)
 		, mSize(0)
 		, mCapacity(0)
+#ifdef ENLIVE_ENABLE_DEBUG_MEMORY
+		, mDebugMemoryContext(en::TypeName<en::Array<T>>::name)
+#endif // ENLIVE_ENABLE_DEBUG_MEMORY
 	{ 
 		Copy(other); 
 	}
@@ -36,6 +53,9 @@ public:
 		: mArray(other.mArray)
 		, mSize(other.mSize)
 		, mCapacity(other.mCapacity)
+#ifdef ENLIVE_ENABLE_DEBUG_MEMORY
+		, mDebugMemoryContext(other.mDebugMemoryContext)
+#endif // ENLIVE_ENABLE_DEBUG_MEMORY
 	{  
 		other.mArray = nullptr;
 		other.mSize = 0;
@@ -236,7 +256,7 @@ public:
 			return nullptr; 
 		}
 		Iterator itr = Begin();
-		Iterator end = End();
+		const Iterator end = End();
 		for (; itr != end; ++itr)
 		{
 			if (*itr == value)
@@ -334,12 +354,28 @@ public:
 		mSize--;
 	}
 
+	void DeleteAll()
+	{
+		if constexpr (en::Traits::IsPointer<T>::value)
+		{
+			for (en::U32 i = 0; i < mSize; ++i)
+			{
+				enDelete(en::Traits::RemovePointer<T>::type, mArray[i]);
+			}
+		}
+	}
+
 	//constexpr bool Exists(const T& value) const { return false; }
 	//template <typename Predicate>
 	//constexpr bool Any(Predicate p) const { return false; }
 
 	//constexpr T& Pop(T& element) {}
 	//constexpr T Pop() {}
+
+#ifdef ENLIVE_ENABLE_DEBUG_MEMORY
+	const char* GetDebugMemoryContext() const { return mDebugMemoryContext; }
+	void SetDebugMemoryContext(const char* context) { mDebugMemoryContext = context; }
+#endif // ENLIVE_ENABLE_DEBUG_MEMORY
 
 private:
 	// To ensure the user knows what he is doing, Realloc is private
@@ -349,12 +385,16 @@ private:
 		mCapacity = newCapacity;
 		if (mArray != nullptr)
 		{
-			const bool result = MemoryAllocator::TypedDeallocate(mArray);
+			const bool result = enDelete(T, mArray);
 			assert(result && mArray == nullptr);
 		}
 		if (mCapacity > 0)
 		{
-			mArray = MemoryAllocator::TypedAllocate<T>(mCapacity);
+#ifdef ENLIVE_ENABLE_DEBUG_MEMORY
+			mArray = enNewCount(T, mDebugMemoryContext, mCapacity);
+#else
+			mArray = enNewCount(T, "Array", mCapacity);
+#endif // ENLIVE_ENABLE_DEBUG_MEMORY
 			assert(mArray != nullptr);
 		}
 	}
@@ -363,6 +403,10 @@ private:
 	T* mArray;
 	U32 mSize;
 	U32 mCapacity;
+
+#ifdef ENLIVE_ENABLE_DEBUG_MEMORY
+	const char* mDebugMemoryContext;
+#endif // ENLIVE_ENABLE_DEBUG_MEMORY
 };
 
 ENLIVE_DEFINE_TYPE_TRAITS_NAME_TEMPLATE_EN(en::Array)

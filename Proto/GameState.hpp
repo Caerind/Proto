@@ -17,6 +17,7 @@ class GameState : public en::State
 {
 public:
 	GameState(en::StateManager& manager);
+	~GameState();
 
 	bool handleEvent(const sf::Event& event);
 
@@ -47,12 +48,6 @@ private:
 	int mDisplay;
 	sf::Texture mTexture;
 
-	DataFile mDataFile;
-	TestClassA mA1;
-	TestClassA mA2;
 	en::Array<TestClassA*> mAs;
-	Aaa mA;
-	Bbb mB;
-	Ccc mC;
 	en::Array<Aaa*> mAaa;
 };

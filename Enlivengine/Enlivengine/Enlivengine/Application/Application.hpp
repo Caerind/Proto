@@ -77,12 +77,14 @@ template <typename State, typename ... Args>
 void Application::Start(Args&& ... args)
 {
 	PushState<State>(std::forward<Args>(args)...);
-
 	mStates.applyPendingChanges();
 
 	mRunning = true;
 
 	Run();
+
+	ClearStates();
+	mStates.applyPendingChanges();
 }
 
 template <typename T, typename ... Args>

@@ -73,27 +73,32 @@ Window& Application::GetWindow()
 
 void Application::Stop()
 {
-	onApplicationStopped(this);
-
-	AudioSystem::GetInstance().Stop();
-	AudioSystem::GetInstance().Clear();
-
-#ifdef ENLIVE_ENABLE_IMGUI
-	//ImGuiResourceBrowser::GetInstance().SaveResourceInfosToFile(PathManager::GetInstance().GetAssetsPath() + "resources.xml");
-#endif // ENLIVE_ENABLE_IMGUI
-
-#ifdef ENLIVE_ENABLE_IMGUI
-	ImGuiToolManager::GetInstance().Shutdown();
-#endif // ENLIVE_ENABLE_IMGUI
-
-	if (mWindow.isOpen())
+	if (mRunning)
 	{
-		mWindow.close();
+		ENLIVE_PROFILE_FUNCTION();
+
+		onApplicationStopped(this);
+
+		AudioSystem::GetInstance().Stop();
+		AudioSystem::GetInstance().Clear();
+
+#ifdef ENLIVE_ENABLE_IMGUI
+		//ImGuiResourceBrowser::GetInstance().SaveResourceInfosToFile(PathManager::GetInstance().GetAssetsPath() + "resources.xml");
+#endif // ENLIVE_ENABLE_IMGUI
+
+#ifdef ENLIVE_ENABLE_IMGUI
+		ImGuiToolManager::GetInstance().Shutdown();
+#endif // ENLIVE_ENABLE_IMGUI
+
+		if (mWindow.isOpen())
+		{
+			mWindow.close();
+		}
+
+		mRunning = false;
+
+		//std::exit(EXIT_SUCCESS);
 	}
-
-	mRunning = false;
-
-	//std::exit(EXIT_SUCCESS);
 }
 
 bool Application::IsRunning() const
@@ -357,6 +362,13 @@ void Application::Run()
 			fpsAccumulator += dt;
 
 			Events();
+			if (!mRunning)
+			{
+#ifdef ENLIVE_ENABLE_PROFILE
+				Profiler::GetInstance().EndFrame();
+#endif // ENLIVE_ENABLE_PROFILE
+				return;
+			}
 
 			// Fixed time 60 FPS
 			while (accumulator >= TimePerFrame)
@@ -411,7 +423,7 @@ void Application::Events()
 	ENLIVE_PROFILE_FUNCTION();
 
 	sf::Event event;
-	while (mWindow.pollEvent(event))
+	while (mWindow.pollEvent(event) && mRunning)
 	{
 		mActionSystem.AddEvent(event);
 

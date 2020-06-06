@@ -40,37 +40,25 @@ bool MemoryAllocator::InitializeEngineAllocator(dyma::Allocator* allocator)
 	return true;
 }
 
-void* MemoryAllocator::Allocate(U32 size)
-{
-#ifdef ENLIVE_ENABLE_DEBUG_MEMORY
-	assert(sDebugAllocator.GetAllocatorToDebug() != nullptr);
-	return sDebugAllocator.Allocate(static_cast<std::size_t>(size));
-#else
-	assert(sEngineAllocator != nullptr);
-	return sEngineAllocator->Allocate(static_cast<std::size_t>(size));
-#endif // ENLIVE_ENABLE_DEBUG_MEMORY
-}
-
-bool MemoryAllocator::Deallocate(void*& ptr)
-{
-#ifdef ENLIVE_ENABLE_DEBUG_MEMORY
-	assert(sDebugAllocator.GetAllocatorToDebug() != nullptr);
-	return sDebugAllocator.Deallocate(ptr);
-#else
-	assert(sEngineAllocator != nullptr);
-	return sAllocator->Deallocate(ptr);
-#endif // ENLIVE_ENABLE_DEBUG_MEMORY
-}
-
 #ifdef ENLIVE_ENABLE_DEBUG_MEMORY
 MemoryAllocator::DebugAllocator::DebugAllocator()
 	: mAllocator(nullptr)
+	, mContext(nullptr)
+	, mFile(nullptr)
+	, mLine(0)
 	, mAllocationCount(0)
 	, mDeallocationCount(0)
 	, mUsedSize(0)
 	, mPeakSize(0)
 	, mBlocks()
 {
+}
+
+void MemoryAllocator::DebugAllocator::SetCurrentContext(const char* context, const char* file, U32 line)
+{
+	mContext = context;
+	mFile = file;
+	mLine = line;
 }
 
 void MemoryAllocator::DebugAllocator::SetAllocatorToDebug(dyma::Allocator* allocator)
@@ -107,6 +95,9 @@ void* MemoryAllocator::DebugAllocator::Allocate(std::size_t size)
 		DebugMemoryBlock block;
 		block.ptr = ptr;
 		block.size = static_cast<U32>(size);
+		block.context = mContext;
+		block.file = mFile;
+		block.line = mLine;
 		mBlocks.push_back(block);
 
 		mUsedSize += static_cast<U32>(size);
