@@ -6,10 +6,18 @@
 #include <Enlivengine/System/String.hpp>
 #include <Enlivengine/System/TypeTraits.hpp>
 #include <Enlivengine/System/ParserXml.hpp>
-#include <Enlivengine/System/Array.hpp>
 
 #include <array>
 #include <vector>
+#include <Enlivengine/System/Array.hpp>
+#include <Enlivengine/System/Time.hpp>
+
+template <typename T>
+struct CustomSerialization
+{
+	// TODO : Maybe have a different value for serialization & deserialization
+	static constexpr bool value = false;
+};
 
 class DataFile
 {
@@ -23,38 +31,60 @@ public:
 
 	template <typename T>
 	bool Serialize(const T& object, const char* name);
+	template <typename T>
+	bool Serialize(const T* object, const char* name);
 
 	template <typename T>
-	bool SerializeBasic(const T& object, const char* name);
-	template <typename T>
-	bool SerializeBasic(const en::Array<T>& object, const char* name);
-	template <typename T>
-	bool SerializeBasic(const std::vector<T>& object, const char* name);
-	template <typename T, std::size_t N>
-	bool SerializeBasic(const std::array<T, N>& object, const char* name);
+	bool Serialize_Registered(const T& object, const char* name);
 
 	template <typename T>
 	bool Deserialize(T& object, const char* name);
+	template <typename T>
+	bool Deserialize(T* object, const char* name);
 
 	template <typename T>
-	bool DeserializeBasic(T& object, const char* name);
-	template <typename T>
-	bool DeserializeBasic(en::Array<T>& object, const char* name);
-	template <typename T>
-	bool DeserializeBasic(std::vector<T>& object, const char* name);
-	template <typename T, std::size_t N>
-	bool DeserializeBasic(std::array<T, N>& object, const char* name);
+	bool Deserialize_Registered(T& object, const char* name);
 
 private:
-	void OpenNode(const char* name);
-	void CloseNode(const char* name);
-	static std::string LevelToString(en::U32 level, en::U32 indentSize = 4); // TODO : Move to String.hpp ?
+	template <typename T>
+	bool Serialize_Common(const T& object, const char* name);
+
+	template <typename T>
+	bool Serialize_Basic(const T& object, const char* name);
+	template <typename T>
+	bool Serialize_Basic(const en::Array<T>& object, const char* name);
+	template <typename T>
+	bool Serialize_Basic(const std::vector<T>& object, const char* name);
+	template <typename T, std::size_t N>
+	bool Serialize_Basic(const std::array<T, N>& object, const char* name);
+	template <typename T>
+	bool Serialize_Basic(const en::Array<T*>& object, const char* name);
+	template <typename T>
+	bool Serialize_Basic(const std::vector<T*>& object, const char* name);
+	template <typename T, std::size_t N>
+	bool Serialize_Basic(const std::array<T*, N>& object, const char* name);
+
+	template <typename T>
+	bool Deserialize_Common(T& object, const char* name);
+
+	template <typename T>
+	bool Deserialize_Basic(T& object, const char* name);
+	template <typename T>
+	bool Deserialize_Basic(en::Array<T>& object, const char* name);
+	template <typename T>
+	bool Deserialize_Basic(std::vector<T>& object, const char* name);
+	template <typename T, std::size_t N>
+	bool Deserialize_Basic(std::array<T, N>& object, const char* name);
+	template <typename T>
+	bool Deserialize_Basic(en::Array<T*>& object, const char* name);
+	template <typename T>
+	bool Deserialize_Basic(std::vector<T*>& object, const char* name);
+	template <typename T, std::size_t N>
+	bool Deserialize_Basic(std::array<T*, N>& object, const char* name);
 
 private:
 	en::ParserXml mParserXml;
 	bool mValid;
-
-	en::U32 mLevel;
 };
 
 template <typename T>
@@ -63,46 +93,65 @@ bool DataFile::Serialize(const T& object, const char* name)
 	assert(mValid);
 	assert(name != nullptr);
 
-	if constexpr (en::Meta::IsRegistered<T>())
+	return Serialize_Common(object, name);
+}
+
+template <typename T>
+bool DataFile::Serialize(const T* object, const char* name)
+{
+	assert(mValid);
+	assert(name != nullptr);
+	assert(object != nullptr);
+
+	return Serialize_Common(*object, name);
+}
+
+template <typename T>
+bool DataFile::Serialize_Registered(const T& object, const char* name)
+{
+	static_assert(en::Meta::IsRegistered<T>());
+	if (mParserXml.createChild(name))
 	{
-		if (mParserXml.createChild(name))
+		mParserXml.setAttribute("classHash", en::Meta::GetClassMembersHash<T>());
+		en::Meta::ForAllMembers<T>([this, &object](const auto& member)
 		{
-			mParserXml.setAttribute("classHash", en::Meta::GetClassMembersHash<T>());
-			en::Meta::ForAllMembers<T>(
-				[this, &object](const auto& member)
-				{
-					if (member.canGetConstRef())
-					{
-						Serialize(member.get(object), member.getName());
-					}
-					else if (member.hasGetter())
-					{
-						auto copy = member.getCopy(object);
-						Serialize(copy, member.getName());
-					}
-				}
-			);
-			mParserXml.closeNode();
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	else
-	{
-		return SerializeBasic(object, name);
+			Serialize_Common(member.get(object), member.getName());
+		});
+		mParserXml.closeNode();
+		return true;
 	}
 }
 
 template <typename T>
-bool DataFile::SerializeBasic(const T& object, const char* name)
+bool DataFile::Deserialize(T& object, const char* name)
 {
-	assert(name);
-	if (mParserXml.createChild(name))
+	assert(mValid);
+	assert(name != nullptr);
+
+	return Deserialize_Common(object, name);
+}
+
+template <typename T>
+bool DataFile::Deserialize(T* object, const char* name)
+{
+	assert(mValid);
+	assert(name != nullptr);
+	assert(object != nullptr);
+
+	return Deserialize_Common(*object, name);
+}
+
+template <typename T>
+bool DataFile::Deserialize_Registered(T& object, const char* name)
+{
+	static_assert(en::Meta::IsRegistered<T>());
+	if (mParserXml.readNode(name))
 	{
-		mParserXml.setValue(en::toString(object));
+		// TODO : Check classHash
+		en::Meta::ForAllMembers<T>([this, &object](const auto& member)
+		{
+			Deserialize_Common(member.getRef(object), member.getName());
+		});
 		mParserXml.closeNode();
 		return true;
 	}
@@ -113,25 +162,77 @@ bool DataFile::SerializeBasic(const T& object, const char* name)
 }
 
 template <typename T>
-bool DataFile::SerializeBasic(const en::Array<T>& object, const char* name)
+bool DataFile::Serialize_Common(const T& object, const char* name)
+{
+	// TODO : Maybe have a different value for serialization & deserialization
+	if constexpr (CustomSerialization<T>::value)
+	{
+		return CustomSerialization<T>::Serialize(*this, object, name);
+	}
+	else if constexpr (en::Meta::IsRegistered<T>())
+	{
+		return Serialize_Registered(object, name);
+	}
+	else
+	{
+		return Serialize_Basic(object, name);
+	}
+}
+
+template <typename T>
+bool DataFile::Serialize_Basic(const T& object, const char* name)
 {
 	assert(name);
 	if (mParserXml.createChild(name))
 	{
-		mParserXml.setAttribute("elementCount", object.Size());
-
-		if constexpr (en::Meta::IsRegistered<T>())
+		if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, bool>::value)
 		{
-			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassMembersHash<T>());
+			mParserXml.setValue(en::toBoolString(object));
 		}
+		else if constexpr (en::Traits::IsEnum<T>::value)
+		{
+			const std::string enumValueStr(en::Meta::GetEnumName(object));
+			mParserXml.setValue(enumValueStr);
+		}
+		else if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, std::string>::value)
+		{
+			mParserXml.setValue(object);
+		}
+		else if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, en::Time>::value)
+		{
+			mParserXml.setValue(en::toString(object.asSeconds()));
+		}
+		else
+		{
+			mParserXml.setValue(en::toString(object));
+		}
+		mParserXml.closeNode();
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 
+template <typename T>
+bool DataFile::Serialize_Basic(const en::Array<T>& object, const char* name)
+{
+	assert(name);
+	if (mParserXml.createChild(name))
+	{
 		bool result = true;
 		for (en::U32 i = 0; i < object.Size(); ++i)
 		{
 			std::string childName(name);
 			childName.append("_");
 			childName.append(std::to_string(i));
-			result = Serialize(object[i], childName.c_str()) && result;
+			result = Serialize_Common(object[i], childName.c_str()) && result;
+		}
+		mParserXml.setAttribute("elementCount", object.Size());
+		if constexpr (en::Meta::IsRegistered<T>())
+		{
+			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassMembersHash<T>());
 		}
 		mParserXml.closeNode();
 		return result;
@@ -143,25 +244,23 @@ bool DataFile::SerializeBasic(const en::Array<T>& object, const char* name)
 }
 
 template <typename T>
-bool DataFile::SerializeBasic(const std::vector<T>& object, const char* name)
+bool DataFile::Serialize_Basic(const std::vector<T>& object, const char* name)
 {
 	assert(name);
 	if (mParserXml.createChild(name))
 	{
-		mParserXml.setAttribute("elementCount", static_cast<en::U32>(object.size()));
-
-		if constexpr (en::Meta::IsRegistered<T>())
-		{
-			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassMembersHash<T>());
-		}
-
 		bool result = true;
 		for (std::size_t i = 0; i < object.size(); ++i)
 		{
 			std::string childName(name);
 			childName.append("_");
 			childName.append(std::to_string(i));
-			result = Serialize(object[i], childName.c_str()) && result;
+			result = Serialize_Common(object[i], childName.c_str()) && result;
+		}
+		mParserXml.setAttribute("elementCount", static_cast<en::U32>(object.size()));
+		if constexpr (en::Meta::IsRegistered<T>())
+		{
+			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassMembersHash<T>());
 		}
 		mParserXml.closeNode();
 		return result;
@@ -173,25 +272,23 @@ bool DataFile::SerializeBasic(const std::vector<T>& object, const char* name)
 }
 
 template <typename T, std::size_t N>
-bool DataFile::SerializeBasic(const std::array<T, N>& object, const char* name)
+bool DataFile::Serialize_Basic(const std::array<T, N>& object, const char* name)
 {
 	assert(name);
 	if (mParserXml.createChild(name))
 	{
-		mParserXml.setAttribute("elementCount", static_cast<en::U32>(N));
-
-		if constexpr (en::Meta::IsRegistered<T>())
-		{
-			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassMembersHash<T>());
-		}
-
 		bool result = true;
-		for (std::size_t i = 0; i < N; ++i)
+		for (std::size_t i = 0; i < object.size(); ++i)
 		{
 			std::string childName(name);
 			childName.append("_");
 			childName.append(std::to_string(i));
-			result = Serialize(object[i], childName.c_str()) && result;
+			result = Serialize_Common(object[i], childName.c_str()) && result;
+		}
+		mParserXml.setAttribute("elementCount", static_cast<en::U32>(object.size()));
+		if constexpr (en::Meta::IsRegistered<T>())
+		{
+			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassMembersHash<T>());
 		}
 		mParserXml.closeNode();
 		return result;
@@ -203,59 +300,168 @@ bool DataFile::SerializeBasic(const std::array<T, N>& object, const char* name)
 }
 
 template <typename T>
-bool DataFile::Deserialize(T& object, const char* name)
+bool DataFile::Serialize_Basic(const en::Array<T*>& object, const char* name)
 {
-	assert(mValid);
-	assert(name != nullptr);
-
-	if constexpr (en::Meta::IsRegistered<T>())
+	assert(name);
+	if (mParserXml.createChild(name))
 	{
-		if (mParserXml.readNode(name))
+		en::U32 elementCount = object.Size();
+		bool result = true;
+		for (en::U32 i = 0; i < object.Size(); ++i)
 		{
-			// TODO : Check classHash
-
-			en::Meta::ForAllMembers<T>(
-				[this, &object](const auto& member)
-				{
-					if (member.canGetRef())
-					{
-						Deserialize(member.getRef(object), member.getName());
-					}
-					else if (member.hasGetter())
-					{
-						using MemberT = meta::get_member_type<decltype(member)>;
-
-						MemberT copy; // TODO : MemberT must be default constuctible
-						Deserialize(copy, member.getName());
-						member.set(object, copy);
-					}
-				}
-			);
-
-			mParserXml.closeNode();
-			return true;
+			std::string childName(name);
+			childName.append("_");
+			childName.append(std::to_string(i));
+			if (object[i] != nullptr)
+			{
+				result = Serialize_Common(*object[i], childName.c_str()) && result;
+			}
+			else
+			{
+				elementCount--;
+				// TODO : nullptr check
+			}
 		}
-		else
+		mParserXml.setAttribute("elementCount", elementCount);
+		if constexpr (en::Meta::IsRegistered<T>())
 		{
-			return false;
+			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassMembersHash<T>());
 		}
+		mParserXml.closeNode();
+		return result;
 	}
 	else
 	{
-		return DeserializeBasic(object, name);
+		return false;
 	}
 }
 
 template <typename T>
-bool DataFile::DeserializeBasic(T& object, const char* name)
+bool DataFile::Serialize_Basic(const std::vector<T*>& object, const char* name)
+{
+	assert(name);
+	if (mParserXml.createChild(name))
+	{
+		en::U32 elementCount = static_cast<en::U32>(object.size());
+		bool result = true;
+		for (std::size_t i = 0; i < object.size(); ++i)
+		{
+			std::string childName(name);
+			childName.append("_");
+			childName.append(std::to_string(i));
+			if (object[i] != nullptr)
+			{
+				result = Serialize_Common(*object[i], childName.c_str()) && result;
+			}
+			else
+			{
+				elementCount--;
+				// TODO : nullptr check
+			}
+		}
+		mParserXml.setAttribute("elementCount", elementCount);
+		if constexpr (en::Meta::IsRegistered<T>())
+		{
+			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassMembersHash<T>());
+		}
+		mParserXml.closeNode();
+		return result;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+template <typename T, std::size_t N>
+bool DataFile::Serialize_Basic(const std::array<T*, N>& object, const char* name)
+{
+	assert(name);
+	if (mParserXml.createChild(name))
+	{
+		en::U32 elementCount = static_cast<en::U32>(object.size());
+		bool result = true;
+		for (std::size_t i = 0; i < object.size(); ++i)
+		{
+			std::string childName(name);
+			childName.append("_");
+			childName.append(std::to_string(i));
+			if (object[i] != nullptr)
+			{
+				result = Serialize_Common(*object[i], childName.c_str()) && result;
+			}
+			else
+			{
+				elementCount--;
+				// TODO : nullptr check
+			}
+		}
+		mParserXml.setAttribute("elementCount", elementCount);
+		if constexpr (en::Meta::IsRegistered<T>())
+		{
+			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassMembersHash<T>());
+		}
+		mParserXml.closeNode();
+		return result;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+template <typename T>
+bool DataFile::Deserialize_Common(T& object, const char* name)
+{
+	// TODO : Maybe have a different value for serialization & deserialization
+	if constexpr (CustomSerialization<T>::value)
+	{
+		return CustomSerialization<T>::Deserialize(*this, object, name);
+	}
+	else if constexpr (en::Meta::IsRegistered<T>())
+	{
+		return Deserialize_Registered(object, name);
+	}
+	else
+	{
+		return Deserialize_Basic(object, name);
+	}
+}
+
+template <typename T>
+bool DataFile::Deserialize_Basic(T& object, const char* name)
 {
 	assert(name);
 	if (mParserXml.readNode(name))
 	{
-		std::string value;
-		mParserXml.getValue(value);
-		object = en::fromString<T>(value);
-
+		if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, bool>::value)
+		{
+			std::string value;
+			mParserXml.getValue(value);
+			object = en::fromBoolString(value);
+		}
+		else if constexpr (en::Traits::IsEnum<T>::value)
+		{
+			std::string value;
+			mParserXml.getValue(value);
+			object = en::Meta::EnumCast<MyEnum>(value);
+		}
+		else if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, std::string>::value)
+		{
+			mParserXml.getValue(object);
+		}
+		else if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, en::Time>::value)
+		{
+			std::string value;
+			mParserXml.getValue(value);
+			object = en::seconds(en::fromString<en::F32>(value));
+		}
+		else
+		{
+			std::string value;
+			mParserXml.getValue(value);
+			object = en::fromString<T>(value);
+		}
 		mParserXml.closeNode();
 		return true;
 	}
@@ -266,7 +472,7 @@ bool DataFile::DeserializeBasic(T& object, const char* name)
 }
 
 template <typename T>
-bool DataFile::DeserializeBasic(en::Array<T>& object, const char* name)
+bool DataFile::Deserialize_Basic(en::Array<T>& object, const char* name)
 {
 	assert(name);
 	if (mParserXml.readNode(name))
@@ -288,8 +494,7 @@ bool DataFile::DeserializeBasic(en::Array<T>& object, const char* name)
 			std::string childName(name);
 			childName.append("_");
 			childName.append(std::to_string(i));
-
-			result = Deserialize(object[i], childName.c_str()) && result;
+			result = Deserialize_Common(object[i], childName.c_str()) && result;
 		}
 
 		mParserXml.closeNode();
@@ -302,7 +507,7 @@ bool DataFile::DeserializeBasic(en::Array<T>& object, const char* name)
 }
 
 template <typename T>
-bool DataFile::DeserializeBasic(std::vector<T>& object, const char* name)
+bool DataFile::Deserialize_Basic(std::vector<T>& object, const char* name)
 {
 	assert(name);
 	if (mParserXml.readNode(name))
@@ -324,8 +529,7 @@ bool DataFile::DeserializeBasic(std::vector<T>& object, const char* name)
 			std::string childName(name);
 			childName.append("_");
 			childName.append(std::to_string(i));
-
-			result = Deserialize(object[i], childName.c_str()) && result;
+			result = Deserialize_Common(object[i], childName.c_str()) && result;
 		}
 
 		mParserXml.closeNode();
@@ -338,7 +542,7 @@ bool DataFile::DeserializeBasic(std::vector<T>& object, const char* name)
 }
 
 template <typename T, std::size_t N>
-bool DataFile::DeserializeBasic(std::array<T, N>& object, const char* name)
+bool DataFile::Deserialize_Basic(std::array<T, N>& object, const char* name)
 {
 	assert(name);
 	if (mParserXml.readNode(name))
@@ -347,10 +551,7 @@ bool DataFile::DeserializeBasic(std::array<T, N>& object, const char* name)
 
 		en::U32 elementCount = 0;
 		mParserXml.getAttribute("elementCount", elementCount);
-		if (elementCount != static_cast<en::U32>(N))
-		{
-			result = false;
-		}
+		assert(elementCount == static_cast<en::U32>(N));
 
 		if constexpr (en::Meta::IsRegistered<T>())
 		{
@@ -362,8 +563,132 @@ bool DataFile::DeserializeBasic(std::array<T, N>& object, const char* name)
 			std::string childName(name);
 			childName.append("_");
 			childName.append(std::to_string(i));
+			result = Deserialize_Common(object[i], childName.c_str()) && result;
+		}
 
-			result = Deserialize(object[i], childName.c_str()) && result;
+		mParserXml.closeNode();
+		return result;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+template <typename T>
+bool DataFile::Deserialize_Basic(en::Array<T*>& object, const char* name)
+{
+	assert(name);
+	if (mParserXml.readNode(name))
+	{
+		bool result = true;
+
+		en::U32 elementCount = 0;
+		mParserXml.getAttribute("elementCount", elementCount);
+
+		object.Resize(elementCount); // TODO : T must be default constructible
+
+		if constexpr (en::Meta::IsRegistered<T>())
+		{
+			// TODO : Test elementClassHash
+		}
+
+		for (en::U32 i = 0; i < elementCount; ++i)
+		{
+			std::string childName(name);
+			childName.append("_");
+			childName.append(std::to_string(i));
+			if (object[i] != nullptr)
+			{
+				result = Deserialize_Common(*object[i], childName.c_str()) && result;
+			}
+			else
+			{
+				// TODO : nullptr check
+			}
+		}
+
+		mParserXml.closeNode();
+		return result;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+template <typename T>
+bool DataFile::Deserialize_Basic(std::vector<T*>& object, const char* name)
+{
+	assert(name);
+	if (mParserXml.readNode(name))
+	{
+		bool result = true;
+
+		en::U32 elementCount = 0;
+		mParserXml.getAttribute("elementCount", elementCount);
+
+		object.resize(elementCount); // TODO : T must be default constructible
+
+		if constexpr (en::Meta::IsRegistered<T>())
+		{
+			// TODO : Test elementClassHash
+		}
+
+		for (en::U32 i = 0; i < elementCount; ++i)
+		{
+			std::string childName(name);
+			childName.append("_");
+			childName.append(std::to_string(i));
+			if (object[i] != nullptr)
+			{
+				result = Deserialize_Common(*object[i], childName.c_str()) && result;
+			}
+			else
+			{
+				// TODO : nullptr check
+			}
+		}
+
+		mParserXml.closeNode();
+		return result;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+template <typename T, std::size_t N>
+bool DataFile::Deserialize_Basic(std::array<T*, N>& object, const char* name)
+{
+	assert(name);
+	if (mParserXml.readNode(name))
+	{
+		bool result = true;
+
+		en::U32 elementCount = 0;
+		mParserXml.getAttribute("elementCount", elementCount);
+		assert(elementCount == static_cast<en::U32>(N));
+
+		if constexpr (en::Meta::IsRegistered<T>())
+		{
+			// TODO : Test elementClassHash
+		}
+
+		for (en::U32 i = 0; i < elementCount; ++i)
+		{
+			std::string childName(name);
+			childName.append("_");
+			childName.append(std::to_string(i));
+			if (object[i] != nullptr)
+			{
+				result = Deserialize_Common(*object[i], childName.c_str()) && result;
+			}
+			else
+			{
+				// TODO : nullptr check
+			}
 		}
 
 		mParserXml.closeNode();

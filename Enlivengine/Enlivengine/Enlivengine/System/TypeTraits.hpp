@@ -7,6 +7,7 @@
 #include <Enlivengine/System/Hash.hpp>
 #include <Enlivengine/System/Macros.hpp>
 #include <Enlivengine/System/String.hpp>
+#include <Enlivengine/System/Time.hpp> // TODO : Used to define TypeName here. Is it really a good place ?
 
 namespace en
 {
@@ -280,6 +281,8 @@ ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::I64)
 ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::U64)
 ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::F32)
 ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::F64)
+ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::Time) // TODO : Define here ?
+ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(std::string) // TODO : Define here ?
 
 template <typename T>
 struct TypeSize

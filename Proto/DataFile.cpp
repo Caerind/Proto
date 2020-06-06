@@ -5,7 +5,6 @@
 DataFile::DataFile()
 	: mParserXml()
 	, mValid(false)
-	, mLevel(0)
 {
 }
 
@@ -54,21 +53,4 @@ bool DataFile::LoadFromFile(const std::string& filename)
 bool DataFile::SaveToFile(const std::string& filename)
 {
 	return mParserXml.saveToFile(filename);
-}
-
-void DataFile::OpenNode(const char* name)
-{
-	std::cout << LevelToString(mLevel) << "<" << name << ">" << std::endl;
-	mLevel++;
-}
-
-void DataFile::CloseNode(const char* name)
-{
-	mLevel--;
-	std::cout << LevelToString(mLevel) << "</" << name << ">" << std::endl;
-}
-
-std::string DataFile::LevelToString(en::U32 level, en::U32 indentSize /*= 4*/)
-{
-	return std::string(static_cast<std::size_t>(level) * static_cast<std::size_t>(indentSize), ' ');
 }

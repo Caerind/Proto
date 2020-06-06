@@ -7,8 +7,6 @@
 
 #include <imgui/imgui.h>
 
-#include "BlueprintEditor.hpp"
-
 GameState::GameState(en::StateManager& manager)
 	: en::State(manager)
 {
@@ -42,6 +40,50 @@ GameState::GameState(en::StateManager& manager)
 
 	mDisplay = 0;
 	mTexture.loadFromImage(mMapImage);
+
+	Vector2Test v1;
+	v1.x = -10;
+	v1.y = +10;
+	Vector2Test v2;
+	v2.x = +10;
+	v2.y = -10;
+	mA1.SetA(123);
+	mA1.SetB(-456);
+	mA1.SetC(7.89f);
+	mA1.SetD(true);
+	mA1.SetE(MyEnum::B);
+	mA1.SetF(en::seconds(23.0f));
+	mA1.AddG(7);
+	mA1.AddG(20);
+	mA1.SetH(v1);
+	mA1.SetI("TestI1");
+	mA1.SetJ(0, v1);
+	mA1.SetJ(1, v2);
+	mA2.SetA(789);
+	mA2.SetB(-654);
+	mA2.SetC(1.23f);
+	mA2.SetD(false);
+	mA2.SetE(MyEnum::C);
+	mA2.SetF(en::milliseconds(10));
+	mA2.AddG(1);
+	mA2.AddG(8);
+	mA2.AddG(123);
+	mA2.SetH(v2);
+	mA2.SetI("TestI2");
+	mA2.SetJ(0, v1);
+	mA2.SetJ(1, v2);
+	mAs.Add(&mA1);
+	mAs.Add(&mA2);
+	mAs.Add(nullptr);
+
+	mA.a = 1;
+	mB.a = 2;
+	mB.b = true;
+	mC.a = 3;
+	mC.c = 'c';
+	mAaa.Add(&mA);
+	mAaa.Add(&mB);
+	mAaa.Add(&mC);
 }
 
 bool GameState::handleEvent(const sf::Event& event)
@@ -58,6 +100,25 @@ bool GameState::update(en::Time dt)
 	if (!en::Application::GetInstance().IsRunning())
 	{
 		return false;
+	}
+
+	ObjectEditor::ImGuiEditor(mAs, "As");
+	ObjectEditor::ImGuiEditor(mAaa, "A");
+	if (ImGui::Begin("TestSerialization"))
+	{
+		if (ImGui::Button("Save"))
+		{
+			DataFile file;
+			file.CreateEmptyFile();
+			file.Serialize(mAs, "As");
+			file.Serialize(mAaa, "A");
+			file.SaveToFile("DataFileGame.xml");
+		}
+		if (ImGui::Button("Load"))
+		{
+			// TODO : Ptr & MemAlloc
+		}
+		ImGui::End();
 	}
 
 	ImGui::Begin("Noise");

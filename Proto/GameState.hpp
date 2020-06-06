@@ -7,6 +7,12 @@
 
 #include "ColorGradient.hpp"
 
+#include "Meta.hpp"
+
+#include "BlueprintEditor.hpp"
+#include "ObjectEditor.hpp"
+#include "DataFile.hpp"
+
 class GameState : public en::State
 {
 public:
@@ -40,4 +46,13 @@ private:
 
 	int mDisplay;
 	sf::Texture mTexture;
+
+	DataFile mDataFile;
+	TestClassA mA1;
+	TestClassA mA2;
+	en::Array<TestClassA*> mAs;
+	Aaa mA;
+	Bbb mB;
+	Ccc mC;
+	en::Array<Aaa*> mAaa;
 };

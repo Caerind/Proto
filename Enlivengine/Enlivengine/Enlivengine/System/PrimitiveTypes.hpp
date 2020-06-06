@@ -51,6 +51,8 @@ constexpr F32 F32_Max = FLT_MAX;
 constexpr F64 F64_Epsilon = DBL_EPSILON;
 constexpr F64 F64_Max = DBL_MAX;
 
+// TODO : NumericLimits<T>
+
 #if defined(ENLIVE_ENABLE_DOUBLE_PRECISION)
 	using Real = F64;
 	constexpr Real Real_Epsilon = F64_Epsilon;
