@@ -7,15 +7,20 @@
 #include "Meta.hpp"
 
 #include <Enlivengine/System/String.hpp>
+#include <Enlivengine/System/ClassManager.hpp>
 
 int main(int argc, char** argv)
 {
+	// TODO : Find a better way to register
+	en::ClassManager::Register<TestClassA>();
+	en::ClassManager::Register<Aaa>();
+	en::ClassManager::Register<Bbb>();
+	en::ClassManager::Register<Ccc>();
+
 	{
 		// TODO : Do something about type info for pointers
 		printf("%s\n", en::TypeInfo<en::Array<en::U32>>::GetName());
 		printf("%s\n", en::TypeInfo<en::Array<en::U32*>>::GetName());
-
-		printf("%s\n", en::Meta::ClassFactory::IsRegistered<TestClassA>() ? "true" : "false");
 
 		if (argc >= 1)
 		{

@@ -6,6 +6,8 @@ set(SRC_SYSTEM
     Enlivengine/System/ByteUnits.hpp
     Enlivengine/System/CallOnExit.cpp
     Enlivengine/System/CallOnExit.hpp
+    Enlivengine/System/ClassManager.cpp
+    Enlivengine/System/ClassManager.hpp
     Enlivengine/System/CompilerDetection.hpp
     Enlivengine/System/CompilerTraits.hpp
     Enlivengine/System/Compression.cpp
@@ -24,7 +26,6 @@ set(SRC_SYSTEM
     Enlivengine/System/Macros.hpp
     Enlivengine/System/MemoryAllocator.cpp
     Enlivengine/System/MemoryAllocator.hpp
-    Enlivengine/System/Meta.cpp
     Enlivengine/System/Meta.hpp
     Enlivengine/System/MetaEnum.hpp
     Enlivengine/System/NonCopyable.hpp

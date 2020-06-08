@@ -50,4 +50,6 @@ private:
 
 	en::Array<TestClassA*> mAs;
 	en::Array<Aaa*> mAaa;
+
+	Aaa* mTestFactory;
 };

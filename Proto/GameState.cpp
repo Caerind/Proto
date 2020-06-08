@@ -4,6 +4,7 @@
 #include <Enlivengine/Application/Application.hpp>
 #include <Enlivengine/Graphics/LinearColor.hpp>
 #include <Enlivengine/Graphics/SFMLWrapper.hpp>
+#include <Enlivengine/System/ClassManager.hpp>
 
 #include <imgui/imgui.h>
 
@@ -111,12 +112,15 @@ GameState::GameState(en::StateManager& manager)
 	mAaa.Add(mA);
 	mAaa.Add(mB);
 	mAaa.Add(mC);
+
+	mTestFactory = (Aaa*)en::ClassManager::CreateClassFromHash(en::TypeInfo<Bbb>::GetHash());
 }
 
 GameState::~GameState()
 {
 	mAs.DeleteAll();
 	mAaa.DeleteAll();
+	enDelete(Aaa, mTestFactory);
 }
 
 bool GameState::handleEvent(const sf::Event& event)
@@ -160,6 +164,30 @@ bool GameState::update(en::Time dt)
 		}
 		ObjectEditor::ImGuiEditor(mAs, "As");
 		ObjectEditor::ImGuiEditor(mAaa, "A");
+		if (mTestFactory != nullptr)
+		{
+			ObjectEditor::ImGuiEditor(mTestFactory, "TestFactory");
+			if (ImGui::Button("Remove"))
+			{
+				enDelete(Aaa, mTestFactory);
+			}
+		}
+		else
+		{
+			// TODO : Make this more automatic 
+			if (ImGui::Button("Create Aaa"))
+			{
+				mTestFactory = (Aaa*)en::ClassManager::CreateClassFromHash(en::TypeInfo<Aaa>::GetHash());
+			}
+			if (ImGui::Button("Create Bbb"))
+			{
+				mTestFactory = (Aaa*)en::ClassManager::CreateClassFromHash(en::TypeInfo<Bbb>::GetHash());
+			}
+			if (ImGui::Button("Create Ccc"))
+			{
+				mTestFactory = (Aaa*)en::ClassManager::CreateClassFromHash(en::TypeInfo<Ccc>::GetHash());
+			}
+		}
 		ImGui::End();
 	}
 

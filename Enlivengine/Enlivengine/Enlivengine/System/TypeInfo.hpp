@@ -14,7 +14,7 @@ struct TypeInfo
 	using type = T;
 	static constexpr bool IsKnown() { return false; }
 	static constexpr const char* GetName() { return "<Unknown>"; }
-	//static constexpr U32 GetHash() { return Hash::ConstexprHash(GetName()); } // This has been removed to explicit the fact that its invalid
+	//static constexpr U32 GetHash() { return Hash::ConstexprHash(GetName()); } // This has been removed to explicit the fact that it is invalid
 	static constexpr U32 GetSize() { return ENLIVE_SIZE_OF(T); }
 	static constexpr U32 GetAlign() { return ENLIVE_ALIGN_OF(T); }
 };

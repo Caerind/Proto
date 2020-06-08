@@ -1,18 +1,9 @@
 #pragma once
 
-#include <Enlivengine/Config.hpp>
-
-#ifdef ENLIVE_ENABLE_METADATA
-
-#include <functional>
-#include <tuple>
-#include <unordered_map>
-
 #include <Enlivengine/System/PrimitiveTypes.hpp>
 #include <Enlivengine/System/Hash.hpp>
 #include <Enlivengine/System/TypeTraits.hpp>
 #include <Enlivengine/System/TypeInfo.hpp>
-#include <Enlivengine/System/MemoryAllocator.hpp>
 
 namespace en::Meta
 {
@@ -193,56 +184,7 @@ constexpr U32 GetClassVersion()
 	return hash;
 }
 
-// Class Factory
-class ClassFactory
-{
-public:
-	static void* CreateClassFromHash(U32 classHash)
-	{
-		const auto itr = mFactory.find(classHash);
-		if (itr != mFactory.end())
-		{
-			return itr->second();
-		}
-		else
-		{
-			return nullptr;
-		}
-	}
-
-	static bool IsRegistered(U32 classHash)
-	{
-		return mFactory.find(classHash) != mFactory.end();
-	}
-
-	template <typename T>
-	static bool IsRegistered()
-	{
-		return IsRegistered(TypeInfo<T>::GetHash());
-	}
-
-	template <typename T>
-	static bool Register()
-	{
-		static_assert(en::Meta::IsRegistered<T>() && TypeInfo<T>::IsKnown());
-		mFactory[TypeInfo<T>::GetHash()] = []()
-		{
-#ifdef ENLIVE_ENABLE_DEBUG_MEMORY
-			constexpr U32 stringStorageSize = StringLength("ClassFactory::") + StringLength(TypeInfo<T>::GetName()) + 1;
-			constexpr ConstexprStringStorage stringStorage = ConstexprStringStorage<stringStorageSize>("ClassFactory::", TypeInfo<T>::GetName());
-			constexpr const char* context = stringStorage.GetData();
-#else
-			constexpr const char* context = nullptr;
-#endif // ENLIVE_ENABLE_DEBUG_MEMORY
-			return (void*)enNew(T, context); 
-		};
-		return true;
-	}
-
-private:
-	static std::unordered_map<U32, std::function<void*()>> mFactory;
-};
-
+// TODO : Move to ObjectEditor ?
 // Custom ImGui Editor
 #define ENLIVE_META_CLASS_DEFAULT_TRAITS_VIRTUAL_IMGUI_EDITOR(className) \
 	template <> \
@@ -260,6 +202,7 @@ private:
 		 return ObjectEditor::ImGuiEditor_Registered(*this, name); \
 	}
 
+// TODO : Move to DataFile ?
 // Custom Serialization
 #define ENLIVE_META_CLASS_DEFAULT_TRAITS_VIRTUAL_SERIALIZATION(className) \
 	template <> \
@@ -285,7 +228,4 @@ private:
 		 return dataFile.Deserialize_Registered(*this, name); \
 	}
 
-
 } // namespace en::Meta
-
-#endif // ENLIVE_ENABLE_METADATA

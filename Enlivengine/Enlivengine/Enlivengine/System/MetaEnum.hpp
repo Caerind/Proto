@@ -1,9 +1,5 @@
 #pragma once
 
-#include <Enlivengine/Config.hpp>
-
-#ifdef ENLIVE_ENABLE_METADATA
-
 #include <magic_enum/magic_enum.hpp>
 
 #include <Enlivengine/System/PrimitiveTypes.hpp>
@@ -62,5 +58,3 @@ constexpr E GetEnumFromIndex(en::U32 index)
 } // namespace Meta
 
 } // namespace en
-
-#endif // ENLIVE_ENABLE_METADATA
