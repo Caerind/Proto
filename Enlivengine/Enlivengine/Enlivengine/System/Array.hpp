@@ -3,6 +3,7 @@
 #include <Enlivengine/System/Assert.hpp>
 #include <Enlivengine/System/Macros.hpp>
 #include <Enlivengine/System/TypeTraits.hpp>
+#include <Enlivengine/System/TypeInfo.hpp>
 #include <Enlivengine/System/MemoryAllocator.hpp>
 
 #include <cstdlib> // memcmp, memcpy // TODO : Move to Dyma ? MemoryAllocator ? new Memory.hpp ?
@@ -24,7 +25,7 @@ public:
 		, mSize(0)
 		, mCapacity(0)
 #ifdef ENLIVE_ENABLE_DEBUG_MEMORY
-		, mDebugMemoryContext(en::TypeName<en::Array<T>>::name)
+		, mDebugMemoryContext(TypeInfo<Array<T>>::GetName())
 #endif // ENLIVE_ENABLE_DEBUG_MEMORY
 	{
 	}
@@ -44,7 +45,7 @@ public:
 		, mSize(0)
 		, mCapacity(0)
 #ifdef ENLIVE_ENABLE_DEBUG_MEMORY
-		, mDebugMemoryContext(en::TypeName<en::Array<T>>::name)
+		, mDebugMemoryContext(TypeInfo<Array<T>>::GetName())
 #endif // ENLIVE_ENABLE_DEBUG_MEMORY
 	{ 
 		Copy(other); 
@@ -356,11 +357,11 @@ public:
 
 	void DeleteAll()
 	{
-		if constexpr (en::Traits::IsPointer<T>::value)
+		if constexpr (Traits::IsPointer<T>::value)
 		{
-			for (en::U32 i = 0; i < mSize; ++i)
+			for (U32 i = 0; i < mSize; ++i)
 			{
-				enDelete(en::Traits::RemovePointer<T>::type, mArray[i]);
+				enDelete(Traits::RemovePointer<T>::type, mArray[i]);
 			}
 		}
 	}
@@ -409,6 +410,6 @@ private:
 #endif // ENLIVE_ENABLE_DEBUG_MEMORY
 };
 
-ENLIVE_DEFINE_TYPE_TRAITS_NAME_TEMPLATE_EN(en::Array)
-
 } // namespace en
+
+ENLIVE_DEFINE_TYPE_INFO_TEMPLATE(en::Array)

@@ -3,6 +3,7 @@
 #include <Enlivengine/System/PrimitiveTypes.hpp>
 
 #include <Enlivengine/System/Meta.hpp>
+#include <Enlivengine/System/MetaEnum.hpp>
 #include <Enlivengine/System/String.hpp>
 #include <Enlivengine/System/TypeTraits.hpp>
 #include <Enlivengine/System/Array.hpp>
@@ -67,9 +68,9 @@ public:
 		if (ImGui::CollapsingHeader(name))
 		{
 			ImGui::Indent();
-			en::Meta::ForAllMembers<T>([&object, &modified](const auto& member)
+			en::Meta::ForEachMember<T>([&object, &modified](const auto& member)
 			{
-				modified = ImGuiEditor_Common(member.getRef(object), member.getName()) || modified;
+				modified = ImGuiEditor_Common(member.Get(object), member.GetName()) || modified;
 			});
 			ImGui::Unindent();
 		}
@@ -102,6 +103,17 @@ private:
 		if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, bool>::value)
 		{
 			return ImGui::Checkbox(name, &object);
+		}
+		else if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, char>::value)
+		{
+			static char c;
+			c = object;
+			if (ImGui::InputText(name, &c, 2))
+			{
+				object = c;
+				return true;
+			}
+			return false;
 		}
 		else if constexpr (en::Traits::IsEnum<T>::value)
 		{
@@ -195,7 +207,7 @@ private:
 		}
 		else
 		{
-			ImGui::Text("%s type is not implemented for imgui for %s", en::TypeName<T>::name, name);
+			ImGui::Text("%s type is not implemented for imgui for %s", en::TypeInfo<T>::GetName(), name);
 			return false;
 		}
 	}

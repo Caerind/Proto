@@ -13,7 +13,6 @@
 - https://github.com/nlohmann/json  
 - https://github.com/Neargye/magic_enum  
 - https://github.com/cmuratori/meow_hash  
-- https://github.com/eliasdaler/MetaStuff  
 - https://github.com/GameTechDev/MetricsGui 
 - https://github.com/richgel999/miniz   
 - https://github.com/zeux/pugixml  

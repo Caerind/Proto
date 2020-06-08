@@ -166,6 +166,15 @@ struct ConstexprStringStorage
 		Add(s4);
 	}
 
+	constexpr ConstexprStringStorage(const char* s1, const char* s2, const char* s3, const char* s4, const char* s5)
+	{
+		Add(s1);
+		Add(s2);
+		Add(s3);
+		Add(s4);
+		Add(s5);
+	}
+
 	constexpr void Add(const char* s)
 	{
 		const U32 length = StringLength(s);
@@ -183,5 +192,25 @@ struct ConstexprStringStorage
 	char mData[N]{};
 	U32 mSize{ 0 };
 };
+
+namespace priv
+{
+	template <U8... digits> 
+	struct positive_to_chars 
+	{ 
+		static constexpr const char value[] = { ('0' + digits)..., 0 }; 
+	};
+
+	template <U32 rem, U8... digits>
+	struct explode : explode<rem / 10, rem % 10, digits...> {};
+
+	template <U8... digits>
+	struct explode<0, digits...> : positive_to_chars<digits...> {};
+
+} // namespace priv
+
+template <U32 number>
+struct ConstexprIntToString : priv::explode<number>{};
+
 
 } // namespace en

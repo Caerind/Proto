@@ -4,12 +4,18 @@
 #include <Enlivengine/Graphics/View.hpp>
 
 #include "GameState.hpp"
+#include "Meta.hpp"
+
+#include <Enlivengine/System/String.hpp>
 
 int main(int argc, char** argv)
 {
 	{
-		printf("%s\n", en::TypeName<en::Array<en::U32>>::name);
-		printf("%s\n", en::TypeName<en::Array<en::U32*>>::name);
+		// TODO : Do something about type info for pointers
+		printf("%s\n", en::TypeInfo<en::Array<en::U32>>::GetName());
+		printf("%s\n", en::TypeInfo<en::Array<en::U32*>>::GetName());
+
+		printf("%s\n", en::Meta::ClassFactory::IsRegistered<TestClassA>() ? "true" : "false");
 
 		if (argc >= 1)
 		{

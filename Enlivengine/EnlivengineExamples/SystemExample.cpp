@@ -10,13 +10,13 @@
 #include <Enlivengine/System/Time.hpp>
 #include <Enlivengine/System/Hash.hpp>
 #include <Enlivengine/System/String.hpp>
-#include <Enlivengine/System/TypeTraits.hpp>
+#include <Enlivengine/System/TypeInfo.hpp>
 
 #include <Box2D/Box2D.h>
 
 #include <SFML/Graphics.hpp>
 
-#include <Enlivengine/MetaData/MetaData.hpp>
+#include <Enlivengine/System/Meta.hpp>
 #include <iostream>
 
 enum class SomeEnum
@@ -66,8 +66,6 @@ void MetaEnumTest()
 }
 
 
-
-
 int main()
 {
 #ifdef ENLIVE_ENABLE_LOG
@@ -82,13 +80,13 @@ int main()
 	LogInfo(en::LogChannel::System, 9, "ENLIVE_PLATFORM_DESCRIPTION : %s", ENLIVE_PLATFORM_DESCRIPTION);
 
 	/*
-	LogInfo(en::LogChannel::System, 9, "A: %s", en::TypeName<A>::name);
-	LogInfo(en::LogChannel::System, 9, "B<A>: %s", en::TypeName<B<A>>::name);
-	LogInfo(en::LogChannel::System, 9, "B<en::U32>: %s", en::TypeName<B<en::U32>>::name);
-	LogInfo(en::LogChannel::System, 9, "B<C>: %s", en::TypeName<B<C>>::name);
+	LogInfo(en::LogChannel::System, 9, "A: %s", en::TypeInfo<A>::GetName());
+	LogInfo(en::LogChannel::System, 9, "B<A>: %s", en::TypeInfo<B<A>>::GetName());
+	LogInfo(en::LogChannel::System, 9, "B<en::U32>: %s", en::TypeInfo<B<en::U32>>::GetName());
+	LogInfo(en::LogChannel::System, 9, "B<C>: %s", en::TypeInfo<B<C>>::GetName());
 	*/
 
-
+	MetaEnumTest();
 
 	return 0;
 }

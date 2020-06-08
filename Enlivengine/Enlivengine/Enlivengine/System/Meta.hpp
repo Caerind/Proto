@@ -4,37 +4,244 @@
 
 #ifdef ENLIVE_ENABLE_METADATA
 
-#include <magic_enum/magic_enum.hpp>
-#include <MetaStuff/Meta.h>
+#include <functional>
+#include <tuple>
+#include <unordered_map>
 
 #include <Enlivengine/System/PrimitiveTypes.hpp>
 #include <Enlivengine/System/Hash.hpp>
 #include <Enlivengine/System/TypeTraits.hpp>
+#include <Enlivengine/System/TypeInfo.hpp>
+#include <Enlivengine/System/MemoryAllocator.hpp>
 
-namespace en
+namespace en::Meta
 {
 
-namespace Meta
+// A large part of this is based on the awesome work of EliasDaler in https://github.com/eliasdaler/MetaStuff
+// I modified it to fit my needs and use C++17
+// Plus the different other usage I needed for serialization and such
+
+template <typename Class, typename T>
+class Member
 {
+public:
+	using MemberPtrT = T Class::*;
+	using classType = Class;
+	using type = T;
 
-// Enums
-static_assert(magic_enum::is_magic_enum_supported);
-template <typename E> constexpr auto GetEnumTypeName() { return magic_enum::enum_type_name<E>(); }
-template <typename E> constexpr auto GetEnumName(E value) { return magic_enum::enum_name(value); }
-template <typename E> constexpr auto GetEnumNames() { return magic_enum::enum_names<E>(); }
-template <typename E, typename T> constexpr auto EnumCast(T value) { return magic_enum::enum_cast<E>(value).value(); }
-template <typename E> constexpr en::U32 GetEnumCount() { return static_cast<en::U32>(magic_enum::enum_count<E>()); }
-template <typename E> constexpr en::U32 GetEnumIndex(E value) { return static_cast<en::U32>(magic_enum::enum_index(value).value()); }
-template <typename E> constexpr E GetEnumFromIndex(en::U32 index) { return magic_enum::enum_value<E>(static_cast<std::size_t>(index)); }
+	constexpr Member(const char* name, MemberPtrT ptr, U32 attributes = 0)
+		: mName(name)
+		, mPtr(ptr)
+		, mAttributes(attributes)
+	{
+	}
 
-// Classes
-#define ENLIVE_META_CLASS() template <typename T> friend auto meta::registerMembers();
-#define ENLIVE_META_CLASS_BEGIN(className) ENLIVE_DEFINE_TYPE_TRAITS_NAME(className) \
-	namespace meta { \
-		template <> inline auto registerName<className>() { return #className; } \
-		template <> inline auto registerMembers<className>() { return members(
-#define ENLIVE_META_CLASS_MEMBER(name, ptr) member(name, ptr)
+	constexpr const char* GetName() const { return mName; }
+	constexpr U32 GetHash() const { return Hash::ConstexprHash(mName); }
+	constexpr const MemberPtrT GetPtr() const { return mPtr; }
+	constexpr U32 GetAttributes() const { return mAttributes; }
+	constexpr U32 GetSize() const { return ENLIVE_SIZE_OF(T); }
+
+	constexpr U32 GetTotalHash() const
+	{
+		static_assert(TypeInfo<Class>::IsKnown());
+		static_assert(TypeInfo<T>::IsKnown());
+		return Hash::Combine32(TypeInfo<Class>::GetHash(), Hash::Combine32(TypeInfo<T>::GetHash(), Hash::ConstexprHash(mName)));
+	}
+
+	constexpr T& Get(Class& obj) const
+	{
+		return obj.*mPtr;
+	}
+	
+	constexpr const T& Get(const Class& obj) const
+	{
+		return obj.*mPtr;
+	}
+
+	template <typename V, typename = Traits::EnableIf<std::is_constructible_v<T, V>::type>>
+	constexpr void Set(Class& obj, V&& value) const
+	{
+		assert(mPtr != nullptr);
+		obj.*mPtr = value;
+	}
+
+private:
+	const char* mName;
+	MemberPtrT mPtr;
+	U32 mAttributes;
+};
+
+template <typename Class, typename T>
+constexpr Member<Class, T> RegisterMember(const char* name, T Class::* memberPtr, U32 attributes = 0)
+{
+	return Member<Class, T>(name, memberPtr, attributes);
+}
+
+template <typename T>
+constexpr auto RegisterMembers()
+{
+	return std::make_tuple();
+}
+
+namespace priv
+{
+	template <typename T, typename TupleType>
+	struct Holder
+	{
+		static constexpr TupleType members = RegisterMembers<T>();
+	};
+
+} // namespace priv
+
+#define ENLIVE_META_CLASS() template <typename T> friend constexpr auto ::en::Meta::RegisterMembers();
+#define ENLIVE_META_CLASS_BEGIN(className) ENLIVE_DEFINE_TYPE_INFO(className) \
+	namespace en::Meta { \
+		template <> \
+		constexpr auto RegisterMembers<className>() { return std::make_tuple(
+#define ENLIVE_META_CLASS_MEMBER(name, ptr) en::Meta::RegisterMember(name, ptr)
+#define ENLIVE_META_CLASS_MEMBER_EX(name, ptr, attributes) en::Meta::RegisterMember(name, ptr, attributes)
 #define ENLIVE_META_CLASS_END() ); } }
+
+template <typename T>
+constexpr bool IsRegistered()
+{
+	return !Traits::IsSame<std::tuple<>, decltype(RegisterMembers<T>())>::value;
+}
+
+template <typename T>
+constexpr const auto& GetMembers()
+{
+	return priv::Holder<T, decltype(RegisterMembers<T>())>::members;
+}
+
+template <typename T>
+constexpr U32 GetMemberCount()
+{
+	return static_cast<U32>(std::tuple_size<decltype(RegisterMembers<T>())>::value);
+}
+
+template <typename T, typename F>
+constexpr void ForEachMember(F&& f)
+{
+	static_assert(IsRegistered<T>());
+	std::apply(
+		[&f](auto&&... elems)
+		{
+			((f(elems)), ...);
+		},
+		GetMembers<T>()
+	);
+}
+
+template <typename T>
+using MemberTypeOf = typename Traits::Decay<T>::type;
+
+template <typename T>
+constexpr bool HasMember(const char* name)
+{
+	constexpr U32 hash = Hash::ConstexprHash(name);
+	bool found = false;
+	ForEachMember([&found, &hash](const auto& member)
+	{
+		if (member.GetHash() == hash)
+		{
+			found = true;
+		}
+	});
+	return found;
+}
+
+template <typename T, typename MemberT>
+constexpr bool HasMemberOfType(const char* name)
+{
+	constexpr U32 hash = Hash::ConstexprHash(name);
+	bool found = false;
+	ForEachMember([&found, &hash](const auto& member)
+	{
+		if (Traits::IsSame<T, MemberTypeOf<decltype(member)>>::value && member.GetHash() == hash)
+		{
+			found = true;
+		}
+	});
+	return found;
+}
+
+template <typename T, typename MemberT, typename F>
+constexpr void ForMember(const char* name, F&& f)
+{
+	static_assert(HasMemberOfType<T, MemberT>(name));
+	constexpr U32 hash = Hash::ConstexprHash(name);
+	ForEachMember<T>([&](const auto& member)
+	{
+		if (member.GetHash() == hash)
+		{
+			f(member);
+		}
+	});
+}
+
+template <typename T>
+constexpr U32 GetClassVersion()
+{
+	static_assert(IsRegistered<T>() && TypeInfo<T>::IsKnown());
+	U32 hash = TypeInfo<T>::GetHash();
+	ForEachMember<T>([&hash](const auto& member)
+	{
+		hash = Hash::Combine32(hash, member.GetTotalHash());
+	});
+	return hash;
+}
+
+// Class Factory
+class ClassFactory
+{
+public:
+	static void* CreateClassFromHash(U32 classHash)
+	{
+		const auto itr = mFactory.find(classHash);
+		if (itr != mFactory.end())
+		{
+			return itr->second();
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+
+	static bool IsRegistered(U32 classHash)
+	{
+		return mFactory.find(classHash) != mFactory.end();
+	}
+
+	template <typename T>
+	static bool IsRegistered()
+	{
+		return IsRegistered(TypeInfo<T>::GetHash());
+	}
+
+	template <typename T>
+	static bool Register()
+	{
+		static_assert(en::Meta::IsRegistered<T>() && TypeInfo<T>::IsKnown());
+		mFactory[TypeInfo<T>::GetHash()] = []()
+		{
+#ifdef ENLIVE_ENABLE_DEBUG_MEMORY
+			constexpr U32 stringStorageSize = StringLength("ClassFactory::") + StringLength(TypeInfo<T>::GetName()) + 1;
+			constexpr ConstexprStringStorage stringStorage = ConstexprStringStorage<stringStorageSize>("ClassFactory::", TypeInfo<T>::GetName());
+			constexpr const char* context = stringStorage.GetData();
+#else
+			constexpr const char* context = nullptr;
+#endif // ENLIVE_ENABLE_DEBUG_MEMORY
+			return (void*)enNew(T, context); 
+		};
+		return true;
+	}
+
+private:
+	static std::unordered_map<U32, std::function<void*()>> mFactory;
+};
 
 // Custom ImGui Editor
 #define ENLIVE_META_CLASS_DEFAULT_TRAITS_VIRTUAL_IMGUI_EDITOR(className) \
@@ -78,60 +285,7 @@ template <typename E> constexpr E GetEnumFromIndex(en::U32 index) { return magic
 		 return dataFile.Deserialize_Registered(*this, name); \
 	}
 
-template <typename T> constexpr bool IsRegistered() { return meta::isRegistered<T>(); }
-template <typename T> using EnableIfRegistered = en::Traits::EnableIf<IsRegistered<T>()>;
-template <typename T> using EnableIfNotRegistered = en::Traits::EnableIf<!IsRegistered<T>()>;
 
-template <typename T> constexpr auto GetClassName() { return meta::getName<T>(); }
-template <typename T> constexpr auto GetClassMembers() { return meta::getMembers<T>(); }
-template <typename T> constexpr en::U32 GetClassMemberCount() { return static_cast<en::U32>(meta::getMemberCount<T>()); }
-
-template <typename T, typename F> 
-void ForAllMembers(F&& f)
-{
-	meta::doForAllMembers<T>(f);
-}
-
-template <typename T, typename MemberType, typename F>
-void ForMember(const char* name, F&& f)
-{
-	meta::doForMember<T, MemberType>(name, f); // TODO : This internally use strcmp, maybe we could use hash instead ?
-}
-
-template <typename MemberType, typename T>
-MemberType GetMemberValue(T& obj, const char* name)
-{
-	return meta::getMemberValue<MemberType>(obj, name); // TODO : This internally use strcmp, maybe we could use hash instead ?
-}
-
-template <typename MemberType, typename T, typename V>
-void SetMemberValue(T& obj, const char* name, V&& value)
-{
-	return meta::setMemberValue<MemberType>(obj, name, value);
-}
-
-template <typename T>
-U32 GetClassMembersHash()
-{
-	if constexpr (IsRegistered<T>())
-	{
-		U32 hash = 89;
-		en::Meta::ForAllMembers<T>(
-			[&hash](const auto& member)
-			{
-				hash = Hash::Combine32(hash, Hash::Meow32(member.getName()));
-			}
-		);
-		return hash;
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-} // namespace Meta
-
-} // namespace en
+} // namespace en::Meta
 
 #endif // ENLIVE_ENABLE_METADATA

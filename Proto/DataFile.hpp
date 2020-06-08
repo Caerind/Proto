@@ -3,6 +3,7 @@
 #include <Enlivengine/System/PrimitiveTypes.hpp>
 
 #include <Enlivengine/System/Meta.hpp>
+#include <Enlivengine/System/MetaEnum.hpp>
 #include <Enlivengine/System/String.hpp>
 #include <Enlivengine/System/TypeTraits.hpp>
 #include <Enlivengine/System/ParserXml.hpp>
@@ -112,13 +113,17 @@ bool DataFile::Serialize_Registered(const T& object, const char* name)
 	static_assert(en::Meta::IsRegistered<T>());
 	if (mParserXml.createChild(name))
 	{
-		mParserXml.setAttribute("classHash", en::Meta::GetClassMembersHash<T>());
-		en::Meta::ForAllMembers<T>([this, &object](const auto& member)
+		mParserXml.setAttribute("classHash", en::Meta::GetClassVersion<T>());
+		en::Meta::ForEachMember<T>([this, &object](const auto& member)
 		{
-			Serialize_Common(member.get(object), member.getName());
+			Serialize_Common(member.Get(object), member.GetName());
 		});
 		mParserXml.closeNode();
 		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
 
@@ -148,9 +153,9 @@ bool DataFile::Deserialize_Registered(T& object, const char* name)
 	if (mParserXml.readNode(name))
 	{
 		// TODO : Check classHash
-		en::Meta::ForAllMembers<T>([this, &object](const auto& member)
+		en::Meta::ForEachMember<T>([this, &object](const auto& member)
 		{
-			Deserialize_Common(member.getRef(object), member.getName());
+			Deserialize_Common(member.Get(object), member.GetName());
 		});
 		mParserXml.closeNode();
 		return true;
@@ -232,7 +237,7 @@ bool DataFile::Serialize_Basic(const en::Array<T>& object, const char* name)
 		mParserXml.setAttribute("elementCount", object.Size());
 		if constexpr (en::Meta::IsRegistered<T>())
 		{
-			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassMembersHash<T>());
+			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassVersion<T>());
 		}
 		mParserXml.closeNode();
 		return result;
@@ -260,7 +265,7 @@ bool DataFile::Serialize_Basic(const std::vector<T>& object, const char* name)
 		mParserXml.setAttribute("elementCount", static_cast<en::U32>(object.size()));
 		if constexpr (en::Meta::IsRegistered<T>())
 		{
-			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassMembersHash<T>());
+			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassVersion<T>());
 		}
 		mParserXml.closeNode();
 		return result;
@@ -288,7 +293,7 @@ bool DataFile::Serialize_Basic(const std::array<T, N>& object, const char* name)
 		mParserXml.setAttribute("elementCount", static_cast<en::U32>(object.size()));
 		if constexpr (en::Meta::IsRegistered<T>())
 		{
-			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassMembersHash<T>());
+			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassVersion<T>());
 		}
 		mParserXml.closeNode();
 		return result;
@@ -325,7 +330,7 @@ bool DataFile::Serialize_Basic(const en::Array<T*>& object, const char* name)
 		mParserXml.setAttribute("elementCount", elementCount);
 		if constexpr (en::Meta::IsRegistered<T>())
 		{
-			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassMembersHash<T>());
+			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassVersion<T>());
 		}
 		mParserXml.closeNode();
 		return result;
@@ -362,7 +367,7 @@ bool DataFile::Serialize_Basic(const std::vector<T*>& object, const char* name)
 		mParserXml.setAttribute("elementCount", elementCount);
 		if constexpr (en::Meta::IsRegistered<T>())
 		{
-			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassMembersHash<T>());
+			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassVersion<T>());
 		}
 		mParserXml.closeNode();
 		return result;
@@ -399,7 +404,7 @@ bool DataFile::Serialize_Basic(const std::array<T*, N>& object, const char* name
 		mParserXml.setAttribute("elementCount", elementCount);
 		if constexpr (en::Meta::IsRegistered<T>())
 		{
-			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassMembersHash<T>());
+			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassVersion<T>());
 		}
 		mParserXml.closeNode();
 		return result;

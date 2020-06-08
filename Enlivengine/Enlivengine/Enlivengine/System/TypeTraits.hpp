@@ -2,12 +2,7 @@
 #pragma once
 
 #include <type_traits>
-
 #include <Enlivengine/System/PrimitiveTypes.hpp>
-#include <Enlivengine/System/Hash.hpp>
-#include <Enlivengine/System/Macros.hpp>
-#include <Enlivengine/System/String.hpp>
-#include <Enlivengine/System/Time.hpp> // TODO : Used to define TypeName here. Is it really a good place ?
 
 namespace en
 {
@@ -24,6 +19,12 @@ namespace Traits
 	};
 #define ENLIVE_DEFINE_TYPE_TRAITS_VALUE_2(name, expr) \
 	template <typename T1, typename T2> \
+	struct name \
+	{ \
+		static constexpr auto value = expr; \
+	};
+#define ENLIVE_DEFINE_TYPE_TRAITS_ARGS(name, expr) \
+	template <typename T, typename... Args> \
 	struct name \
 	{ \
 		static constexpr auto value = expr; \
@@ -80,6 +81,7 @@ namespace Traits
 	//ENLIVE_DEFINE_TYPE_TRAITS(IsUnboundedArray, std::is_union<T>::value) // New C++20
 
 	// Supported operations
+	// TODO : Args...
 	ENLIVE_DEFINE_TYPE_TRAITS_VALUE(IsConstructible, std::is_constructible<T>::value)
 	ENLIVE_DEFINE_TYPE_TRAITS_VALUE(IsTriviallyConstructible, std::is_trivially_constructible<T>::value)
 	ENLIVE_DEFINE_TYPE_TRAITS_VALUE(IsNothrowConstructible, std::is_nothrow_constructible<T>::value)
@@ -237,73 +239,9 @@ namespace Traits
 
 #undef ENLIVE_DEFINE_TYPE_TRAITS_VALUE
 #undef ENLIVE_DEFINE_TYPE_TRAITS_VALUE_2
+#undef ENLIVE_DEFINE_TYPE_TRAITS_ARGS
 #undef ENLIVE_DEFINE_TYPE_TRAITS_TYPE
 
 } // namespace Traits
-
-template <typename T>
-struct TypeName
-{
-	static constexpr const char* name = "<Unknown>";
-	static U32 Hash() { return Hash::Meow32(name); }
-};
-
-#define ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(type) \
-	template <> \
-	struct TypeName<type> \
-	{ \
-		static constexpr const char* name = #type; \
-		static U32 Hash() { return Hash::Meow32(name); } \
-	}; \
-	template <> \
-	struct TypeName<type*> \
-	{ \
-	private: \
-		static constexpr en::U32 s_stringStorageSize = en::StringLength(#type) + en::StringLength("*") + 1; \
-		static constexpr en::ConstexprStringStorage s_stringStorage = en::ConstexprStringStorage<s_stringStorageSize>(#type, "*"); \
-	public: \
-		static constexpr const char* name = s_stringStorage.GetData(); \
-		static U32 Hash() { return Hash::Meow32(name); } \
-	};
-#define ENLIVE_DEFINE_TYPE_TRAITS_NAME(type) namespace en { ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(type) }
-
-#define ENLIVE_DEFINE_TYPE_TRAITS_NAME_TEMPLATE_EN(templateBase) \
-	template <typename T> \
-	struct TypeName<templateBase<T>> \
-	{ \
-	private: \
-		static constexpr en::U32 s_stringStorageSize = en::StringLength(#templateBase) + en::StringLength(en::TypeName<T>::name) + en::StringLength("<>") + 1; \
-		static constexpr en::ConstexprStringStorage s_stringStorage = en::ConstexprStringStorage<s_stringStorageSize>(#templateBase, "<", en::TypeName<T>::name, ">"); \
-	public: \
-		static constexpr const char* name = s_stringStorage.GetData(); \
-		static U32 Hash() { return Hash::Meow32(name); } \
-	};
-#define ENLIVE_DEFINE_TYPE_TRAITS_NAME_TEMPLATE(type) namespace en { ENLIVE_DEFINE_TYPE_TRAITS_NAME_TEMPLATE_EN(type) }
-
-ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(bool)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::I8)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::U8)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::I16)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::U16)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::I32)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::U32)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::I64)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::U64)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::F32)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::F64)
-ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(en::Time) // TODO : Define here ?
-ENLIVE_DEFINE_TYPE_TRAITS_NAME_EN(std::string) // TODO : Define here ?
-
-template <typename T>
-struct TypeSize
-{
-	static constexpr U32 size = ENLIVE_SIZE_OF(T);
-};
-
-template <typename T>
-struct TypeAlign
-{
-	static constexpr U32 align = ENLIVE_ALIGN_OF(T);
-};
 
 } // namespace en

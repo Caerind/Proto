@@ -24,7 +24,9 @@ set(SRC_SYSTEM
     Enlivengine/System/Macros.hpp
     Enlivengine/System/MemoryAllocator.cpp
     Enlivengine/System/MemoryAllocator.hpp
+    Enlivengine/System/Meta.cpp
     Enlivengine/System/Meta.hpp
+    Enlivengine/System/MetaEnum.hpp
     Enlivengine/System/NonCopyable.hpp
     Enlivengine/System/ParserIni.cpp
     Enlivengine/System/ParserIni.hpp
@@ -44,6 +46,7 @@ set(SRC_SYSTEM
     Enlivengine/System/String.hpp
     Enlivengine/System/Time.cpp
     Enlivengine/System/Time.hpp
+    Enlivengine/System/TypeInfo.hpp
     Enlivengine/System/TypeTraits.hpp
 )
 source_group("System" FILES ${SRC_SYSTEM})

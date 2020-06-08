@@ -218,18 +218,6 @@ set(SRC_MEOWHASH
 )
 source_group("meow_hash" FILES ${SRC_MEOWHASH})
 
-# MetaStuff
-set(SRC_METASTUFF
-	MetaStuff/Member.h
-	MetaStuff/Member.inl
-	MetaStuff/Meta.h
-	MetaStuff/Meta.inl
-	MetaStuff/detail/MetaHolder.h
-	MetaStuff/detail/template_helpers.h
-	MetaStuff/detail/template_helpers.inl
-)
-source_group("MetaStuff" FILES ${SRC_METASTUFF})
-
 # metrics-gui
 set(SRC_METRICSGUI
 	metrics_gui/metrics_gui.cpp
@@ -268,7 +256,6 @@ add_library(EnlivengineThirdParty STATIC
 	${SRC_JSON}
 	${SRC_MAGICENUM}
 	${SRC_MEOWHASH}
-	${SRC_METASTUFF}
 	${SRC_METRICSGUI}
 	${SRC_MINIZ}
 	${SRC_PUGIXML}

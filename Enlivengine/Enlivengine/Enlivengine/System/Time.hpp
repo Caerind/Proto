@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Enlivengine/System/PrimitiveTypes.hpp>
+#include <Enlivengine/System/TypeInfo.hpp> // TODO : Define here ?
 
 namespace en
 {
@@ -150,3 +151,5 @@ class Timer
 };
 
 } // namespace en
+
+ENLIVE_DEFINE_TYPE_INFO(en::Time)

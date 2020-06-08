@@ -1,62 +1,7 @@
 #pragma once
 
-/*
-
-#include <Enlivengine/Config.hpp>
-#include <Enlivengine/System/PrimitiveTypes.hpp>
-#include <Enlivengine/System/TypeTraits.hpp>
-
-static constexpr en::U32 Attribute_None = 0;
-static constexpr en::U32 Attribute_Transient = (1 << 0);
-static constexpr en::U32 Attribute_CustomSerialization = (1 << 1);
-static constexpr en::U32 Attribute_ToolOnly = (1 << 2);
-static constexpr en::U32 Attribute_Grayed = (1 << 3);
-static constexpr en::U32 Attribute_Hidden = (1 << 4);
-
-template <typename Class, typename T>
-class MetaDataMember
-{
-public:
-	using MemberPtrT = T Class::*;
-
-	constexpr MetaDataMember(const char* name, MemberPtrT ptr, en::U32 attributes = Attribute_None)
-		: mName(name)
-		, mPtr(ptr)
-		, mAttributes(attributes)
-	{
-	}
-
-	constexpr const char* GetName() const { return mName; }
-	constexpr MemberPtrT GetPtr() const { return mPtr; }
-	constexpr en::U32 GetAttributes() const { return mAttributes; }
-
-	const T& Get(const Class& obj) const 
-	{ 
-		assert(mPtr != nullptr);
-		return obj.*mPtr;
-	}
-
-	template <typename V, typename = std::enable_if_t<std::is_constructible_v<T, V>>>
-	void Set(Class& obj, V&& value) const
-	{
-		assert(mPtr != nullptr);
-		obj.*mPtr = value;
-	}
-
-private:
-	const char* mName;
-	MemberPtrT mPtr;
-	en::U32 mAttributes;
-};
-
-template <typename T, typename TupleType>
-class 
-	*/
-
-
 #include <Enlivengine/System/Meta.hpp>
 #include <Enlivengine/System/Time.hpp>
-#include <iostream>
 #include <array>
 #include <vector>
 
@@ -70,6 +15,7 @@ enum class MyEnum
 	B,
 	C
 };
+ENLIVE_DEFINE_TYPE_INFO(MyEnum)
 
 struct Vector2Test
 {
@@ -199,6 +145,7 @@ ENLIVE_META_CLASS_END()
 struct Ccc : public Aaa
 {
 	char c;
+	int d;
 
 	ENLIVE_META_CLASS()
 	ENLIVE_META_CLASS_DEFAULT_VIRTUAL_IMGUI_EDITOR()
@@ -208,5 +155,6 @@ ENLIVE_META_CLASS_DEFAULT_TRAITS_VIRTUAL_IMGUI_EDITOR(Ccc)
 ENLIVE_META_CLASS_DEFAULT_TRAITS_VIRTUAL_SERIALIZATION(Ccc)
 ENLIVE_META_CLASS_BEGIN(Ccc)
 	ENLIVE_META_CLASS_MEMBER("a", &Ccc::a),
-	ENLIVE_META_CLASS_MEMBER("c", &Ccc::c)
+	ENLIVE_META_CLASS_MEMBER("c", &Ccc::c),
+	ENLIVE_META_CLASS_MEMBER("d", &Ccc::d)
 ENLIVE_META_CLASS_END()
