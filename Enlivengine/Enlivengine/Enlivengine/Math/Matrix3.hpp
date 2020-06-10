@@ -398,7 +398,7 @@ inline Matrix3<T> Matrix3<T>::operator*(const T& s) const
 template<typename T>
 inline Matrix3<T> Matrix3<T>::operator/(const T& s) const
 {
-	assert(s != T(0));
+	enAssert(s != T(0));
 	const T inv = 1 / s;
 	return Matrix3<T>(data[0] * inv, data[1] * inv, data[2] * inv,
 					  data[3] * inv, data[4] * inv, data[5] * inv,
@@ -453,7 +453,7 @@ inline Matrix3<T>& Matrix3<T>::operator*=(const T& s)
 template<typename T>
 inline Matrix3<T>& Matrix3<T>::operator/=(const T& s)
 {
-	assert(s != T(0));
+	enAssert(s != T(0));
 	const T inv = 1 / s;
 	data[0] *= inv;
 	data[1] *= inv;

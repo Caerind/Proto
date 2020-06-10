@@ -50,10 +50,9 @@ public:
 		return obj.*mPtr;
 	}
 
-	template <typename V, typename = Traits::EnableIf<std::is_constructible_v<T, V>::type>>
+	template <typename V, typename = Traits::EnableIf<std::is_constructible_v<T, V>::type>> // TODO : Remove this std::type_traits
 	constexpr void Set(Class& obj, V&& value) const
 	{
-		assert(mPtr != nullptr);
 		obj.*mPtr = value;
 	}
 

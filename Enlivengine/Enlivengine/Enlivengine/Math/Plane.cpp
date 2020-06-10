@@ -89,7 +89,7 @@ void Plane::setConstant(F32 constant)
 F32 Plane::normalize()
 {
 	F32 length = mNormal.getLength();
-	assert(length > 0.0f);
+	enAssert(length > 0.0f);
 	F32 inv = 1.0f / length;
 	mNormal *= inv;
 	mConstant *= inv;

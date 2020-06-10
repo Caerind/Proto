@@ -39,7 +39,7 @@ T* ResourcePtr<T>::GetPtr() const
 template <typename T>
 T& ResourcePtr<T>::Get() const
 {
-	assert(IsValid());
+	enAssert(IsValid());
 	return *(mManager->GetRawPtr<T>(mID));
 }
 
@@ -146,14 +146,14 @@ ResourcePtr<T> en::ResourceManager::GetFromFilename(const std::string& filename)
 template <typename T> 
 T* ResourceManager::GetRawPtr(ResourceID id)
 {
-	assert(Has(id));
+	enAssert(Has(id));
 	return static_cast<T*>(mResources.find(id)->second.get());
 }
 
 template <typename T> 
 const T* ResourceManager::GetRawPtr(ResourceID id) const
 {
-	assert(Has(id));
+	enAssert(Has(id));
 	return static_cast<T*>(mResources.find(id)->second.get());
 }
 

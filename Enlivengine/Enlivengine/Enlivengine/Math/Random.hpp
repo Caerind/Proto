@@ -67,7 +67,7 @@ T getDev(T middle, T deviation)
 template<typename T>
 inline T RandomEngine::get(T min, T max)
 {
-	assert(false); // Not implemented
+	enAssert(false); // Not implemented
 	ENLIVE_UNUSED(min);
 	ENLIVE_UNUSED(max);
 	return T();
@@ -76,7 +76,7 @@ inline T RandomEngine::get(T min, T max)
 template<typename T>
 inline T RandomEngine::getDev(T middle, T deviation)
 {
-	assert(false); // Not implemented
+	enAssert(false); // Not implemented
 	ENLIVE_UNUSED(middle);
 	ENLIVE_UNUSED(deviation);
 	return T();
@@ -85,7 +85,7 @@ inline T RandomEngine::getDev(T middle, T deviation)
 template<>
 inline I32 RandomEngine::get(I32 min, I32 max)
 {
-	assert(min <= max);
+	enAssert(min <= max);
 	std::uniform_int_distribution<I32> distribution(min, max);
 	return distribution(mGenerator);
 }
@@ -93,7 +93,7 @@ inline I32 RandomEngine::get(I32 min, I32 max)
 template<>
 inline U32 RandomEngine::get(U32 min, U32 max)
 {
-	assert(min <= max);
+	enAssert(min <= max);
 	std::uniform_int_distribution<U32> distribution(min, max);
 	return distribution(mGenerator);
 }
@@ -101,7 +101,7 @@ inline U32 RandomEngine::get(U32 min, U32 max)
 template<>
 inline F32 RandomEngine::get(F32 min, F32 max)
 {
-	assert(min <= max);
+	enAssert(min <= max);
 	std::uniform_real_distribution<F32> distribution(min, max);
 	return distribution(mGenerator);
 }
@@ -109,7 +109,7 @@ inline F32 RandomEngine::get(F32 min, F32 max)
 template<>
 inline I32 RandomEngine::getDev(I32 middle, I32 deviation)
 {
-	assert(deviation >= 0);
+	enAssert(deviation >= 0);
 	return get(middle - deviation, middle + deviation);
 }
 
@@ -122,7 +122,7 @@ inline U32 RandomEngine::getDev(U32 middle, U32 deviation)
 template<>
 inline F32 RandomEngine::getDev(F32 middle, F32 deviation)
 {
-	assert(deviation >= 0.0f);
+	enAssert(deviation >= 0.0f);
 	return get(middle - deviation, middle + deviation);
 }
 

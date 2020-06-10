@@ -47,7 +47,7 @@ public:
 
 		getApplication().GetWindow().create(sf::VideoMode(1024, 768), "EngineExample");
 
-		assert(atmogTexture.IsValid());
+		enAssert(atmogTexture.IsValid());
 		mBackground.setTexture(atmogTexture.Get());
 	}
 

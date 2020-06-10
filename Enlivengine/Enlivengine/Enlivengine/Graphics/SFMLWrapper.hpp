@@ -99,11 +99,11 @@ inline sf::Vector3f toSF(const Vector3f& vector)
 
 inline Time toEN(const sf::Time& time)
 {
-	return microseconds(time.asMicroseconds());
+	return Time::Microseconds(time.asMicroseconds());
 }
 inline sf::Time toSF(const Time& time)
 {
-	return sf::microseconds(time.asMicroseconds());
+	return sf::microseconds(time.AsMicroseconds());
 }
 
 const char* sfKeyToString(sf::Keyboard::Key key);

@@ -47,17 +47,9 @@ Application::~Application()
 
 bool Application::Initialize()
 {
-#ifdef ENLIVE_ENABLE_LOG
-	LogManager::GetInstance().Initialize();
-#endif // ENLIVE_ENABLE_LOG
-
-#ifdef ENLIVE_ENABLE_IMGUI
-	ImGuiConsole::GetInstance().RegisterConsole();
-#endif // ENLIVE_ENABLE_IMGUI
-
 	mInitialized = true;
 
-	mWindowClosedSlot.connect(mWindow.onWindowClosed, [this](const en::Window*) { Stop(); });
+	mWindowClosedSlot.Connect(mWindow.onWindowClosed, [this](const en::Window*) { Stop(); });
 
 	RegisterTools();
 
@@ -128,12 +120,12 @@ U32 Application::GetTotalFrames() const
 
 Time Application::GetTotalDuration() const
 {
-	return mTotalDuration.getElapsedTime();
+	return mTotalDuration.GetElapsedTime();
 }
 
 bool Application::LoadResources()
 {
-	assert(mInitialized);
+	enAssert(mInitialized);
 
 #ifdef ENLIVE_ENABLE_IMGUI
 	return ImGuiResourceBrowser::GetInstance().LoadResourceInfosFromFile(PathManager::GetInstance().GetAssetsPath() + "resources.xml");
@@ -181,16 +173,16 @@ bool Application::LoadResources()
 bool Application::LoadResource(I32 type, const std::string& identifier, const std::string& filename, ResourceID& resourceID)
 {
 #ifdef ENLIVE_ENABLE_IMGUI
-	assert(-1 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::Unknown));
-	assert(0 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::Font));
-	assert(1 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::Texture));
-	assert(2 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::Tileset));
-	assert(3 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::Map));
-	assert(4 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::Animation));
-	assert(5 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::AnimationStateMachine));
-	assert(6 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::Music));
-	assert(7 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::Sound));
-	assert(8 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::Count));
+	static_assert(-1 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::Unknown));
+	static_assert(0 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::Font));
+	static_assert(1 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::Texture));
+	static_assert(2 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::Tileset));
+	static_assert(3 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::Map));
+	static_assert(4 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::Animation));
+	static_assert(5 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::AnimationStateMachine));
+	static_assert(6 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::Music));
+	static_assert(7 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::Sound));
+	static_assert(8 == static_cast<I32>(ImGuiResourceBrowser::ResourceInfo::Type::Count));
 #endif // ENLIVE_ENABLE_IMGUI
 
 	ResourceManager& resourceManager = ResourceManager::GetInstance();
@@ -323,17 +315,17 @@ bool Application::LoadResource(I32 type, const std::string& identifier, const st
 		}
 		break;
 	}
-	default: assert(false); return false;
+	default: enAssert(false); return false;
 	}
 	return true;
 }
 
 void Application::Run()
 {
-	const Time TimeUpdateFPS = seconds(0.5f);
-	const Time TimePerFrame = seconds(1.0f / 60.0f);
-	Time accumulator = Time::Zero;
-	Time fpsAccumulator = Time::Zero;
+	constexpr Time TimeUpdateFPS = Time::Seconds(0.5f);
+	constexpr Time TimePerFrame = Time::Seconds(1.0f / 60.0f);
+	Time accumulator;
+	Time fpsAccumulator;
 	U32 framesFps = 0;
 	Clock clock;
 
@@ -348,11 +340,11 @@ void Application::Run()
 			ENLIVE_PROFILE_SCOPE(MainFrame);
 
 			// Time
-			Time dt = clock.restart();
+			Time dt = clock.Restart();
 
 			// Usefull when using Breakpoints on Debugging
 #ifdef ENLIVE_DEBUG
-			if (dt > Time::Second)
+			if (dt > Time::Second())
 			{
 				dt = TimePerFrame;
 			}
@@ -394,12 +386,12 @@ void Application::Run()
 			framesFps++;
 			if (fpsAccumulator > TimeUpdateFPS)
 			{
-				mFps = static_cast<U32>(framesFps / TimeUpdateFPS.asSeconds());
-				fpsAccumulator = Time::Zero;
+				mFps = static_cast<U32>(framesFps / TimeUpdateFPS.AsSeconds());
+				fpsAccumulator = Time::Zero();
 				framesFps = 0;
 
 #ifdef ENLIVE_DEBUG
-				mWindow.setTitle("FPS : " + toString(mFps));
+				mWindow.setTitle("FPS : " + ToString(mFps));
 #endif // ENLIVE_DEBUG
 			}
 

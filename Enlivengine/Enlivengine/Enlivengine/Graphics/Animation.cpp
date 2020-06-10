@@ -24,7 +24,7 @@ Animation::Clip::Clip(const std::string& name, U32 from, U32 to, Direction direc
 
 U32 Animation::Clip::GetFrameCount() const
 {
-    assert(mTo >= mFrom);
+	enAssert(mTo >= mFrom);
     const U32 distance = (mTo - mFrom);
     if (mDirection != Direction::PingPong)
     {
@@ -38,7 +38,7 @@ U32 Animation::Clip::GetFrameCount() const
 
 U32 Animation::Clip::GetFrameIndex(U32 index) const
 {
-    assert(index < GetFrameCount());
+	enAssert(index < GetFrameCount());
     if (mDirection == Direction::Forward)
     {
         return mFrom + index;
@@ -58,7 +58,7 @@ U32 Animation::Clip::GetFrameIndex(U32 index) const
             return 2 * mTo - index;
         }
     }
-    assert(false);
+	enAssert(false);
     return 0;
 }
 
@@ -83,7 +83,7 @@ bool Animation::LoadFromFile(const std::string& filename)
 				for (auto& frame : itr.value())
 				{
 					const Rectu rect{ { frame["frame"]["x"].get<U32>(), frame["frame"]["y"].get<U32>() }, { frame["frame"]["w"].get<U32>(), frame["frame"]["h"].get<U32>() } };
-					const Time duration{ milliseconds(frame["duration"].get<I32>()) };
+					const Time duration{ Time::Milliseconds(frame["duration"].get<I32>()) };
 					AddFrame(rect, duration);
 				}
 
@@ -168,7 +168,7 @@ U32 Animation::GetFrameCount() const
 
 const Animation::Frame& Animation::GetFrame(U32 index) const
 {
-	assert(index < GetFrameCount());
+	enAssert(index < GetFrameCount());
 	return mFrames[index];
 }
 
@@ -189,7 +189,7 @@ U32 Animation::GetClipCount() const
 
 const Animation::Clip& Animation::GetClip(U32 index) const
 {
-	assert(index < GetClipCount());
+	enAssert(index < GetClipCount());
 	return mClips[index];
 }
 

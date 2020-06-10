@@ -1,3 +1,9 @@
+#include <iostream>
+
+#include <SFML/Graphics.hpp>
+
+#include <Box2D/Box2D.h>
+
 #include <Enlivengine/System/Preprocessor.hpp>
 #include <Enlivengine/System/PlatformDetection.hpp>
 #include <Enlivengine/System/CompilerDetection.hpp>
@@ -11,13 +17,10 @@
 #include <Enlivengine/System/Hash.hpp>
 #include <Enlivengine/System/String.hpp>
 #include <Enlivengine/System/TypeInfo.hpp>
-
-#include <Box2D/Box2D.h>
-
-#include <SFML/Graphics.hpp>
-
+#include <Enlivengine/System/CallOnExit.hpp>
 #include <Enlivengine/System/Meta.hpp>
-#include <iostream>
+#include <Enlivengine/System/MetaEnum.hpp>
+#include <Enlivengine/System/Assert.hpp>
 
 enum class SomeEnum
 {
@@ -66,11 +69,27 @@ void MetaEnumTest()
 }
 
 
+enum class LogChannelClient : en::U64
+{
+	Gameplay1 = (1 << 7),
+	Gameplay2 = (1 << 8)
+};
+
+
 int main()
 {
 #ifdef ENLIVE_ENABLE_LOG
-	en::LogManager::GetInstance().Initialize();
+	en::LogManager::GetInstance().InitializeClientChannels<LogChannelClient>();
 #endif // ENLIVE_ENABLE_LOG
+
+	en::ConsoleLogger consoleLogger;
+
+	enAssert(true);
+	enAssert(!false);
+
+	{
+		en::CallOnExit callWhenScopeEnds([]() { LogInfo(en::LogChannel::System, 9, "CallOnExit::Call() : Scope is now closed"); });
+	}
 
 	LogInfo(en::LogChannel::System, 9, "ENLIVE_FUNCTION : %s", ENLIVE_FUNCTION);
 	LogInfo(en::LogChannel::System, 9, "ENLIVE_COMPILER_NAME : %s", ENLIVE_COMPILER_NAME);
@@ -79,7 +98,10 @@ int main()
 	LogInfo(en::LogChannel::System, 9, "ENLIVE_PLATFORM_NAME : %s", ENLIVE_PLATFORM_NAME);
 	LogInfo(en::LogChannel::System, 9, "ENLIVE_PLATFORM_DESCRIPTION : %s", ENLIVE_PLATFORM_DESCRIPTION);
 
-	/*
+	en::LogManager::GetInstance().Write(en::LogType::Info, (en::U64)LogChannelClient::Gameplay1, "Test 1");
+	en::LogManager::GetInstance().Write(en::LogType::Info, (en::U64)LogChannelClient::Gameplay1, "Test 2 : %d", 3);
+		
+	/*	
 	LogInfo(en::LogChannel::System, 9, "A: %s", en::TypeInfo<A>::GetName());
 	LogInfo(en::LogChannel::System, 9, "B<A>: %s", en::TypeInfo<B<A>>::GetName());
 	LogInfo(en::LogChannel::System, 9, "B<en::U32>: %s", en::TypeInfo<B<en::U32>>::GetName());
@@ -87,6 +109,8 @@ int main()
 	*/
 
 	MetaEnumTest();
+
+	LogError(en::LogChannel::All, 10, "Assertion failed!\nExpr : %s\nFile : %s\nLine : %d\n", #expr, __FILE__, __LINE__)
 
 	return 0;
 }

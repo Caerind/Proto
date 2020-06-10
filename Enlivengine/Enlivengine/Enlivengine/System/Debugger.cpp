@@ -1,8 +1,9 @@
 #include <Enlivengine/System/Debugger.hpp>
 
+#include <debug_break/debugbreak.h>
+
 #include <Enlivengine/System/CompilerTraits.hpp>
 #include <Enlivengine/System/PlatformTraits.hpp>
-#include <debug_break/debugbreak.h>
 
 #if defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC)
 #include <Windows.h>

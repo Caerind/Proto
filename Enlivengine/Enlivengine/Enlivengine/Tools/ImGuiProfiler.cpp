@@ -46,7 +46,7 @@ void ImGuiProfiler::Display()
 
 		ImGui::SameLine();
 
-		assert(mCaptureFrames >= 1);
+		enAssert(mCaptureFrames >= 1);
 		int captureFrames = static_cast<int>(mCaptureFrames);
 		if (ImGui::InputInt("NbFrames", &captureFrames))
 		{
@@ -148,7 +148,7 @@ bool ImGuiProfiler::IsCapturing() const
 void ImGuiProfiler::DisplayFrame(const ProfilerFrame& frame) const
 {
 	const Time duration = frame.GetDuration();
-	const I64 us = duration.asMicroseconds();
+	const I64 us = duration.AsMicroseconds();
 	const F32 ms = static_cast<F32>(us) * 0.001f;
 
 	ImGui::Spacing();
@@ -178,7 +178,7 @@ void ImGuiProfiler::DisplayFrame(const ProfilerFrame& frame) const
 			if (task.depth == level)
 			{
 				const Time taskDuration = task.GetDuration();
-				const F32 taskDurationMs = static_cast<F32>(taskDuration.asMicroseconds()) * 0.001f;
+				const F32 taskDurationMs = static_cast<F32>(taskDuration.AsMicroseconds()) * 0.001f;
 
 				const Time prevTime = frame.start + task.start - levelTime;
 				const F32 invisibleWidth = frame.GetPercentTime(prevTime) * frameSize;

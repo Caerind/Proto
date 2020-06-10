@@ -47,8 +47,8 @@ std::string ScreenshotSystem::GetScreenshotName()
 	DateTime date;
 	I32 y, m, d;
 	I32 H, M, S;
-	date.getDate(y, m, d);
-	date.getTime(H, M, S);
+	date.GetDate(y, m, d);
+	date.GetTime(H, M, S);
 	std::ostringstream oss;
 	oss << y << "-" << m << "-" << d << "_" << H << "-" << M << "-" << S;
 	return oss.str();

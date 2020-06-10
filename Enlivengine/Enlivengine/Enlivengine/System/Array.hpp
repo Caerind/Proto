@@ -1,14 +1,13 @@
 #pragma once
 
+#include <algorithm> // sort
+#include <cstdlib> // memcmp, memcpy
+
 #include <Enlivengine/System/Assert.hpp>
 #include <Enlivengine/System/Macros.hpp>
+#include <Enlivengine/System/MemoryAllocator.hpp>
 #include <Enlivengine/System/TypeTraits.hpp>
 #include <Enlivengine/System/TypeInfo.hpp>
-#include <Enlivengine/System/MemoryAllocator.hpp>
-
-#include <cstdlib> // memcmp, memcpy // TODO : Move to Dyma ? MemoryAllocator ? new Memory.hpp ?
-
-#include <algorithm> // sort
 
 namespace en
 {
@@ -103,7 +102,7 @@ public:
 
 	constexpr void Copy(const Array& other)
 	{
-		assert(this != &other);
+		enAssert(this != &other);
 		Clear();
 		if (other.mSize > 0)
 		{
@@ -169,8 +168,7 @@ public:
 
 	void Reserve(U32 newCapacity)
 	{
-		// TODO : Remove the assert ? 
-		assert(newCapacity > mCapacity);
+		enAssert(newCapacity > mCapacity);
 		if (newCapacity > mCapacity)
 		{
 			Realloc(newCapacity);
@@ -179,9 +177,8 @@ public:
 
 	void Shrink(U32 newCapacity)
 	{
-		// TODO : Remove the assert ? 
-		assert(newCapacity >= mSize);
-		assert(newCapacity < mCapacity);
+		enAssert(newCapacity >= mSize);
+		enAssert(newCapacity < mCapacity);
 		if (newCapacity < mCapacity)
 		{
 			Realloc(newCapacity);
@@ -211,8 +208,8 @@ public:
 	constexpr void Sort() { std::sort(begin(), end()); }
 	template <typename Predicate> constexpr void Sort(Predicate predicate) { std::sort(begin(), end(), predicate); }
 
-	constexpr T& operator[](U32 index) { assert(index < mSize); return mArray[index]; }
-	constexpr const T& operator[](U32 index) const { assert(index < mSize); return mArray[index]; }
+	constexpr T& operator[](U32 index) { enAssert(index < mSize); return mArray[index]; }
+	constexpr const T& operator[](U32 index) const { enAssert(index < mSize); return mArray[index]; }
 
 	constexpr U32 Size() const { return mSize; }
 	constexpr U32 GetSize() const { return mSize; }
@@ -245,10 +242,10 @@ public:
 	constexpr const U8* GetArrayData() const { return (U8*)mArray; }
 	constexpr U32 GetArrayDataSize() const { return mSize * ENLIVE_SIZE_OF(T); }
 
-	constexpr T& Front() { assert(mSize > 0); return mArray[0]; }
-	constexpr const T& Front() const { assert(mSize > 0); return mArray[0]; }
-	constexpr T& Back() { assert(mSize > 0); return mArray[mSize - 1]; }
-	constexpr const T& Back() const { assert(mSize > 0); return mArray[mSize - 1]; }
+	constexpr T& Front() { enAssert(mSize > 0); return mArray[0]; }
+	constexpr const T& Front() const { enAssert(mSize > 0); return mArray[0]; }
+	constexpr T& Back() { enAssert(mSize > 0); return mArray[mSize - 1]; }
+	constexpr const T& Back() const { enAssert(mSize > 0); return mArray[mSize - 1]; }
 
 	constexpr Iterator Find(const T& value)
 	{ 
@@ -343,7 +340,7 @@ public:
 
 	void RemoveAtIndex(U32 index)
 	{
-		assert(index < mSize); 
+		enAssert(index < mSize);
 		if (index + 1 < mSize)
 		{
 			if constexpr (!Traits::IsTriviallyDestructible<T>::value)
@@ -387,7 +384,7 @@ private:
 		if (mArray != nullptr)
 		{
 			const bool result = enDelete(T, mArray);
-			assert(result && mArray == nullptr);
+			enAssert(result && mArray == nullptr);
 		}
 		if (mCapacity > 0)
 		{
@@ -396,7 +393,7 @@ private:
 #else
 			mArray = enNewCount(T, "Array", mCapacity);
 #endif // ENLIVE_ENABLE_DEBUG_MEMORY
-			assert(mArray != nullptr);
+			enAssert(mArray != nullptr);
 		}
 	}
 

@@ -79,9 +79,9 @@ bool Ray::contains(const Vector3f& point) const
 
 bool Ray::intersects(const AABB& box, F32* distance) const
 {
-	assert(mDirection.x != 0.0f);
-	assert(mDirection.y != 0.0f);
-	assert(mDirection.z != 0.0f);
+	enAssert(mDirection.x != 0.0f);
+	enAssert(mDirection.y != 0.0f);
+	enAssert(mDirection.z != 0.0f);
 	Vector3f t1 = (box.getMinimum() - mOrigin) / mDirection;
 	Vector3f t2 = (box.getMaximum() - mOrigin) / mDirection;
 	Vector3f vmax = Vector3f::maximum(t1, t2);

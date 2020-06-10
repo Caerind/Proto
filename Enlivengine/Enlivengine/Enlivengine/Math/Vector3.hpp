@@ -247,7 +247,7 @@ inline Vector3<T>& Vector3<T>::set(const Vector2<T>& v12, const T& s3)
 template<typename T>
 inline T& Vector3<T>::operator()(U32 i)
 {
-	assert(i < 3);
+	enAssert(i < 3);
 	if (i == 0) return x;
 	else if (i == 1) return y;
 	return z;
@@ -256,7 +256,7 @@ inline T& Vector3<T>::operator()(U32 i)
 template<typename T>
 inline const T& Vector3<T>::operator()(U32 i) const
 {
-	assert(i < 3);
+	enAssert(i < 3);
 	if (i == 0) return x;
 	else if (i == 1) return y;
 	return z;
@@ -265,7 +265,7 @@ inline const T& Vector3<T>::operator()(U32 i) const
 template<typename T>
 inline T& Vector3<T>::operator[](U32 i)
 {
-	assert(i < 3);
+	enAssert(i < 3);
 	if (i == 0) return x;
 	else if (i == 1) return y;
 	return z;
@@ -274,7 +274,7 @@ inline T& Vector3<T>::operator[](U32 i)
 template<typename T>
 inline const T& Vector3<T>::operator[](U32 i) const
 {
-	assert(i < 3);
+	enAssert(i < 3);
 	if (i == 0) return x;
 	else if (i == 1) return y;
 	return z;
@@ -322,9 +322,9 @@ inline Vector3<T> Vector3<T>::operator*(const Vector3<T>& vec) const
 template<typename T>
 inline Vector3<T> Vector3<T>::operator/(const Vector3<T>& vec) const
 {
-	assert(vec.x != T(0));
-	assert(vec.y != T(0));
-	assert(vec.z != T(0));
+	enAssert(vec.x != T(0));
+	enAssert(vec.y != T(0));
+	enAssert(vec.z != T(0));
 	return Vector3<T>(x / vec.x, y / vec.y, z / vec.z);
 }
 
@@ -358,9 +358,9 @@ inline Vector3<T>& Vector3<T>::operator*=(const Vector3<T>& vec)
 template<typename T>
 inline Vector3<T>& Vector3<T>::operator/=(const Vector3<T>& vec)
 {
-	assert(vec.x != T(0));
-	assert(vec.y != T(0));
-	assert(vec.z != T(0));
+	enAssert(vec.x != T(0));
+	enAssert(vec.y != T(0));
+	enAssert(vec.z != T(0));
 	x /= vec.x;
 	y /= vec.y;
 	z /= vec.z;
@@ -388,7 +388,7 @@ inline Vector3<T> Vector3<T>::operator*(T scale) const
 template<typename T>
 inline Vector3<T> Vector3<T>::operator/(T scale) const
 {
-	assert(scale != T(0));
+	enAssert(scale != T(0));
 	const T inv = 1 / scale;
 	return Vector3<T>(x * inv, y * inv, z * inv);
 }
@@ -423,7 +423,7 @@ inline Vector3<T>& Vector3<T>::operator*=(T scale)
 template<typename T>
 inline Vector3<T>& Vector3<T>::operator/=(T scale)
 {
-	assert(scale != T(0));
+	enAssert(scale != T(0));
 	const T inv = 1 / scale;
 	x *= inv;
 	y *= inv;
@@ -533,7 +533,7 @@ template<typename T>
 inline Vector3<T>& Vector3<T>::setLength(const T& length, T* oldLength)
 {
 	const T currentLength = getLength();
-	assert(currentLength != T(0));
+	enAssert(currentLength != T(0));
 	if (oldLength != nullptr)
 	{
 		*oldLength = currentLength;
@@ -668,9 +668,9 @@ inline Vector3<T> operator*(const T& scale, const Vector3<T>& vector)
 template<typename T>
 Vector3<T> operator/(const T& scale, const Vector3<T>& vector)
 {
-	assert(vector[0] != T(0));
-	assert(vector[1] != T(0));
-	assert(vector[2] != T(0));
+	enAssert(vector[0] != T(0));
+	enAssert(vector[1] != T(0));
+	enAssert(vector[2] != T(0));
 	return Vector3<T>(scale / vector[0], scale / vector[1], scale / vector[2]);
 }
 

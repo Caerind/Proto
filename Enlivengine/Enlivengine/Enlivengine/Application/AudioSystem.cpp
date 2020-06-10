@@ -14,7 +14,7 @@ en::SoundSourceStatus toEN(const sf::SoundSource::Status& status)
 	case sf::SoundSource::Status::Paused: return SoundSourceStatus::Paused; break;
 	case sf::SoundSource::Status::Stopped: return SoundSourceStatus::Stopped; break;
 	}
-	assert(false); // Unimplemented
+	enAssert(false); // Unimplemented
 	return SoundSourceStatus::Playing;
 }
 

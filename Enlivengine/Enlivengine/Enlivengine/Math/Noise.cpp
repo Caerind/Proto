@@ -43,7 +43,7 @@ void Noise::SetInterpolation(Interpolation interpolation)
 	case Interpolation::Linear: mNoise.SetInterp(FastNoise::Linear); break;
 	case Interpolation::Hermite: mNoise.SetInterp(FastNoise::Hermite); break;
 	case Interpolation::Quintic: mNoise.SetInterp(FastNoise::Quintic);  break;
-	default: assert(false); break;
+	default: enAssert(false); break;
 	}
 }
 
@@ -54,7 +54,7 @@ Noise::Interpolation Noise::GetInterpolation() const
 	case FastNoise::Linear: return Interpolation::Linear;
 	case FastNoise::Hermite: return Interpolation::Hermite;
 	case FastNoise::Quintic: return Interpolation::Quintic;
-	default: assert(false); break;
+	default: enAssert(false); break;
 	}
 	return Interpolation::Linear;
 }
@@ -72,7 +72,7 @@ void Noise::SetNoiseType(NoiseType type)
 	case NoiseType::WhiteNoise: mNoise.SetNoiseType(FastNoise::WhiteNoise); break;
 	case NoiseType::Cubic: mNoise.SetNoiseType(FastNoise::Cubic); break;
 	case NoiseType::CubicFractal: mNoise.SetNoiseType(FastNoise::CubicFractal); break;
-	default: assert(false); break;
+	default: enAssert(false); break;
 	}
 }
 
@@ -89,7 +89,7 @@ Noise::NoiseType Noise::GetNoiseType() const
 	case FastNoise::WhiteNoise: return NoiseType::WhiteNoise;
 	case FastNoise::Cubic: return NoiseType::Cubic;
 	case FastNoise::CubicFractal: return NoiseType::CubicFractal;
-	default: assert(false); break;
+	default: enAssert(false); break;
 	}
 	return NoiseType::Value;
 }
@@ -131,7 +131,7 @@ void Noise::SetFractalType(FractalType fractalType)
 	case FractalType::FBM: mNoise.SetFractalType(FastNoise::FBM); break;
 	case FractalType::Billow: mNoise.SetFractalType(FastNoise::Billow); break;
 	case FractalType::RigidMulti: mNoise.SetFractalType(FastNoise::RigidMulti); break;
-	default: assert(false); break;
+	default: enAssert(false); break;
 	}
 }
 
@@ -142,7 +142,7 @@ Noise::FractalType Noise::GetFractalType() const
 	case FastNoise::FBM: return FractalType::FBM;
 	case FastNoise::Billow: return FractalType::Billow;
 	case FastNoise::RigidMulti: return FractalType::RigidMulti;
-	default: assert(false); break;
+	default: enAssert(false); break;
 	}
 	return FractalType::FBM;
 }

@@ -27,14 +27,14 @@ void ImGuiTool::Display()
 
 void ImGuiTool::Register()
 {
-	assert(!mRegistered);
+	enAssert(!mRegistered);
 	ImGuiToolManager::GetInstance().RegisterTool(this);
 	mRegistered = true;
 }
 
 void ImGuiTool::Unregister()
 {
-	assert(mRegistered);
+	enAssert(mRegistered);
 	ImGuiToolManager::GetInstance().UnregisterTool(this);
 	mRegistered = false;
 }
@@ -99,18 +99,18 @@ ImGuiToolManager::ImGuiToolManager()
 
 void ImGuiToolManager::RegisterTool(ImGuiTool* tool)
 {
-	assert(tool != nullptr);
+	enAssert(tool != nullptr);
 
 	const U32 toolHash = tool->GetHash();
 	const U32 tab = static_cast<U32>(tool->GetTab());
-	assert(tab >= static_cast<U32>(ImGuiToolTab::Main) && tab < static_cast<U32>(ImGuiToolTab::Count));
+	enAssert(tab >= static_cast<U32>(ImGuiToolTab::Main) && tab < static_cast<U32>(ImGuiToolTab::Count));
 
 	std::vector<ImGuiTool*>& tools = mTools[tab];
 
 	const size_t size = tools.size();
 	for (size_t i = 0; i < size; ++i)
 	{
-		assert(tools[i]->GetHash() != toolHash);
+		enAssert(tools[i]->GetHash() != toolHash);
 	}
 
 	tools.push_back(tool);
@@ -118,11 +118,11 @@ void ImGuiToolManager::RegisterTool(ImGuiTool* tool)
 
 void ImGuiToolManager::UnregisterTool(ImGuiTool* tool)
 {
-	assert(tool != nullptr);
+	enAssert(tool != nullptr);
 
 	const U32 toolHash = tool->GetHash();
     const U32 tab = static_cast<U32>(tool->GetTab());
-	assert(tab >= static_cast<U32>(ImGuiToolTab::Main) && tab < static_cast<U32>(ImGuiToolTab::Count));
+	enAssert(tab >= static_cast<U32>(ImGuiToolTab::Main) && tab < static_cast<U32>(ImGuiToolTab::Count));
 
 	std::vector<ImGuiTool*>& tools = mTools[tab];
 
@@ -136,7 +136,7 @@ void ImGuiToolManager::UnregisterTool(ImGuiTool* tool)
 		}
 	}
 
-	assert(false);
+	enAssert(false);
 }
 
 void ImGuiToolManager::Initialize(Window& window)

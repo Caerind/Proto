@@ -63,7 +63,7 @@ void MemoryAllocator::DebugAllocator::SetCurrentContext(const char* context, con
 
 void MemoryAllocator::DebugAllocator::SetAllocatorToDebug(dyma::Allocator* allocator)
 {
-	assert(allocator != nullptr);
+	enAssert(allocator != nullptr);
 
 	mAllocator = allocator;
 	mAllocationCount = 0;
@@ -85,7 +85,7 @@ const dyma::Allocator* MemoryAllocator::DebugAllocator::GetAllocatorToDebug() co
 
 void* MemoryAllocator::DebugAllocator::Allocate(std::size_t size)
 {
-	assert(mAllocator != nullptr);
+	enAssert(mAllocator != nullptr);
 
 	void* ptr = mAllocator->Allocate(size);
 	if (ptr != nullptr)
@@ -111,7 +111,7 @@ void* MemoryAllocator::DebugAllocator::Allocate(std::size_t size)
 
 bool MemoryAllocator::DebugAllocator::Deallocate(void*& ptr)
 {
-	assert(mAllocator != nullptr);
+	enAssert(mAllocator != nullptr);
 
 	const void* ptrBeforeDeallocation = ptr;
 	const bool result = mAllocator->Deallocate(ptr);
@@ -138,7 +138,7 @@ bool MemoryAllocator::DebugAllocator::Deallocate(void*& ptr)
 
 bool MemoryAllocator::DebugAllocator::Owns(const void* ptr) const
 {
-	assert(mAllocator != nullptr);
+	enAssert(mAllocator != nullptr);
 
 	return mAllocator->Owns(ptr);
 }

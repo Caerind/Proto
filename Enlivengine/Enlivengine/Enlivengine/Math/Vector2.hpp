@@ -203,7 +203,7 @@ inline Vector2<T>& Vector2<T>::set(const T& s1, const T& s2)
 template<typename T>
 inline T& Vector2<T>::operator()(U32 i)
 {
-	assert(i < 2);
+	enAssert(i < 2);
 	if (i == 0) return x;
 	return y;
 }
@@ -211,7 +211,7 @@ inline T& Vector2<T>::operator()(U32 i)
 template<typename T>
 inline const T& Vector2<T>::operator()(U32 i) const
 {
-	assert(i < 2);
+	enAssert(i < 2);
 	if (i == 0) return x;
 	return y;
 }
@@ -219,7 +219,7 @@ inline const T& Vector2<T>::operator()(U32 i) const
 template<typename T>
 inline T& Vector2<T>::operator[](U32 i)
 {
-	assert(i < 2);
+	enAssert(i < 2);
 	if (i == 0) return x;
 	return y;
 }
@@ -227,7 +227,7 @@ inline T& Vector2<T>::operator[](U32 i)
 template<typename T>
 inline const T& Vector2<T>::operator[](U32 i) const
 {
-	assert(i < 2);
+	enAssert(i < 2);
 	if (i == 0) return x;
 	return y;
 }
@@ -273,8 +273,8 @@ inline Vector2<T> Vector2<T>::operator*(const Vector2<T>& vec) const
 template<typename T>
 inline Vector2<T> Vector2<T>::operator/(const Vector2<T>& vec) const
 {
-	assert(vec.x != T(0));
-	assert(vec.y != T(0));
+	enAssert(vec.x != T(0));
+	enAssert(vec.y != T(0));
 	return Vector2<T>(x / vec.x, y / vec.y);
 }
 
@@ -305,8 +305,8 @@ inline Vector2<T>& Vector2<T>::operator*=(const Vector2<T>& vec)
 template<typename T>
 inline Vector2<T>& Vector2<T>::operator/=(const Vector2<T>& vec)
 {
-	assert(vec.x != T(0));
-	assert(vec.y != T(0));
+	enAssert(vec.x != T(0));
+	enAssert(vec.y != T(0));
 	x /= vec.x;
 	y /= vec.y;
 	return *this;
@@ -333,7 +333,7 @@ inline Vector2<T> Vector2<T>::operator*(T scale) const
 template<typename T>
 inline Vector2<T> Vector2<T>::operator/(T scale) const
 {
-	assert(scale != T(0));
+	enAssert(scale != T(0));
 	const T inv = 1 / scale;
 	return Vector2<T>(x * inv, y * inv);
 }
@@ -365,7 +365,7 @@ inline Vector2<T>& Vector2<T>::operator*=(T scale)
 template<typename T>
 inline Vector2<T>& Vector2<T>::operator/=(T scale)
 {
-	assert(scale != T(0));
+	enAssert(scale != T(0));
 	const T inv = 1 / scale;
 	x *= inv;
 	y *= inv;
@@ -452,7 +452,7 @@ template<typename T>
 inline Vector2<T>& Vector2<T>::setLength(const T& length, T* oldLength)
 {
 	const T currentLength = getLength();
-	assert(currentLength != T(0));
+	enAssert(currentLength != T(0));
 	if (oldLength != nullptr)
 	{
 		*oldLength = currentLength;
@@ -601,8 +601,8 @@ inline Vector2<T> operator*(const T& scale, const Vector2<T>& vector)
 template<typename T>
 Vector2<T> operator/(const T& scale, const Vector2<T>& vector)
 {
-	assert(vector[0] != T(0));
-	assert(vector[1] != T(0));
+	enAssert(vector[0] != T(0));
+	enAssert(vector[1] != T(0));
 	return Vector2<T>(scale / vector[0], scale / vector[1]);
 }
 

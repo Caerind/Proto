@@ -31,6 +31,12 @@ constexpr auto GetEnumNames()
 	return magic_enum::enum_names<E>();
 }
 
+template <typename E>
+constexpr auto GetEnumValues()
+{
+	return magic_enum::enum_values<E>();
+}
+
 template <typename E, typename T> 
 constexpr E EnumCast(T value) 
 { 

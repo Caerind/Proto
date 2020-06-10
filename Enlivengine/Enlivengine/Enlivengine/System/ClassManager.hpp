@@ -1,8 +1,8 @@
 #pragma once
 
 #include <functional>
-#include <unordered_map>
 #include <iterator>
+#include <unordered_map>
 
 #include <Enlivengine/System/PrimitiveTypes.hpp>
 #include <Enlivengine/System/Hash.hpp>

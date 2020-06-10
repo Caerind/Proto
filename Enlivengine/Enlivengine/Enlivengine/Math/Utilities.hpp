@@ -65,7 +65,7 @@ public:
 	template <typename T>
 	static inline constexpr T Max(T x, T y) { return (x <= y) ? y : x; }
 	template <typename T>
-	static inline constexpr T Clamp(T value, T valueMin, T valueMax) { assert(valueMin < valueMax); return Max(Min(value, valueMax), valueMin); }
+	static inline constexpr T Clamp(T value, T valueMin, T valueMax) { return Max(Min(value, valueMax), valueMin); }
 	template <typename T>
 	static inline constexpr T Abs(T value) { return (value >= 0) ? value : -value; }
 

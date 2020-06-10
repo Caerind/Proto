@@ -43,7 +43,7 @@ public:
 	bool LoadResources();
 	bool LoadResource(I32 type, const std::string& identifier, const std::string& filename, ResourceID& resourceID);
 
-	EnSignal(onApplicationStopped, const Application*);
+	enSignal(onApplicationStopped, const Application*);
 
 private:
 	~Application();
@@ -63,7 +63,7 @@ private:
 	ScreenshotSystem mScreenshotSystem;
 	ActionSystem mActionSystem;
 
-	EnSlot(en::Window, onWindowClosed, mWindowClosedSlot);
+	enSlot(en::Window, onWindowClosed, mWindowClosedSlot);
 
 	U32 mFps;
 	bool mRunning;

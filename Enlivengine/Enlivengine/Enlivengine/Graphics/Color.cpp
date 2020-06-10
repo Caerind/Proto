@@ -111,7 +111,7 @@ Color::Color(const std::string& color)
 
 U8& Color::operator[](U8 index)
 {
-	assert(index < 4);
+	enAssert(index < 4);
 	switch (index)
 	{
 		case 0: return r;
@@ -123,7 +123,7 @@ U8& Color::operator[](U8 index)
 
 const U8& Color::operator[](U8 index) const
 {
-	assert(index < 4);
+	enAssert(index < 4);
 	switch (index)
 	{
 		case 0: return r;

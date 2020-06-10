@@ -25,39 +25,39 @@ Tileset::Tileset()
 bool Tileset::LoadFromFile(const std::string& filename)
 {
 	ParserXml xml;
-	if (!xml.loadFromFile(filename))
+	if (!xml.LoadFromFile(filename))
 	{
 		LogError(en::LogChannel::Map, 9, "Can't open tileset file at %s", filename.c_str());
 		return false;
 	}
 
-	if (xml.readNode("tileset"))
+	if (xml.ReadNode("tileset"))
 	{
-		xml.getAttribute("name", mName);
-		xml.getAttribute("tilewidth", mTileSize.x);
-		xml.getAttribute("tileheight", mTileSize.y);
-		xml.getAttribute("tilecount", mTileCount);
-		xml.getAttribute("columns", mColumns);
-		xml.getAttribute("spacing", mSpacing);
-		xml.getAttribute("margin", mMargin);
+		xml.GetAttribute("name", mName);
+		xml.GetAttribute("tilewidth", mTileSize.x);
+		xml.GetAttribute("tileheight", mTileSize.y);
+		xml.GetAttribute("tilecount", mTileCount);
+		xml.GetAttribute("columns", mColumns);
+		xml.GetAttribute("spacing", mSpacing);
+		xml.GetAttribute("margin", mMargin);
 
 		mPath = std::filesystem::path(filename).remove_filename().string();
 
-		if (xml.readNode("image"))
+		if (xml.ReadNode("image"))
 		{
-			xml.getAttribute("source", mImageSource);
+			xml.GetAttribute("source", mImageSource);
 			
-			if (xml.hasAttribute("trans"))
+			if (xml.HasAttribute("trans"))
 			{
 				std::string transparentStr;
-				xml.getAttribute("trans", transparentStr);
+				xml.GetAttribute("trans", transparentStr);
 				mImageTransparent.fromString(transparentStr);
 			}
 
-			xml.closeNode();
+			xml.CloseNode();
 		}
 
-		xml.closeNode();
+		xml.CloseNode();
 	}
 	else
 	{

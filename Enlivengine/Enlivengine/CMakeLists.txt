@@ -4,7 +4,6 @@ set(SRC_SYSTEM
     Enlivengine/System/Array.hpp
     Enlivengine/System/Assert.hpp
     Enlivengine/System/ByteUnits.hpp
-    Enlivengine/System/CallOnExit.cpp
     Enlivengine/System/CallOnExit.hpp
     Enlivengine/System/ClassManager.cpp
     Enlivengine/System/ClassManager.hpp
@@ -12,8 +11,6 @@ set(SRC_SYSTEM
     Enlivengine/System/CompilerTraits.hpp
     Enlivengine/System/Compression.cpp
     Enlivengine/System/Compression.hpp
-    Enlivengine/System/Console.cpp
-    Enlivengine/System/Console.hpp
     Enlivengine/System/DateTime.cpp
     Enlivengine/System/DateTime.hpp
     Enlivengine/System/Debugger.cpp
@@ -29,10 +26,6 @@ set(SRC_SYSTEM
     Enlivengine/System/Meta.hpp
     Enlivengine/System/MetaEnum.hpp
     Enlivengine/System/NonCopyable.hpp
-    Enlivengine/System/ParserIni.cpp
-    Enlivengine/System/ParserIni.hpp
-    Enlivengine/System/ParserJson.cpp
-    Enlivengine/System/ParserJson.hpp
     Enlivengine/System/ParserXml.cpp
     Enlivengine/System/ParserXml.hpp
     Enlivengine/System/PlatformDetection.hpp

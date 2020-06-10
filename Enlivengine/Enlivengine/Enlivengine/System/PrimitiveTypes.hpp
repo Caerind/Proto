@@ -8,10 +8,11 @@
 #include <Enlivengine/System/CompilerTraits.hpp>
 #include <Enlivengine/System/PlatformTraits.hpp>
 
+// TODO : NumericLimits<T>
 // TODO : Bool type ?
 // TODO : 16 sized floating point type ?
 // TODO : 128 sized int types ?
-// TODO : Char types (char + wchar)
+// TODO : Char types (char + wchar) (char != signed char != unsigned char)
 // TODO : Char constants : \b, \t, \n, ... : https://docs.microsoft.com/fr-fr/cpp/c-language/escape-sequences?view=vs-2019
 // TODO : More floating point constants : http://www.cplusplus.com/reference/cfloat/
 
@@ -50,8 +51,6 @@ constexpr F32 F32_Epsilon = FLT_EPSILON;
 constexpr F32 F32_Max = FLT_MAX;
 constexpr F64 F64_Epsilon = DBL_EPSILON;
 constexpr F64 F64_Max = DBL_MAX;
-
-// TODO : NumericLimits<T>
 
 #if defined(ENLIVE_ENABLE_DOUBLE_PRECISION)
 	using Real = F64;

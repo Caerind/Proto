@@ -1,16 +1,17 @@
 #pragma once
 
 #include <Enlivengine/Config.hpp>
-#include <Enlivengine/System/PrimitiveTypes.hpp>
-#include <Enlivengine/System/Macros.hpp>
-#include <Enlivengine/System/Assert.hpp>
-
-#include <Dyma/Dyma.hpp>
 
 #ifdef ENLIVE_ENABLE_DEBUG_MEMORY
 #include <vector>
 #include <filesystem>
 #endif // ENLIVE_ENABLE_DEBUG_MEMORY
+
+#include <Dyma/Dyma.hpp>
+
+#include <Enlivengine/System/PrimitiveTypes.hpp>
+#include <Enlivengine/System/Macros.hpp>
+#include <Enlivengine/System/Assert.hpp>
 
 namespace en
 {
@@ -52,7 +53,7 @@ public:
 
 	static void* Allocate(const char* context, const char* file, U32 line, U32 size)
 	{
-		assert(sDebugAllocator.GetAllocatorToDebug() != nullptr);
+		enAssert(sDebugAllocator.GetAllocatorToDebug() != nullptr);
 		sDebugAllocator.SetCurrentContext(context, file, line);
 		return sDebugAllocator.Allocate(static_cast<std::size_t>(size));
 	}
@@ -63,7 +64,7 @@ public:
 		{
 			return true;
 		}
-		assert(sDebugAllocator.GetAllocatorToDebug() != nullptr);
+		enAssert(sDebugAllocator.GetAllocatorToDebug() != nullptr);
 		return sDebugAllocator.Deallocate(ptr);
 	}
 #else
@@ -84,7 +85,7 @@ public:
 
 	static void* Allocate(U32 size)
 	{
-		assert(sEngineAllocator != nullptr);
+		enAssert(sEngineAllocator != nullptr);
 		return sEngineAllocator->Allocate(static_cast<std::size_t>(size));
 	}
 
@@ -94,7 +95,7 @@ public:
 		{
 			return true;
 		}
-		assert(sEngineAllocator != nullptr);
+		enAssert(sEngineAllocator != nullptr);
 		return sEngineAllocator->Deallocate(ptr);
 	}
 #endif // ENLIVE_ENABLE_DEBUG_MEMORY

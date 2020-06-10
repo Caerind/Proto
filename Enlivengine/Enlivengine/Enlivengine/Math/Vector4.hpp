@@ -279,7 +279,7 @@ inline Vector4<T>& Vector4<T>::set(const Vector2<T>& v12, const Vector2<T>& v34)
 template<typename T>
 inline T& Vector4<T>::operator()(U32 i)
 {
-	assert(i < 4);
+	enAssert(i < 4);
 	if (i == 0) return x;
 	else if (i == 1) return y;
 	else if (i == 2) return z;
@@ -289,7 +289,7 @@ inline T& Vector4<T>::operator()(U32 i)
 template<typename T>
 inline const T& Vector4<T>::operator()(U32 i) const
 {
-	assert(i < 4);
+	enAssert(i < 4);
 	if (i == 0) return x;
 	else if (i == 1) return y;
 	else if (i == 2) return z;
@@ -299,7 +299,7 @@ inline const T& Vector4<T>::operator()(U32 i) const
 template<typename T>
 inline T& Vector4<T>::operator[](U32 i)
 {
-	assert(i < 4);
+	enAssert(i < 4);
 	if (i == 0) return x;
 	else if (i == 1) return y;
 	else if (i == 2) return z;
@@ -309,7 +309,7 @@ inline T& Vector4<T>::operator[](U32 i)
 template<typename T>
 inline const T& Vector4<T>::operator[](U32 i) const
 {
-	assert(i < 4);
+	enAssert(i < 4);
 	if (i == 0) return x;
 	else if (i == 1) return y;
 	else if (i == 2) return z;
@@ -359,10 +359,10 @@ inline Vector4<T> Vector4<T>::operator*(const Vector4<T>& vec) const
 template<typename T>
 inline Vector4<T> Vector4<T>::operator/(const Vector4<T>& vec) const
 {
-	assert(vec.x != T(0));
-	assert(vec.y != T(0));
-	assert(vec.z != T(0));
-	assert(vec.w != T(0));
+	enAssert(vec.x != T(0));
+	enAssert(vec.y != T(0));
+	enAssert(vec.z != T(0));
+	enAssert(vec.w != T(0));
 	return Vector4<T>(x / vec.x, y / vec.y, z / vec.z, w / vec.w);
 }
 
@@ -399,10 +399,10 @@ inline Vector4<T>& Vector4<T>::operator*=(const Vector4<T>& vec)
 template<typename T>
 inline Vector4<T>& Vector4<T>::operator/=(const Vector4<T>& vec)
 {
-	assert(vec.x != T(0));
-	assert(vec.y != T(0));
-	assert(vec.z != T(0));
-	assert(vec.w != T(0));
+	enAssert(vec.x != T(0));
+	enAssert(vec.y != T(0));
+	enAssert(vec.z != T(0));
+	enAssert(vec.w != T(0));
 	x /= vec.x;
 	y /= vec.y;
 	z /= vec.z;
@@ -431,7 +431,7 @@ inline Vector4<T> Vector4<T>::operator*(T scale) const
 template<typename T>
 inline Vector4<T> Vector4<T>::operator/(T scale) const
 {
-	assert(scale != T(0));
+	enAssert(scale != T(0));
 	const T inv = 1 / scale;
 	return Vector4<T>(x * inv, y * inv, z * inv, w * inv);
 }
@@ -469,7 +469,7 @@ inline Vector4<T>& Vector4<T>::operator*=(T scale)
 template<typename T>
 inline Vector4<T>& Vector4<T>::operator/=(T scale)
 {
-	assert(scale != T(0));
+	enAssert(scale != T(0));
 	const T inv = 1 / scale;
 	x *= inv;
 	y *= inv;
@@ -596,7 +596,7 @@ template<typename T>
 inline Vector4<T>& Vector4<T>::setLength(const T& length, T* oldLength)
 {
 	const T currentLength = getLength();
-	assert(currentLength != T(0));
+	enAssert(currentLength != T(0));
 	if (oldLength != nullptr)
 	{
 		*oldLength = currentLength;
@@ -729,10 +729,10 @@ inline Vector4<T> operator*(const T& scale, const Vector4<T>& vector)
 template<typename T>
 Vector4<T> operator/(const T & scale, const Vector4<T>& vector)
 {
-	assert(vector[0] != T(0));
-	assert(vector[1] != T(0));
-	assert(vector[2] != T(0));
-	assert(vector[3] != T(0));
+	enAssert(vector[0] != T(0));
+	enAssert(vector[1] != T(0));
+	enAssert(vector[2] != T(0));
+	enAssert(vector[3] != T(0));
 	return Vector4<T>(scale / vector[0], scale / vector[1], scale / vector[2], scale / vector[3]);
 }
 

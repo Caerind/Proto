@@ -257,7 +257,7 @@ ActionInputType ActionInputLogical::GetInputType() const
 	case ActionInputLogicalOperator::And: return ActionInputType::And;
 	case ActionInputLogicalOperator::Or: return ActionInputType::Or;
 	case ActionInputLogicalOperator::Not: return ActionInputType::Not;
-	default: assert(false);
+	default: enAssert(false);
 	}
 	return ActionInputType::Not;
 }
@@ -276,7 +276,7 @@ bool ActionInputLogical::IsCurrentlyActive(ActionSystem* system) const
 		case ActionInputLogicalOperator::And: return system->GetInputByIndex(mInputAIndex)->IsActive() && system->GetInputByIndex(mInputBIndex)->IsActive();
 		case ActionInputLogicalOperator::Or: return system->GetInputByIndex(mInputAIndex)->IsActive() || system->GetInputByIndex(mInputBIndex)->IsActive();
 		case ActionInputLogicalOperator::Not: return !system->GetInputByIndex(mInputAIndex)->IsActive();
-		default: assert(false);
+		default: enAssert(false);
 		}
 	}
 	return false;
@@ -368,13 +368,13 @@ void ActionSystem::Update()
 
 bool ActionSystem::IsInputActive(const std::string& inputName) const
 {
-    assert(IsInputExisting(inputName));
+	enAssert(IsInputExisting(inputName));
     return IsInputActive(Hash::Meow32(inputName.c_str()));
 }
 
 bool ActionSystem::IsInputActive(U32 inputID) const
 {
-    assert(IsInputExisting(inputID));
+	enAssert(IsInputExisting(inputID));
     const U32 inputCount = GetInputCount();
     for (U32 i = 0; i < inputCount; ++i)
     {
@@ -454,7 +454,7 @@ U32 ActionSystem::GetInputCount() const
 
 const ActionInput* ActionSystem::GetInputByIndex(U32 index) const
 {
-    assert(index < GetInputCount());
+	enAssert(index < GetInputCount());
     return mInputs[index];
 }
 
@@ -478,7 +478,7 @@ const ActionInput* ActionSystem::GetInputByID(U32 inputID) const
 
 void ActionSystem::RemoveInputByIndex(U32 index)
 {
-	assert(index < GetInputCount());
+	enAssert(index < GetInputCount());
 	delete mInputs[index];
 	mInputs[index] = nullptr;
 	mInputs.erase(mInputs.begin() + index);
@@ -529,7 +529,7 @@ U32 ActionSystem::GetEventCount() const
 
 const sf::Event& ActionSystem::GetEvent(U32 index) const
 {
-    assert(index < GetEventCount());
+	enAssert(index < GetEventCount());
     return mEvents[index];
 }
 
@@ -540,7 +540,7 @@ void ActionSystem::ClearEvents()
 
 ActionInput* ActionSystem::GetInputByIndexNonConst(U32 index)
 {
-	assert(index < GetInputCount());
+	enAssert(index < GetInputCount());
 	return mInputs[index];
 }
 
@@ -582,8 +582,8 @@ void ActionSystem::Update_Internal()
     {
         std::sort(mInputs.begin(), mInputs.end(), [](const ActionInput* a, const ActionInput* b)
         {
-            assert(a != nullptr); //if (!a) return false;
-            assert(b != nullptr); //if (!b) return true;
+			enAssert(a != nullptr); //if (!a) return false;
+			enAssert(b != nullptr); //if (!b) return true;
             const U32 pA = a->GetPriorityLevel();
             const U32 pB = b->GetPriorityLevel();
             if (pA == pB)

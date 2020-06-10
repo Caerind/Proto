@@ -34,7 +34,7 @@ void ImGuiMemoryDebugger::Display()
 	const U32 totalAlloc = debugAllocator.GetAllocationCount();
 	const U32 totalDealloc = debugAllocator.GetDeallocationCount();
 	const U32 currentAlloc = totalAlloc - totalDealloc;
-	assert(currentAlloc == debugAllocator.GetBlockCount());
+	enAssert(currentAlloc == debugAllocator.GetBlockCount());
 	ImGui::Text("Total allocations : %d", totalAlloc);
 	ImGui::Text("Total deallocations : %d", totalDealloc);
 	ImGui::Text("Maximum used size : %d", debugAllocator.GetPeakSize());

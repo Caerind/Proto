@@ -29,20 +29,20 @@ Map::Map()
 bool Map::LoadFromFile(const std::string& filename)
 {
 	ParserXml xml;
-	if (!xml.loadFromFile(filename))
+	if (!xml.LoadFromFile(filename))
 	{
 		LogError(en::LogChannel::Map, 9, "Can't open file at %s", filename.c_str());
 		return false;
 	}
 
-	if (xml.readNode("map"))
+	if (xml.ReadNode("map"))
 	{
-		xml.getAttribute("name", mName);
+		xml.GetAttribute("name", mName);
 
 		std::string attribStr;
 		
 		attribStr = "orthogonal";
-		xml.getAttribute("orientation", attribStr);
+		xml.GetAttribute("orientation", attribStr);
 		if (attribStr == "orthogonal")
 		{
 			mOrientation = Orientation::Orthogonal;
@@ -66,7 +66,7 @@ bool Map::LoadFromFile(const std::string& filename)
 		}
 
 		attribStr = "right-down";
-		xml.getAttribute("renderorder", attribStr);
+		xml.GetAttribute("renderorder", attribStr);
 		if (attribStr == "right-down")
 		{
 			mRenderOrder = RenderOrder::RightDown;
@@ -88,20 +88,20 @@ bool Map::LoadFromFile(const std::string& filename)
 			LogWarning(en::LogChannel::Map, 7, "Invalid renderorder %s", attribStr.c_str());
 		}
 
-		xml.getAttribute("width", mSize.x);
-		xml.getAttribute("height", mSize.y);
+		xml.GetAttribute("width", mSize.x);
+		xml.GetAttribute("height", mSize.y);
 
-		xml.getAttribute("tilewidth", mTileSize.x);
-		xml.getAttribute("tileheight", mTileSize.y);
+		xml.GetAttribute("tilewidth", mTileSize.x);
+		xml.GetAttribute("tileheight", mTileSize.y);
 
-		xml.getAttribute("hexsidelength", mHexSideLength);
+		xml.GetAttribute("hexsidelength", mHexSideLength);
 		if (mOrientation == Orientation::Hexagonal && mHexSideLength <= 0)
 		{
 			LogWarning(en::LogChannel::Map, 7, "Invalid hexsidelength %s", attribStr.c_str());
 		}
 
 		attribStr = "y";
-		xml.getAttribute("staggeraxis", attribStr);
+		xml.GetAttribute("staggeraxis", attribStr);
 		if (attribStr == "y")
 		{
 			mStaggerAxis = StaggerAxis::Y;
@@ -119,7 +119,7 @@ bool Map::LoadFromFile(const std::string& filename)
 		}
 
 		attribStr = "odd";
-		xml.getAttribute("staggerindex", attribStr);
+		xml.GetAttribute("staggerindex", attribStr);
 		if (attribStr == "odd")
 		{
 			mStaggerIndex = StaggerIndex::Odd;
@@ -137,7 +137,7 @@ bool Map::LoadFromFile(const std::string& filename)
 		}
 
 		attribStr = "";
-		xml.getAttribute("backgroundcolor", attribStr);
+		xml.GetAttribute("backgroundcolor", attribStr);
 		if (attribStr.size() > 0)
 		{
 			if (attribStr[0] == '#')
@@ -151,7 +151,7 @@ bool Map::LoadFromFile(const std::string& filename)
 		}
 
 		I32 infinite = 0;
-		xml.getAttribute("infinite", infinite);
+		xml.GetAttribute("infinite", infinite);
 		if (infinite > 0)
 		{
 			// TODO : Infinite maps
@@ -159,14 +159,14 @@ bool Map::LoadFromFile(const std::string& filename)
 			return false;
 		}
 
-		xml.getAttribute("nextlayerid", mNextLayerID);
-		xml.getAttribute("nextobjectid", mNextObjectID);
+		xml.GetAttribute("nextlayerid", mNextLayerID);
+		xml.GetAttribute("nextobjectid", mNextObjectID);
 
-		if (xml.readFirstNode())
+		if (xml.ReadFirstNode())
 		{
 			do 
 			{
-				std::string nodeName = xml.getNodeName();
+				std::string nodeName = xml.GetNodeName();
 				if (nodeName == "tileset")
 				{
 					TilesetMapData tilesetData;
@@ -175,7 +175,7 @@ bool Map::LoadFromFile(const std::string& filename)
 
 					bool validTileset = true;
 
-					xml.getAttribute("firstgid", tilesetData.firstGid);
+					xml.GetAttribute("firstgid", tilesetData.firstGid);
 					if (tilesetData.firstGid <= 0)
 					{
 						validTileset = false;
@@ -183,7 +183,7 @@ bool Map::LoadFromFile(const std::string& filename)
 					}
 
 					std::string source = "";
-					xml.getAttribute("source", source);
+					xml.GetAttribute("source", source);
 					if (source.size() > 0)
 					{
 						const std::string currentPath = std::filesystem::path(filename).remove_filename().string();
@@ -245,8 +245,8 @@ bool Map::LoadFromFile(const std::string& filename)
 				{
 					LogError(en::LogChannel::Map, 8, "Unknown layer type %s", nodeName.c_str());
 				}
-			} while (xml.nextSibling());
-			xml.closeNode();
+			} while (xml.NextSibling());
+			xml.CloseNode();
 		}
 	}
 	else
@@ -328,13 +328,13 @@ U32 Map::GetTilesetIndexFromGID(U32 gid) const
 
 TilesetPtr Map::GetTileset(U32 tilesetIndex) const
 {
-	assert(tilesetIndex < GetTilesetCount());
+	enAssert(tilesetIndex < GetTilesetCount());
 	return mTilesets[tilesetIndex].tileset;
 }
 
 U32 Map::GetTilesetFirstGid(U32 tilesetIndex) const
 {
-	assert(tilesetIndex < GetTilesetCount());
+	enAssert(tilesetIndex < GetTilesetCount());
 	return mTilesets[tilesetIndex].firstGid;
 }
 
@@ -345,13 +345,13 @@ U32 Map::GetTilesetCount() const
 
 LayerBase* Map::GetLayerByIndex(U32 layerIndex)
 {
-	assert(layerIndex < GetLayerCount());
+	enAssert(layerIndex < GetLayerCount());
 	return mLayers[layerIndex].get();
 }
 
 LayerBase::LayerType Map::GetLayerTypeByIndex(U32 layerIndex) const
 {
-	assert(layerIndex < GetLayerCount());
+	enAssert(layerIndex < GetLayerCount());
 	return mLayers[layerIndex]->GetLayerType();
 }
 
@@ -376,7 +376,7 @@ LayerBase::LayerType Map::GetLayerTypeByID(U32 layerID) const
 			return layer->GetLayerType();
 		}
 	}
-	assert(false);
+	enAssert(false);
 	return LayerBase::LayerType::TileLayer;
 }
 
@@ -545,7 +545,7 @@ Vector2f Map::CoordsToWorld(const Vector2u& tileCoords) const
 		}
 	}
 
-    assert(false);
+	enAssert(false);
     return Vector2f(0.0f, 0.0f);
 }
 
@@ -574,7 +574,7 @@ Vector2u Map::WorldToCoords(const Vector2f& worldPos) const
         return Vector2u(0, 0);
     }
 
-    assert(false);
+	enAssert(false);
 	return Vector2u(0, 0);
 }
 

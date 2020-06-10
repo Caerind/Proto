@@ -236,33 +236,33 @@ void ImGuiResourceBrowser::Display()
 bool ImGuiResourceBrowser::LoadResourceInfosFromFile(const std::string& filename)
 {
 	ParserXml xml;
-	if (!xml.loadFromFile(filename))
+	if (!xml.LoadFromFile(filename))
 	{
 		LogError(en::LogChannel::Application, 9, "Can't open resources file at %s", filename.c_str());
 		return false;
 	}
 
-	if (xml.readNode("Resources"))
+	if (xml.ReadNode("Resources"))
 	{
 		U32 resourceCount = 0;
-		xml.getAttribute("resourceCount", resourceCount);
+		xml.GetAttribute("resourceCount", resourceCount);
 		U32 typeCount = 0;
-		xml.getAttribute("typeCount", typeCount);
+		xml.GetAttribute("typeCount", typeCount);
 		const bool needToRecomputeTypesFromFilename = (typeCount == static_cast<U32>(ResourceInfo::Type::Count));
 		if (resourceCount > 0)
 		{
 			mResourceInfos.reserve(resourceCount);
-			if (xml.readNode("Resource"))
+			if (xml.ReadNode("Resource"))
 			{
 				do
 				{
 					mResourceInfos.push_back(ResourceInfo());
 					ResourceInfo& resourceInfo = mResourceInfos.back();
 					
-					xml.getAttribute("identifier", resourceInfo.identifier);
-					xml.getAttribute("filename", resourceInfo.filename);
+					xml.GetAttribute("identifier", resourceInfo.identifier);
+					xml.GetAttribute("filename", resourceInfo.filename);
 					I32 typeInt;
-					xml.getAttribute("type", typeInt);
+					xml.GetAttribute("type", typeInt);
 					if (!needToRecomputeTypesFromFilename)
 					{
 						resourceInfo.type = static_cast<ResourceInfo::Type>(typeInt);
@@ -274,11 +274,11 @@ bool ImGuiResourceBrowser::LoadResourceInfosFromFile(const std::string& filename
 
 					Application::GetInstance().LoadResource(static_cast<I32>(resourceInfo.type), resourceInfo.identifier, resourceInfo.filename, resourceInfo.resourceID);
 				
-				} while (xml.nextSibling("Resource"));
-				xml.closeNode();
+				} while (xml.NextSibling("Resource"));
+				xml.CloseNode();
 			}
 		}
-		xml.closeNode();
+		xml.CloseNode();
 	}
 	else
 	{
@@ -296,30 +296,30 @@ bool ImGuiResourceBrowser::LoadResourceInfosFromFile(const std::string& filename
 bool ImGuiResourceBrowser::SaveResourceInfosToFile(const std::string& filename)
 {
 	ParserXml xml;
-	xml.newFile();
+	xml.NewFile();
 
-	if (!xml.createChild("Resources"))
+	if (!xml.CreateNode("Resources"))
 	{
 		return false;
 	}
-	xml.setAttribute("resourceCount", static_cast<U32>(mResourceInfos.size()));
-	xml.setAttribute("typeCount", static_cast<U32>(ResourceInfo::Type::Count));
+	xml.SetAttribute("resourceCount", static_cast<U32>(mResourceInfos.size()));
+	xml.SetAttribute("typeCount", static_cast<U32>(ResourceInfo::Type::Count));
 
 	for (const ResourceInfo& resourceInfo : mResourceInfos)
 	{
-		if (!xml.createChild("Resource"))
+		if (!xml.CreateNode("Resource"))
 		{
 			continue;
 		}
 
-		xml.setAttribute("identifier", resourceInfo.identifier);
-		xml.setAttribute("filename", resourceInfo.filename);
-		xml.setAttribute("type", static_cast<I32>(resourceInfo.type));
+		xml.SetAttribute("identifier", resourceInfo.identifier);
+		xml.SetAttribute("filename", resourceInfo.filename);
+		xml.SetAttribute("type", static_cast<I32>(resourceInfo.type));
 
-		xml.closeNode();
+		xml.CloseNode();
 	}
 
-	if (!xml.saveToFile(filename))
+	if (!xml.SaveToFile(filename))
 	{
 		return false;
 	}
@@ -378,7 +378,7 @@ const char* ImGuiResourceBrowser::ResourceInfo::ResourceInfoTypeToString(Type ty
 	case ResourceInfo::Type::AnimationStateMachine: return "AnimationStateMachine"; break;
 	case ResourceInfo::Type::Music: return "Music"; break;
 	case ResourceInfo::Type::Sound: return "Sound"; break;
-	default: assert(false); break;
+	default: enAssert(false); break;
 	}
 	return "";
 }
@@ -504,7 +504,7 @@ void ImGuiResourceBrowser::AnimationPreview(ResourceInfo& resourceInfo)
 				lastResourceID = resourceInfo.resourceID;
 				animationClipIndex = 0;
 				animationClipFrameIndex = 0;
-				animationAcc = Time::Zero;
+				animationAcc = Time::Zero();
 			}
 
 			ImGui::BeginTooltip();
@@ -538,7 +538,7 @@ void ImGuiResourceBrowser::AnimationStateMachinePreview(ResourceInfo& resourceIn
 					lastResourceID = resourceInfo.resourceID;
 					animationClipIndex = 0;
 					animationClipFrameIndex = 0;
-					animationAcc = Time::Zero;
+					animationAcc = Time::Zero();
 				}
 
 				ImGui::BeginTooltip();

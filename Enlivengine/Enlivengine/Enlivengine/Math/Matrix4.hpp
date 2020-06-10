@@ -590,7 +590,7 @@ inline Matrix4<T> Matrix4<T>::operator*(const T& s) const
 template<typename T>
 inline Matrix4<T> Matrix4<T>::operator/(const T& s) const
 {
-	assert(s != T(0));
+	enAssert(s != T(0));
 	const T inv = 1 / s;
 	return Matrix4<T>(data[0] * inv, data[1] * inv, data[2] * inv, data[3] * inv,
 		data[4] * inv, data[5] * inv, data[6] * inv, data[7] * inv,
@@ -667,7 +667,7 @@ inline Matrix4<T>& Matrix4<T>::operator*=(const T& s)
 template<typename T>
 inline Matrix4<T>& Matrix4<T>::operator/=(const T& s)
 {
-	assert(s != T(0));
+	enAssert(s != T(0));
 	const T inv = 1 / s;
 	data[0] *= inv;
 	data[1] *= inv;
@@ -1365,7 +1365,7 @@ inline Matrix4<T> Matrix4<T>::ortho(const T& left, const T& right, const T& top,
 template<typename T>
 inline Matrix4<T> Matrix4<T>::perspective(const T& fov, const T& ratio, const T& zNear, const T& zFar)
 {
-	assert(ratio != 0.0f);
+	enAssert(ratio != 0.0f);
 	const T y = 1 / Math::Tan(fov * T(0.5));
 	const T x = y / ratio;
 	const T zDist = zFar - zNear;

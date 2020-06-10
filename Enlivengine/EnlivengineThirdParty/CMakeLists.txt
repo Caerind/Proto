@@ -144,6 +144,25 @@ set(SRC_FASTNOISE
 )
 source_group("FastNoise" FILES ${SRC_FASTNOISE})
 
+# fmt
+set(SRC_FMT
+	fmt/chrono.h
+	fmt/color.h
+	fmt/compile.h
+	fmt/core.h
+	fmt/format.cc
+	fmt/format.h
+	fmt/format-inl.h
+	fmt/locale.h
+	fmt/os.cc
+	fmt/os.h
+	fmt/ostream.h
+	fmt/posix.h
+	fmt/printf.h
+	fmt/ranges.h
+)
+source_group("fmt" FILES ${SRC_FMT})
+
 # IconFontCppHeaders
 set(SRC_ICONFONTCPPHEADERS
 	IconFontCppHeaders/IconsFontAwesome5.h
@@ -248,6 +267,7 @@ add_library(EnlivengineThirdParty STATIC
 	${SRC_DYMA}
 	${SRC_ENTT}
 	${SRC_FASTNOISE}
+	${SRC_FMT}
 	${SRC_ICONFONTCPPHEADERS}
 	${SRC_IMGUI}
 	${SRC_IMGUIFILEDIALOG}

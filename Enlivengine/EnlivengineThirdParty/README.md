@@ -5,6 +5,7 @@
 - https://github.com/Cmdu76/Dyma  
 - https://github.com/skypjack/entt  
 - https://github.com/Auburns/FastNoise  
+- https://github.com/fmtlib/fmt  
 - https://github.com/juliettef/IconFontCppHeaders 
 - https://github.com/ocornut/imgui   
 - https://github.com/aiekick/ImGuiFileDialog  

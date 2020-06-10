@@ -110,7 +110,7 @@ LinearColor::LinearColor(const std::string& color)
 
 F32& LinearColor::operator[](U8 index)
 {
-	assert(index < 4);
+	enAssert(index < 4);
 	switch (index)
 	{
 		case 0: return r;
@@ -122,7 +122,7 @@ F32& LinearColor::operator[](U8 index)
 
 const F32& LinearColor::operator[](U8 index) const
 {
-	assert(index < 4);
+	enAssert(index < 4);
 	switch (index)
 	{
 		case 0: return r;
@@ -318,7 +318,7 @@ LinearColor operator*(const LinearColor& left, F32 right)
 
 LinearColor operator/(const LinearColor& left, F32 right)
 {
-	assert(right != 0.0f);
+	enAssert(right != 0.0f);
 	return left * (1.0f / right);
 }
 
@@ -366,7 +366,7 @@ LinearColor& operator*=(LinearColor& left, F32 right)
 
 LinearColor& operator/=(LinearColor& left, F32 right)
 {
-	assert(right != 0.0f);
+	enAssert(right != 0.0f);
 	return left *= (1.0f / right);
 }
 

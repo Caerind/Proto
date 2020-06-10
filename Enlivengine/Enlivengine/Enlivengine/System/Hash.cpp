@@ -1,6 +1,7 @@
 #include <Enlivengine/System/Hash.hpp>
 
 #include <cstring> // strlen
+
 #include <meow_hash/meow_hash_x64_aesni.h>
 
 namespace en
