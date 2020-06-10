@@ -5,13 +5,15 @@
 #include <Enlivengine/System/Debugger.hpp>
 
 #ifdef ENLIVE_ENABLE_ASSERT
-	#define enAssert(expr) \
+	#define enAssertChannel(expr, channel) \
 		if (expr) {} \
 		else \
 		{ \
-			LogError(en::LogChannel::All, 10, "Assertion failed!\nExpr : %s\nFile : %s\nLine : %d\n", #expr, __FILE__, __LINE__); \
+			enLogFatal(channel, "Assertion failed!\nExpr : %s\nFile : %s\nLine : %d\n", #expr, __FILE__, __LINE__); \
 			::en::Debugger::Break(); \
 		}
+	#define enAssert(expr) enAssertChannel(expr, en::LogChannel::Global) 
 #else
+	#define enAssertChannel(expr, channel) 
 	#define enAssert(expr) 
 #endif

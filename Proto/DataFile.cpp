@@ -15,8 +15,8 @@ bool DataFile::IsValid() const
 
 bool DataFile::CreateEmptyFile()
 {
-	mParserXml.newFile();
-	if (mParserXml.createChild("DataFile"))
+	mParserXml.NewFile();
+	if (mParserXml.CreateNode("DataFile"))
 	{
 		mValid = true;
 	}
@@ -30,9 +30,9 @@ bool DataFile::CreateEmptyFile()
 
 bool DataFile::LoadFromFile(const std::string& filename)
 {
-	if (mParserXml.loadFromFile(filename))
+	if (mParserXml.LoadFromFile(filename))
 	{
-		if (mParserXml.readNode("DataFile"))
+		if (mParserXml.ReadNode("DataFile"))
 		{
 			mValid = true;
 		}
@@ -52,5 +52,5 @@ bool DataFile::LoadFromFile(const std::string& filename)
 
 bool DataFile::SaveToFile(const std::string& filename)
 {
-	return mParserXml.saveToFile(filename);
+	return mParserXml.SaveToFile(filename);
 }

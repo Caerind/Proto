@@ -74,7 +74,7 @@ GameState::GameState(en::StateManager& manager)
 	mA1->SetC(7.89f);
 	mA1->SetD(true);
 	mA1->SetE(MyEnum::B);
-	mA1->SetF(en::seconds(23.0f));
+	mA1->SetF(en::Time::Seconds(23.0f));
 	mA1->GetG().SetDebugMemoryContext("mA1::g");
 	mA1->AddG(7);
 	mA1->AddG(20);
@@ -88,7 +88,7 @@ GameState::GameState(en::StateManager& manager)
 	mA2->SetC(1.23f);
 	mA2->SetD(false);
 	mA2->SetE(MyEnum::C);
-	mA2->SetF(en::milliseconds(10));
+	mA2->SetF(en::Time::Milliseconds(10));
 	mA2->GetG().SetDebugMemoryContext("mA2::g");
 	mA2->AddG(1);
 	mA2->AddG(8);

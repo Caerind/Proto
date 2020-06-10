@@ -194,26 +194,26 @@ int main()
 	int32 velocityIterations = 6;
 	int32 positionIterations = 2;
 
-	LogInfo(en::LogChannel::System, 9, "%4.2f %4.2f %4.2f", body->GetPosition().x, body->GetPosition().y, body->GetAngle());
+	enLogInfo(en::LogChannel::System, "%4.2f %4.2f %4.2f", body->GetPosition().x, body->GetPosition().y, body->GetAngle());
 	for (int32 i = 0; i < 20; ++i)
 	{
 		world.Step(timeStep, velocityIterations, positionIterations);
 	}
-	LogInfo(en::LogChannel::System, 9, "%4.2f %4.2f %4.2f", body->GetPosition().x, body->GetPosition().y, body->GetAngle());
+	enLogInfo(en::LogChannel::System, "%4.2f %4.2f %4.2f", body->GetPosition().x, body->GetPosition().y, body->GetAngle());
 	for (int32 i = 0; i < 20; ++i)
 	{
 		world.Step(timeStep, velocityIterations, positionIterations);
 	}
-	LogInfo(en::LogChannel::System, 9, "%4.2f %4.2f %4.2f", body->GetPosition().x, body->GetPosition().y, body->GetAngle());
+	enLogInfo(en::LogChannel::System, "%4.2f %4.2f %4.2f", body->GetPosition().x, body->GetPosition().y, body->GetAngle());
 	for (int32 i = 0; i < 20; ++i)
 	{
 		world.Step(timeStep, velocityIterations, positionIterations);
 	}
-	LogInfo(en::LogChannel::System, 9, "%4.2f %4.2f %4.2f", body->GetPosition().x, body->GetPosition().y, body->GetAngle());
+	enLogInfo(en::LogChannel::System, "%4.2f %4.2f %4.2f", body->GetPosition().x, body->GetPosition().y, body->GetAngle());
 
-	LogWarning(en::LogChannel::System, 9, "%4.2f %4.2f %4.2f", body->GetPosition().x, body->GetPosition().y, body->GetAngle());
+	enLogWarning(en::LogChannel::System, "%4.2f %4.2f %4.2f", body->GetPosition().x, body->GetPosition().y, body->GetAngle());
 
-	LogError(en::LogChannel::System, 9, "%4.2f %4.2f %4.2f", body->GetPosition().x, body->GetPosition().y, body->GetAngle());
+	enLogError(en::LogChannel::System, "%4.2f %4.2f %4.2f", body->GetPosition().x, body->GetPosition().y, body->GetAngle());
 
 	en::Application::GetInstance().Start<MyState>();
 

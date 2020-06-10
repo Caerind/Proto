@@ -4,9 +4,9 @@
 
 #include <bitset>
 
-#if defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC)
+#if defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC) && defined(ENLIVE_DEBUG)
 #include <Windows.h>
-#endif // defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC)
+#endif // defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC) && defined(ENLIVE_DEBUG)
 
 #include <Enlivengine/System/Assert.hpp>
 #include <Enlivengine/System/String.hpp>
@@ -16,9 +16,9 @@ namespace en
 
 #ifdef ENLIVE_ENABLE_DEFAULT_LOGGER
 ConsoleLogger ConsoleLogger::sConsoleLogger;
-#if defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC)
+#if defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC) && defined(ENLIVE_DEBUG)
 VisualStudioLogger VisualStudioLogger::sVisualStudioLogger;
-#endif // defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC)
+#endif // defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC) && defined(ENLIVE_DEBUG)
 #endif // ENLIVE_ENABLE_DEFAULT_LOGGER
 
 std::string_view LogMessage::GetTypeString() const
@@ -37,8 +37,8 @@ std::string_view LogMessage::GetMessageString() const
 }
 
 Logger::Logger()
-	: mTypeFilter(static_cast<U32>(LogType::All))
-	, mChannelFilter(static_cast<U64>(LogChannel::All))
+	: mChannelFilter(U64_Max)
+	, mTypeFilter(U32_Max)
 	, mEnabled(true)
 {
 	RegisterLogger();
@@ -79,9 +79,9 @@ U64 Logger::GetChannelFilter() const
 	return mChannelFilter;
 }
 
-bool Logger::PassFilters(LogType type, U64 channelID) const
+bool Logger::PassFilters(LogType type, U32 channelID) const
 {
-	return (channelID & mChannelFilter) != 0 && (static_cast<U32>(type) & mTypeFilter) != 0;
+	return ((static_cast<U64>(1) << static_cast<U64>(channelID))& mChannelFilter) != 0 && ((1 << static_cast<U32>(type))& mTypeFilter) != 0;
 }
 
 void Logger::RegisterLogger()
@@ -96,9 +96,10 @@ void Logger::UnregisterLogger()
 
 LogManager::LogManager()
 	: mLoggers()
+	, mUserChannelStrings()
 	, mDefaultLogger(nullptr)
-	, mTypeFilter(static_cast<U32>(LogType::All))
-	, mChannelFilter(static_cast<U64>(LogChannel::All))
+	, mChannelFilter(U64_Max)
+	, mTypeFilter(U32_Max)
 {
 }
 
@@ -122,9 +123,9 @@ U64 LogManager::GetChannelFilter() const
 	return mChannelFilter;
 }
 
-bool LogManager::PassFilters(LogType type, U64 channelID) const
+bool LogManager::PassFilters(LogType type, U32 channelID) const
 {
-	return (channelID & mChannelFilter) != 0 && (static_cast<U32>(type)& mTypeFilter) != 0;
+	return ((static_cast<U64>(1) << static_cast<U64>(channelID))& mChannelFilter) != 0 && ((1 << static_cast<U32>(type))& mTypeFilter) != 0;
 }
 
 U32 LogManager::GetLoggerCount() const
@@ -132,28 +133,13 @@ U32 LogManager::GetLoggerCount() const
 	return static_cast<U32>(mLoggers.size());
 }
 
-std::string_view LogManager::GetChannelString(U64 channelID) const
+std::string_view LogManager::GetChannelString(U32 channelID) const
 {
-	enAssert(std::bitset<64>(channelID).count() == 1);
-	if (channelID > static_cast<U64>(LogChannel::AllEngine))
+	if (channelID >= static_cast<U32>(LogChannel::Max))
 	{
-		U32 index = 0;
-		U64 channelTest = static_cast<U64>(LogChannel::AllEngine) + 1;
-		do 
-		{
-			if (channelTest == channelID)
-			{
-				enAssert(index < static_cast<U32>(mUserChannelStrings.size()));
-				return mUserChannelStrings[index];
-			}
-			else
-			{
-				channelTest *= 2;
-				index++;
-			}
-		} while (channelTest <= channelID);
-		enAssert(false);
-		return std::string_view("<UnknownChannel>");
+		const U32 index = channelID - static_cast<U32>(LogChannel::Max);
+		enAssert(index < static_cast<U32>(mUserChannelStrings.size()));
+		return mUserChannelStrings[index];
 	}
 	else
 	{
@@ -304,7 +290,7 @@ void FileLogger::Write(const LogMessage& message)
 	}
 }
 
-#if defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC)
+#if defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC) && defined(ENLIVE_DEBUG)
 VisualStudioLogger::VisualStudioLogger()
 	: Logger()
 {
@@ -324,7 +310,7 @@ void VisualStudioLogger::Write(const LogMessage& message)
 	OutputDebugStringA(s.c_str());
 }
 
-#endif // defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC)
+#endif // defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC) && defined(ENLIVE_DEBUG)
 
 } // namespace en
 

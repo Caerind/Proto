@@ -42,7 +42,7 @@ void Window::create(sf::VideoMode mode, const std::string& title, sf::Uint32 sty
 			}
 			else
 			{
-				LogError(LogChannel::Application, 8, "No fullscreen mode available %d", sf::VideoMode::getFullscreenModes().size());
+				enLogError(LogChannel::Application, "No fullscreen mode available %d", sf::VideoMode::getFullscreenModes().size());
 				mFullscreenVideoMode = sf::VideoMode();
 			}
 		}
@@ -55,7 +55,7 @@ void Window::create(sf::VideoMode mode, const std::string& title, sf::Uint32 sty
 			}
 			else
 			{
-				LogError(LogChannel::Application, 8, "Invalid video mode (%d,%d)", mode.width, mode.height);
+				enLogError(LogChannel::Application, "Invalid video mode (%d,%d)", mode.width, mode.height);
 				mNonFullscreenVideoMode = sf::VideoMode::getDesktopMode();
 			}
 		}
@@ -252,7 +252,7 @@ void Window::setIcon(const std::string& icon)
 	}
 	else
 	{
-		LogWarning(LogChannel::Application, 5, "Can't load the icon from : %s", icon.c_str());
+		enLogWarning(LogChannel::Application, "Can't load the icon from : %s", icon.c_str());
 		mIconPath = "";
 	}
 }
@@ -534,7 +534,7 @@ void Window::setCursorTexture(const std::string& texture)
 	}
 	else
 	{
-		LogWarning(LogChannel::Application, 5, "Can't load cursor from : %s", texture.c_str());
+		enLogWarning(LogChannel::Application, "Can't load cursor from : %s", texture.c_str());
 		mCursorTextureData = "";
 		setCursor(Cursor::Default);
 	}

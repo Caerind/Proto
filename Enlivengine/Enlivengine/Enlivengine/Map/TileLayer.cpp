@@ -140,7 +140,7 @@ bool TileLayer::Parse(ParserXml& parser)
 		}
 		else
 		{
-			LogError(en::LogChannel::Map, 7, "Unknown encoding %s", attribStr.c_str());
+			enLogError(en::LogChannel::Map, "Unknown encoding %s", attribStr.c_str());
 			return false;
 		}
 
@@ -160,7 +160,7 @@ bool TileLayer::Parse(ParserXml& parser)
 		}
 		else
 		{
-			LogError(en::LogChannel::Map, 7, "Unknown compression %s", attribStr.c_str());
+			enLogError(en::LogChannel::Map, "Unknown compression %s", attribStr.c_str());
 			return false;
 		}
 
@@ -217,7 +217,7 @@ bool TileLayer::ParseBase64(ParserXml& parser)
 	}
 	if (!decompression)
 	{
-		LogError(en::LogChannel::Map, 8, "Can't decompress %d", mCompression);
+		enLogError(en::LogChannel::Map, "Can't decompress %d", mCompression);
 		return false;
 	}
 

@@ -197,10 +197,10 @@ private:
 			strcpy(concatName, name);
 			strcat(concatName, " (s)");
 #endif // ENLIVE_COMPILER_MSVC
-			float value = static_cast<float>(object.asSeconds());
+			float value = static_cast<float>(object.AsSeconds());
 			if (ImGui::InputFloat(concatName, &value))
 			{
-				object = en::seconds(value);
+				object = en::Time::Seconds(value);
 				return true;
 			}
 			return false;

@@ -131,39 +131,39 @@ bool Application::LoadResources()
 	return ImGuiResourceBrowser::GetInstance().LoadResourceInfosFromFile(PathManager::GetInstance().GetAssetsPath() + "resources.xml");
 #else
 	ParserXml xml;
-	if (!xml.loadFromFile(PathManager::GetInstance().GetAssetsPath() + "resources.xml"))
+	if (!xml.LoadFromFile(PathManager::GetInstance().GetAssetsPath() + "resources.xml"))
 	{
-		LogError(en::LogChannel::Application, 9, "Can't open resources file at %s", filename.c_str());
+		enLogError(en::LogChannel::Application, "Can't open resources file at %s", filename.c_str());
 		return false;
 	}
 
-	if (xml.readNode("Resources"))
+	if (xml.ReadNode("Resources"))
 	{
 		U32 resourceCount = 0;
-		xml.getAttribute("resourceCount", resourceCount);
+		xml.GetAttribute("resourceCount", resourceCount);
 		if (resourceCount > 0)
 		{
-			if (xml.readNode("Resource"))
+			if (xml.ReadNode("Resource"))
 			{
 				do
 				{
 					std::string identifierStr;
-					xml.getAttribute("identifier", identifierStr);
+					xml.GetAttribute("identifier", identifierStr);
 					std::string filenameStr;
-					xml.getAttribute("filename", filenameStr);
+					xml.GetAttribute("filename", filenameStr);
 					I32 typeInt;
-					xml.getAttribute("type", typeInt);
+					xml.GetAttribute("type", typeInt);
 					ResourceID resourceID;
 					LoadResource(typeInt, identifierStr, filenameStr, resourceID);
-				} while (xml.nextSibling("Resource"));
-				xml.closeNode();
+				} while (xml.NextSibling("Resource"));
+				xml.CloseNode();
 			}
 		}
-		xml.closeNode();
+		xml.CloseNode();
 	}
 	else
 	{
-		LogError(en::LogChannel::Application, 9, "Invalid resources file at %s", filename.c_str());
+		enLogError(en::LogChannel::Application, "Invalid resources file at %s", filename.c_str());
 		return false;
 	}
 	return true;
@@ -192,7 +192,7 @@ bool Application::LoadResource(I32 type, const std::string& identifier, const st
 	case -1: // ResourceInfo::Type::Unknown
 	{
 		resourceID = InvalidResourceID;
-		LogError(en::LogChannel::Global, 4, "Unknown resource type for resource : %s, %s", identifier.c_str(), resourceFilename.c_str());
+		enLogError(en::LogChannel::Global, "Unknown resource type for resource : %s, %s", identifier.c_str(), resourceFilename.c_str());
 		return false;
 	}
 	case 0: // ResourceInfo::Type::Font
@@ -201,7 +201,7 @@ bool Application::LoadResource(I32 type, const std::string& identifier, const st
 		if (!fontPtr.IsValid())
 		{
 			resourceID = InvalidResourceID;
-			LogWarning(en::LogChannel::Global, 2, "Can't load resource : %s, %s", identifier.c_str(), resourceFilename.c_str());
+			enLogWarning(en::LogChannel::Global, "Can't load resource : %s, %s", identifier.c_str(), resourceFilename.c_str());
 			return false;
 		}
 		else
@@ -216,7 +216,7 @@ bool Application::LoadResource(I32 type, const std::string& identifier, const st
 		if (!texturePtr.IsValid())
 		{
 			resourceID = InvalidResourceID;
-			LogWarning(en::LogChannel::Global, 2, "Can't load resource : %s, %s", identifier.c_str(), resourceFilename.c_str());
+			enLogWarning(en::LogChannel::Global, "Can't load resource : %s, %s", identifier.c_str(), resourceFilename.c_str());
 			return false;
 		}
 		else
@@ -231,7 +231,7 @@ bool Application::LoadResource(I32 type, const std::string& identifier, const st
 		if (!tilesetPtr.IsValid())
 		{
 			resourceID = InvalidResourceID;
-			LogWarning(en::LogChannel::Global, 2, "Can't load resource : %s, %s", identifier.c_str(), resourceFilename.c_str());
+			enLogWarning(en::LogChannel::Global, "Can't load resource : %s, %s", identifier.c_str(), resourceFilename.c_str());
 			return false;
 		}
 		else
@@ -246,7 +246,7 @@ bool Application::LoadResource(I32 type, const std::string& identifier, const st
 		if (!mapPtr.IsValid())
 		{
 			resourceID = InvalidResourceID;
-			LogWarning(en::LogChannel::Global, 2, "Can't load resource : %s, %s", identifier.c_str(), resourceFilename.c_str());
+			enLogWarning(en::LogChannel::Global, "Can't load resource : %s, %s", identifier.c_str(), resourceFilename.c_str());
 			return false;
 		}
 		else
@@ -261,7 +261,7 @@ bool Application::LoadResource(I32 type, const std::string& identifier, const st
 		if (!animPtr.IsValid())
 		{
 			resourceID = InvalidResourceID;
-			LogWarning(en::LogChannel::Global, 2, "Can't load resource : %s, %s", identifier.c_str(), resourceFilename.c_str());
+			enLogWarning(en::LogChannel::Global, "Can't load resource : %s, %s", identifier.c_str(), resourceFilename.c_str());
 			return false;
 		}
 		else
@@ -276,7 +276,7 @@ bool Application::LoadResource(I32 type, const std::string& identifier, const st
 		if (!animPtr.IsValid())
 		{
 			resourceID = InvalidResourceID;
-			LogWarning(en::LogChannel::Global, 2, "Can't load resource : %s, %s", identifier.c_str(), resourceFilename.c_str());
+			enLogWarning(en::LogChannel::Global, "Can't load resource : %s, %s", identifier.c_str(), resourceFilename.c_str());
 			return false;
 		}
 		else
@@ -291,7 +291,7 @@ bool Application::LoadResource(I32 type, const std::string& identifier, const st
 		if (musicID == InvalidMusicID)
 		{
 			resourceID = InvalidResourceID;
-			LogWarning(en::LogChannel::Global, 2, "Can't load resource : %s, %s", identifier.c_str(), resourceFilename.c_str());
+			enLogWarning(en::LogChannel::Global, "Can't load resource : %s, %s", identifier.c_str(), resourceFilename.c_str());
 			return false;
 		}
 		else
@@ -306,7 +306,7 @@ bool Application::LoadResource(I32 type, const std::string& identifier, const st
 		if (soundID == InvalidSoundID)
 		{
 			resourceID = InvalidResourceID;
-			LogWarning(en::LogChannel::Global, 2, "Can't load resource : %s, %s", identifier.c_str(), resourceFilename.c_str());
+			enLogWarning(en::LogChannel::Global, "Can't load resource : %s, %s", identifier.c_str(), resourceFilename.c_str());
 			return false;
 		}
 		else

@@ -111,14 +111,14 @@ template <typename T>
 bool DataFile::Serialize_Registered(const T& object, const char* name)
 {
 	static_assert(en::Meta::IsRegistered<T>());
-	if (mParserXml.createChild(name))
+	if (mParserXml.CreateNode(name))
 	{
-		mParserXml.setAttribute("classHash", en::Meta::GetClassVersion<T>());
+		mParserXml.SetAttribute("classHash", en::Meta::GetClassVersion<T>());
 		en::Meta::ForEachMember<T>([this, &object](const auto& member)
 		{
 			Serialize_Common(member.Get(object), member.GetName());
 		});
-		mParserXml.closeNode();
+		mParserXml.CloseNode();
 		return true;
 	}
 	else
@@ -150,14 +150,14 @@ template <typename T>
 bool DataFile::Deserialize_Registered(T& object, const char* name)
 {
 	static_assert(en::Meta::IsRegistered<T>());
-	if (mParserXml.readNode(name))
+	if (mParserXml.ReadNode(name))
 	{
 		// TODO : Check classHash
 		en::Meta::ForEachMember<T>([this, &object](const auto& member)
 		{
 			Deserialize_Common(member.Get(object), member.GetName());
 		});
-		mParserXml.closeNode();
+		mParserXml.CloseNode();
 		return true;
 	}
 	else
@@ -188,30 +188,30 @@ template <typename T>
 bool DataFile::Serialize_Basic(const T& object, const char* name)
 {
 	assert(name);
-	if (mParserXml.createChild(name))
+	if (mParserXml.CreateNode(name))
 	{
 		if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, bool>::value)
 		{
-			mParserXml.setValue(en::toBoolString(object));
+			mParserXml.SetValue(en::ToBoolString(object));
 		}
 		else if constexpr (en::Traits::IsEnum<T>::value)
 		{
 			const std::string enumValueStr(en::Meta::GetEnumName(object));
-			mParserXml.setValue(enumValueStr);
+			mParserXml.SetValue(enumValueStr);
 		}
 		else if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, std::string>::value)
 		{
-			mParserXml.setValue(object);
+			mParserXml.SetValue(object);
 		}
 		else if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, en::Time>::value)
 		{
-			mParserXml.setValue(en::toString(object.asSeconds()));
+			mParserXml.SetValue(en::ToString(object.AsSeconds()));
 		}
 		else
 		{
-			mParserXml.setValue(en::toString(object));
+			mParserXml.SetValue(en::ToString(object));
 		}
-		mParserXml.closeNode();
+		mParserXml.CloseNode();
 		return true;
 	}
 	else
@@ -224,7 +224,7 @@ template <typename T>
 bool DataFile::Serialize_Basic(const en::Array<T>& object, const char* name)
 {
 	assert(name);
-	if (mParserXml.createChild(name))
+	if (mParserXml.CreateNode(name))
 	{
 		bool result = true;
 		for (en::U32 i = 0; i < object.Size(); ++i)
@@ -234,12 +234,12 @@ bool DataFile::Serialize_Basic(const en::Array<T>& object, const char* name)
 			childName.append(std::to_string(i));
 			result = Serialize_Common(object[i], childName.c_str()) && result;
 		}
-		mParserXml.setAttribute("elementCount", object.Size());
+		mParserXml.SetAttribute("elementCount", object.Size());
 		if constexpr (en::Meta::IsRegistered<T>())
 		{
-			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassVersion<T>());
+			mParserXml.SetAttribute("elementClassHash", en::Meta::GetClassVersion<T>());
 		}
-		mParserXml.closeNode();
+		mParserXml.CloseNode();
 		return result;
 	}
 	else
@@ -252,7 +252,7 @@ template <typename T>
 bool DataFile::Serialize_Basic(const std::vector<T>& object, const char* name)
 {
 	assert(name);
-	if (mParserXml.createChild(name))
+	if (mParserXml.CreateNode(name))
 	{
 		bool result = true;
 		for (std::size_t i = 0; i < object.size(); ++i)
@@ -262,12 +262,12 @@ bool DataFile::Serialize_Basic(const std::vector<T>& object, const char* name)
 			childName.append(std::to_string(i));
 			result = Serialize_Common(object[i], childName.c_str()) && result;
 		}
-		mParserXml.setAttribute("elementCount", static_cast<en::U32>(object.size()));
+		mParserXml.SetAttribute("elementCount", static_cast<en::U32>(object.size()));
 		if constexpr (en::Meta::IsRegistered<T>())
 		{
-			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassVersion<T>());
+			mParserXml.SetAttribute("elementClassHash", en::Meta::GetClassVersion<T>());
 		}
-		mParserXml.closeNode();
+		mParserXml.CloseNode();
 		return result;
 	}
 	else
@@ -280,7 +280,7 @@ template <typename T, std::size_t N>
 bool DataFile::Serialize_Basic(const std::array<T, N>& object, const char* name)
 {
 	assert(name);
-	if (mParserXml.createChild(name))
+	if (mParserXml.CreateNode(name))
 	{
 		bool result = true;
 		for (std::size_t i = 0; i < object.size(); ++i)
@@ -290,12 +290,12 @@ bool DataFile::Serialize_Basic(const std::array<T, N>& object, const char* name)
 			childName.append(std::to_string(i));
 			result = Serialize_Common(object[i], childName.c_str()) && result;
 		}
-		mParserXml.setAttribute("elementCount", static_cast<en::U32>(object.size()));
+		mParserXml.SetAttribute("elementCount", static_cast<en::U32>(object.size()));
 		if constexpr (en::Meta::IsRegistered<T>())
 		{
-			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassVersion<T>());
+			mParserXml.SetAttribute("elementClassHash", en::Meta::GetClassVersion<T>());
 		}
-		mParserXml.closeNode();
+		mParserXml.CloseNode();
 		return result;
 	}
 	else
@@ -308,7 +308,7 @@ template <typename T>
 bool DataFile::Serialize_Basic(const en::Array<T*>& object, const char* name)
 {
 	assert(name);
-	if (mParserXml.createChild(name))
+	if (mParserXml.CreateNode(name))
 	{
 		en::U32 elementCount = object.Size();
 		bool result = true;
@@ -327,12 +327,12 @@ bool DataFile::Serialize_Basic(const en::Array<T*>& object, const char* name)
 				// TODO : nullptr check
 			}
 		}
-		mParserXml.setAttribute("elementCount", elementCount);
+		mParserXml.SetAttribute("elementCount", elementCount);
 		if constexpr (en::Meta::IsRegistered<T>())
 		{
-			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassVersion<T>());
+			mParserXml.SetAttribute("elementClassHash", en::Meta::GetClassVersion<T>());
 		}
-		mParserXml.closeNode();
+		mParserXml.CloseNode();
 		return result;
 	}
 	else
@@ -345,7 +345,7 @@ template <typename T>
 bool DataFile::Serialize_Basic(const std::vector<T*>& object, const char* name)
 {
 	assert(name);
-	if (mParserXml.createChild(name))
+	if (mParserXml.CreateNode(name))
 	{
 		en::U32 elementCount = static_cast<en::U32>(object.size());
 		bool result = true;
@@ -364,12 +364,12 @@ bool DataFile::Serialize_Basic(const std::vector<T*>& object, const char* name)
 				// TODO : nullptr check
 			}
 		}
-		mParserXml.setAttribute("elementCount", elementCount);
+		mParserXml.SetAttribute("elementCount", elementCount);
 		if constexpr (en::Meta::IsRegistered<T>())
 		{
-			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassVersion<T>());
+			mParserXml.SetAttribute("elementClassHash", en::Meta::GetClassVersion<T>());
 		}
-		mParserXml.closeNode();
+		mParserXml.CloseNode();
 		return result;
 	}
 	else
@@ -382,7 +382,7 @@ template <typename T, std::size_t N>
 bool DataFile::Serialize_Basic(const std::array<T*, N>& object, const char* name)
 {
 	assert(name);
-	if (mParserXml.createChild(name))
+	if (mParserXml.CreateNode(name))
 	{
 		en::U32 elementCount = static_cast<en::U32>(object.size());
 		bool result = true;
@@ -401,12 +401,12 @@ bool DataFile::Serialize_Basic(const std::array<T*, N>& object, const char* name
 				// TODO : nullptr check
 			}
 		}
-		mParserXml.setAttribute("elementCount", elementCount);
+		mParserXml.SetAttribute("elementCount", elementCount);
 		if constexpr (en::Meta::IsRegistered<T>())
 		{
-			mParserXml.setAttribute("elementClassHash", en::Meta::GetClassVersion<T>());
+			mParserXml.SetAttribute("elementClassHash", en::Meta::GetClassVersion<T>());
 		}
-		mParserXml.closeNode();
+		mParserXml.CloseNode();
 		return result;
 	}
 	else
@@ -437,37 +437,37 @@ template <typename T>
 bool DataFile::Deserialize_Basic(T& object, const char* name)
 {
 	assert(name);
-	if (mParserXml.readNode(name))
+	if (mParserXml.ReadNode(name))
 	{
 		if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, bool>::value)
 		{
 			std::string value;
-			mParserXml.getValue(value);
-			object = en::fromBoolString(value);
+			mParserXml.GetValue(value);
+			object = en::FromBoolString(value);
 		}
 		else if constexpr (en::Traits::IsEnum<T>::value)
 		{
 			std::string value;
-			mParserXml.getValue(value);
+			mParserXml.GetValue(value);
 			object = en::Meta::EnumCast<MyEnum>(value);
 		}
 		else if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, std::string>::value)
 		{
-			mParserXml.getValue(object);
+			mParserXml.GetValue(object);
 		}
 		else if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, en::Time>::value)
 		{
 			std::string value;
-			mParserXml.getValue(value);
-			object = en::seconds(en::fromString<en::F32>(value));
+			mParserXml.GetValue(value);
+			object = en::Time::Seconds(en::FromString<en::F32>(value));
 		}
 		else
 		{
 			std::string value;
-			mParserXml.getValue(value);
-			object = en::fromString<T>(value);
+			mParserXml.GetValue(value);
+			object = en::FromString<T>(value);
 		}
-		mParserXml.closeNode();
+		mParserXml.CloseNode();
 		return true;
 	}
 	else
@@ -480,12 +480,12 @@ template <typename T>
 bool DataFile::Deserialize_Basic(en::Array<T>& object, const char* name)
 {
 	assert(name);
-	if (mParserXml.readNode(name))
+	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
 
 		en::U32 elementCount = 0;
-		mParserXml.getAttribute("elementCount", elementCount);
+		mParserXml.GetAttribute("elementCount", elementCount);
 
 		object.Resize(elementCount); // TODO : T must be default constructible
 
@@ -502,7 +502,7 @@ bool DataFile::Deserialize_Basic(en::Array<T>& object, const char* name)
 			result = Deserialize_Common(object[i], childName.c_str()) && result;
 		}
 
-		mParserXml.closeNode();
+		mParserXml.CloseNode();
 		return result;
 	}
 	else
@@ -515,12 +515,12 @@ template <typename T>
 bool DataFile::Deserialize_Basic(std::vector<T>& object, const char* name)
 {
 	assert(name);
-	if (mParserXml.readNode(name))
+	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
 
 		en::U32 elementCount = 0;
-		mParserXml.getAttribute("elementCount", elementCount);
+		mParserXml.GetAttribute("elementCount", elementCount);
 
 		object.resize(elementCount); // TODO : T must be default constructible
 
@@ -537,7 +537,7 @@ bool DataFile::Deserialize_Basic(std::vector<T>& object, const char* name)
 			result = Deserialize_Common(object[i], childName.c_str()) && result;
 		}
 
-		mParserXml.closeNode();
+		mParserXml.CloseNode();
 		return result;
 	}
 	else
@@ -550,12 +550,12 @@ template <typename T, std::size_t N>
 bool DataFile::Deserialize_Basic(std::array<T, N>& object, const char* name)
 {
 	assert(name);
-	if (mParserXml.readNode(name))
+	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
 
 		en::U32 elementCount = 0;
-		mParserXml.getAttribute("elementCount", elementCount);
+		mParserXml.GetAttribute("elementCount", elementCount);
 		assert(elementCount == static_cast<en::U32>(N));
 
 		if constexpr (en::Meta::IsRegistered<T>())
@@ -571,7 +571,7 @@ bool DataFile::Deserialize_Basic(std::array<T, N>& object, const char* name)
 			result = Deserialize_Common(object[i], childName.c_str()) && result;
 		}
 
-		mParserXml.closeNode();
+		mParserXml.CloseNode();
 		return result;
 	}
 	else
@@ -584,12 +584,12 @@ template <typename T>
 bool DataFile::Deserialize_Basic(en::Array<T*>& object, const char* name)
 {
 	assert(name);
-	if (mParserXml.readNode(name))
+	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
 
 		en::U32 elementCount = 0;
-		mParserXml.getAttribute("elementCount", elementCount);
+		mParserXml.GetAttribute("elementCount", elementCount);
 
 		object.Resize(elementCount); // TODO : T must be default constructible
 
@@ -613,7 +613,7 @@ bool DataFile::Deserialize_Basic(en::Array<T*>& object, const char* name)
 			}
 		}
 
-		mParserXml.closeNode();
+		mParserXml.CloseNode();
 		return result;
 	}
 	else
@@ -626,12 +626,12 @@ template <typename T>
 bool DataFile::Deserialize_Basic(std::vector<T*>& object, const char* name)
 {
 	assert(name);
-	if (mParserXml.readNode(name))
+	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
 
 		en::U32 elementCount = 0;
-		mParserXml.getAttribute("elementCount", elementCount);
+		mParserXml.GetAttribute("elementCount", elementCount);
 
 		object.resize(elementCount); // TODO : T must be default constructible
 
@@ -655,7 +655,7 @@ bool DataFile::Deserialize_Basic(std::vector<T*>& object, const char* name)
 			}
 		}
 
-		mParserXml.closeNode();
+		mParserXml.CloseNode();
 		return result;
 	}
 	else
@@ -668,12 +668,12 @@ template <typename T, std::size_t N>
 bool DataFile::Deserialize_Basic(std::array<T*, N>& object, const char* name)
 {
 	assert(name);
-	if (mParserXml.readNode(name))
+	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
 
 		en::U32 elementCount = 0;
-		mParserXml.getAttribute("elementCount", elementCount);
+		mParserXml.GetAttribute("elementCount", elementCount);
 		assert(elementCount == static_cast<en::U32>(N));
 
 		if constexpr (en::Meta::IsRegistered<T>())
@@ -696,7 +696,7 @@ bool DataFile::Deserialize_Basic(std::array<T*, N>& object, const char* name)
 			}
 		}
 
-		mParserXml.closeNode();
+		mParserXml.CloseNode();
 		return result;
 	}
 	else

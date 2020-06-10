@@ -69,10 +69,11 @@ void MetaEnumTest()
 }
 
 
-enum class LogChannelClient : en::U64
+enum class LogChannelClient
 {
-	Gameplay1 = (1 << 7),
-	Gameplay2 = (1 << 8)
+	Gameplay1 = static_cast<en::U32>(en::LogChannel::Max),
+	Gameplay2,
+	Gameplay3
 };
 
 
@@ -86,21 +87,22 @@ int main()
 	enAssert(!false);
 
 	{
-		en::CallOnExit callWhenScopeEnds([]() { LogInfo(en::LogChannel::System, 9, "CallOnExit::Call() : Scope is now closed"); });
+		en::CallOnExit callWhenScopeEnds([]() { enLogInfo(en::LogChannel::System, "CallOnExit::Call() : Scope is now closed"); });
 	}
 
-	LogInfo(en::LogChannel::System, 9, "ENLIVE_FUNCTION : %s", ENLIVE_FUNCTION);
-	LogInfo(en::LogChannel::System, 9, "ENLIVE_COMPILER_NAME : %s", ENLIVE_COMPILER_NAME);
-	LogInfo(en::LogChannel::System, 9, "ENLIVE_COMPILER_VERSION : %s", ENLIVE_STRINGIFY(ENLIVE_COMPILER_VERSION));
-	LogInfo(en::LogChannel::System, 9, "ENLIVE_COMPILER_STRING : %s", ENLIVE_COMPILER_STRING);
-	LogInfo(en::LogChannel::System, 9, "ENLIVE_PLATFORM_NAME : %s", ENLIVE_PLATFORM_NAME);
-	LogInfo(en::LogChannel::System, 9, "ENLIVE_PLATFORM_DESCRIPTION : %s", ENLIVE_PLATFORM_DESCRIPTION);
+	enLogInfo(en::LogChannel::System, "ENLIVE_FUNCTION : %s", ENLIVE_FUNCTION);
+	enLogInfo(en::LogChannel::System, "ENLIVE_COMPILER_NAME : %s", ENLIVE_COMPILER_NAME);
+	enLogInfo(en::LogChannel::System, "ENLIVE_COMPILER_VERSION : %s", ENLIVE_STRINGIFY(ENLIVE_COMPILER_VERSION));
+	enLogInfo(en::LogChannel::System, "ENLIVE_COMPILER_STRING : %s", ENLIVE_COMPILER_STRING);
+	enLogInfo(en::LogChannel::System, "ENLIVE_PLATFORM_NAME : %s", ENLIVE_PLATFORM_NAME);
+	enLogInfo(en::LogChannel::System, "ENLIVE_PLATFORM_DESCRIPTION : %s", ENLIVE_PLATFORM_DESCRIPTION);
 
 	std::cout << "TestColor" << std::endl;
 
-	en::LogManager::GetInstance().Write(en::LogType::Info, (en::U64)LogChannelClient::Gameplay1, "Test 1");
-	en::LogManager::GetInstance().Write(en::LogType::Warning, (en::U64)LogChannelClient::Gameplay1, "Test 2 : %d", 3);
-	en::LogManager::GetInstance().Write(en::LogType::Error, (en::U64)LogChannelClient::Gameplay1, "Test 3 : %s", "azerty");
+	enLogInfo(LogChannelClient::Gameplay1, "Test 1");
+	enLogWarning(LogChannelClient::Gameplay2, "Test 2 : %d", 3);
+	enLogError(LogChannelClient::Gameplay3, "Test 3 : %s", "azerty");
+	enLogFatal(en::LogChannel::Graphics, "Assert {} {}", __FILE__, __LINE__);
 
 	std::cout << "TestColor" << std::endl;
 		
@@ -112,8 +114,6 @@ int main()
 	*/
 
 	MetaEnumTest();
-
-	LogError(en::LogChannel::All, 10, "Assertion failed!\nExpr : %s\nFile : %s\nLine : %d\n", #expr, __FILE__, __LINE__)
 
 	return 0;
 }

@@ -16,42 +16,36 @@
 namespace en
 {
 
-enum class LogType : U32
+enum class LogType
 {
-	None = 0,
-	Info = (1 << 1),
-	Warning = (1 << 2),
-	Error = (1 << 3),
-	Fatal = (1 << 4),
-	All = U32_Max
+	Info = 0,
+	Warning,
+	Error,
+	Fatal
 };
 
-enum class LogChannel : U64
+enum class LogChannel
 {
-	None = 0,
-	Global = (1 << 0),
-	System = (1 << 1),
-	Math = (1 << 2),
-	Application = (1 << 3),
-	Graphics = (1 << 4),
-	Map = (1 << 5),
-	Animation = (1 << 6),
+	Global = 0,
+	System,
+	Math,
+	Application,
+	Graphics,
+	Map,
+	Animation,
 
 	// TODO : Add others
 
-	AllEngine = (1 << 7) - 1,
-	All = U64_Max,
-	AllClient = All - AllEngine
+	Max
 };
 
 /*
 Register your own LogChannels :
-'x' must follow last engine channel
 
-enum class LogChannelClient : en::U64
+enum class LogChannelClient
 {
-	GameplayChannel1 = (1 << x),
-	GameplayChannel2 = (1 << x+1),
+	GameplayChannel1 = static_cast<en::U32>(en::LogChannel::Max),
+	GameplayChannel2
 	...
 };
 
@@ -61,7 +55,7 @@ Then use LogManager::InitializeClientChannels<LogChannelClient>() in your main a
 struct LogMessage
 {
 	std::string message; // TODO : Might this be transformed to string_view ?
-	U64 channel; 
+	U32 channel; 
 	LogType type;
 
 	std::string_view GetTypeString() const;
@@ -84,7 +78,7 @@ public:
 	void SetChannelFilter(U64 channelFilter);
 	U64 GetChannelFilter() const;
 
-	bool PassFilters(LogType type, U64 channelID) const;
+	bool PassFilters(LogType type, U32 channelID) const;
 
 	virtual void Write(const LogMessage& message) = 0;
 
@@ -104,7 +98,7 @@ class LogManager
 
 public:
 	template <typename... Args>
-	void Write(LogType type, U64 channelID, std::string_view formatStr, Args&& ...args);
+	void Write(LogType type, U32 channelID, std::string_view formatStr, Args&& ...args);
 
 	void SetTypeFilter(U32 typeFilter);
 	U32 GetTypeFilter() const;
@@ -112,13 +106,13 @@ public:
 	void SetChannelFilter(U64 channelFilter);
 	U64 GetChannelFilter() const;
 
-	bool PassFilters(LogType type, U64 channelID) const;
+	bool PassFilters(LogType type, U32 channelID) const;
 
 	U32 GetLoggerCount() const;
 
 	template <typename EnumClient>
 	bool InitializeClientChannels();
-	std::string_view GetChannelString(U64 channelID) const;
+	std::string_view GetChannelString(U32 channelID) const;
 
 private:
 	friend class Logger;
@@ -130,12 +124,12 @@ private:
 	std::vector<Logger*> mLoggers;
 	std::vector<std::string_view> mUserChannelStrings;
 	Logger* mDefaultLogger;
-	U32 mTypeFilter;
 	U64 mChannelFilter;
+	U32 mTypeFilter;
 };
 
 template <typename... Args>
-void LogManager::Write(LogType type, U64 channelID, std::string_view formatStr, Args&& ...args)
+void LogManager::Write(LogType type, U32 channelID, std::string_view formatStr, Args&& ...args)
 {
 	if (PassFilters(type, channelID))
 	{
@@ -157,37 +151,21 @@ void LogManager::Write(LogType type, U64 channelID, std::string_view formatStr, 
 template <typename EnumClient>
 bool LogManager::InitializeClientChannels()
 {
-	const auto enumValues = magic_enum::enum_values<EnumClient>();
+	const auto enumValues = Meta::GetEnumValues<EnumClient>();
 	mUserChannelStrings.clear();
-	mUserChannelStrings.reserve(enumValues.size());
-	bool valid = enumValues.size() > 0;
-	U64 nextChannelID = 0;
-	for (const auto& enumValue : enumValues)
+	if (static_cast<U32>(enumValues[0]) == static_cast<U32>(LogChannel::Max))
 	{
-		if (valid)
+		mUserChannelStrings.reserve(enumValues.size());
+		for (const auto& enumValue : enumValues)
 		{
-			if (nextChannelID == 0)
-			{
-				valid = (static_cast<U64>(enumValue) == static_cast<U64>(LogChannel::AllEngine) + 1);
-				nextChannelID = static_cast<U64>(enumValue) * 2;
-			}
-			else
-			{
-				valid = (static_cast<U64>(enumValue) == nextChannelID);
-				nextChannelID *= 2;
-			}
-
-			if (valid)
-			{
-				mUserChannelStrings.push_back(Meta::GetEnumName(enumValue));
-			}
+			mUserChannelStrings.push_back(Meta::GetEnumName(enumValue));
 		}
+		return true;
 	}
-	if (!valid)
+	else
 	{
-		mUserChannelStrings.clear();
+		return false;
 	}
-	return valid;
 }
 
 class ConsoleLogger : public Logger
@@ -220,7 +198,7 @@ private:
 	std::string mFilename;
 };
 
-#if defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC)
+#if defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC) && defined(ENLIVE_DEBUG)
 class VisualStudioLogger : public Logger
 {
 public:
@@ -234,18 +212,20 @@ private:
 	static VisualStudioLogger sVisualStudioLogger;
 #endif // ENLIVE_ENABLE_DEFAULT_LOGGER
 };
-#endif // defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC)
+#endif // defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC) && defined(ENLIVE_DEBUG)
 
 } // namespace en
 
-#define LogInfo(channel, importance, message, ...) //::en::LogManager::GetInstance().Write(en::LogType::Info, channel, message, __VA_ARGS__);
-#define LogWarning(channel, importance, message, ...) //::en::LogManager::GetInstance().Write(en::LogType::Warning, channel, message, __VA_ARGS__);
-#define LogError(channel, importance, message, ...) //::en::LogManager::GetInstance().Write(en::LogType::Error, channel, message, __VA_ARGS__);
+#define enLogInfo(channel, message, ...) ::en::LogManager::GetInstance().Write(::en::LogType::Info, static_cast<::en::U32>(channel), message, __VA_ARGS__);
+#define enLogWarning(channel, message, ...) ::en::LogManager::GetInstance().Write(::en::LogType::Warning, static_cast<::en::U32>(channel), message, __VA_ARGS__);
+#define enLogError(channel, message, ...) ::en::LogManager::GetInstance().Write(::en::LogType::Error, static_cast<::en::U32>(channel), message, __VA_ARGS__);
+#define enLogFatal(channel, message, ...) ::en::LogManager::GetInstance().Write(::en::LogType::Fatal, static_cast<::en::U32>(channel), message, __VA_ARGS__);
 
 #else
 
-#define LogInfo(channel, importance, message, ...)
-#define LogWarning(channel, importance, message, ...)
-#define LogError(channel, importance, message, ...)
+#define enLogInfo(channel, message, ...) 
+#define enLogWarning(channel, message, ...) 
+#define enLogError(channel, message, ...) 
+#define enLogFatal(channel, message, ...) 
 
 #endif // ENLIVE_ENABLE_LOG
