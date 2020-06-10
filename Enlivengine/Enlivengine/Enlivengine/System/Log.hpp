@@ -197,6 +197,11 @@ public:
 	virtual ~ConsoleLogger();
 
 	virtual void Write(const LogMessage& message);
+
+#ifdef ENLIVE_ENABLE_DEFAULT_LOGGER
+private:
+	static ConsoleLogger sConsoleLogger;
+#endif // ENLIVE_ENABLE_DEFAULT_LOGGER
 };
 
 class FileLogger : public Logger
@@ -223,6 +228,11 @@ public:
 	virtual ~VisualStudioLogger();
 
 	virtual void Write(const LogMessage& message);
+
+#ifdef ENLIVE_ENABLE_DEFAULT_LOGGER
+private:
+	static VisualStudioLogger sVisualStudioLogger;
+#endif // ENLIVE_ENABLE_DEFAULT_LOGGER
 };
 #endif // defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC)
 

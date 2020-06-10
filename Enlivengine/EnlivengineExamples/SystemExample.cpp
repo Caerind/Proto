@@ -82,8 +82,6 @@ int main()
 	en::LogManager::GetInstance().InitializeClientChannels<LogChannelClient>();
 #endif // ENLIVE_ENABLE_LOG
 
-	en::ConsoleLogger consoleLogger;
-
 	enAssert(true);
 	enAssert(!false);
 
@@ -98,8 +96,13 @@ int main()
 	LogInfo(en::LogChannel::System, 9, "ENLIVE_PLATFORM_NAME : %s", ENLIVE_PLATFORM_NAME);
 	LogInfo(en::LogChannel::System, 9, "ENLIVE_PLATFORM_DESCRIPTION : %s", ENLIVE_PLATFORM_DESCRIPTION);
 
+	std::cout << "TestColor" << std::endl;
+
 	en::LogManager::GetInstance().Write(en::LogType::Info, (en::U64)LogChannelClient::Gameplay1, "Test 1");
-	en::LogManager::GetInstance().Write(en::LogType::Info, (en::U64)LogChannelClient::Gameplay1, "Test 2 : %d", 3);
+	en::LogManager::GetInstance().Write(en::LogType::Warning, (en::U64)LogChannelClient::Gameplay1, "Test 2 : %d", 3);
+	en::LogManager::GetInstance().Write(en::LogType::Error, (en::U64)LogChannelClient::Gameplay1, "Test 3 : %s", "azerty");
+
+	std::cout << "TestColor" << std::endl;
 		
 	/*	
 	LogInfo(en::LogChannel::System, 9, "A: %s", en::TypeInfo<A>::GetName());

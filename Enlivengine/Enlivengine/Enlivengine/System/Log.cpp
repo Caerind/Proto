@@ -14,6 +14,13 @@
 namespace en
 {
 
+#ifdef ENLIVE_ENABLE_DEFAULT_LOGGER
+ConsoleLogger ConsoleLogger::sConsoleLogger;
+#if defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC)
+VisualStudioLogger VisualStudioLogger::sVisualStudioLogger;
+#endif // defined(ENLIVE_PLATFORM_WINDOWS) && defined(ENLIVE_COMPILER_MSVC)
+#endif // ENLIVE_ENABLE_DEFAULT_LOGGER
+
 std::string_view LogMessage::GetTypeString() const
 {
 	return Meta::GetEnumName(type);
@@ -205,23 +212,47 @@ void ConsoleLogger::Write(const LogMessage& message)
 	switch (message.type)
 	{
 	case LogType::Warning: 
-		SetConsoleTextAttribute(hConsole, 14); 
+		SetConsoleTextAttribute(hConsole, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN);
 		break;
 	case LogType::Error:
 	case LogType::Fatal: 
-		SetConsoleTextAttribute(hConsole, 10); 
+		SetConsoleTextAttribute(hConsole, FOREGROUND_INTENSITY | FOREGROUND_RED);
 		break;
 	case LogType::Info: 
-	default: 
-		SetConsoleTextAttribute(hConsole, 15); 
+	default:
+		SetConsoleTextAttribute(hConsole, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 		break;
 	}
-#endif // ENLIVE_PLATFORM_WINDOWS
 
 	fmt::print("[{}][{}] {}\n",
 		message.GetTypeString(),
 		message.GetChannelString(),
 		message.GetMessageString());
+
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+#endif // ENLIVE_PLATFORM_WINDOWS
+
+#ifdef ENLIVE_PLATFORM_UNIX
+	char colorChar;
+	switch (message.type)
+	{
+	case LogType::Warning:
+		colorChar = '\e[34m';
+		break;
+	case LogType::Error:
+	case LogType::Fatal:
+		colorChar = '\e[31m';
+		break;
+	case LogType::Info:
+	default:
+		colorChar = '\e[0m';
+		break;
+	}
+	fmt::print("{}[{}][{}] {}\e[0m\n",
+		message.GetTypeString(),
+		message.GetChannelString(),
+		message.GetMessageString());
+#endif // ENLIVE_PLATFORM_UNIX
 }
 
 FileLogger::FileLogger(const std::string& filename)
