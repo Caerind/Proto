@@ -44,23 +44,6 @@ GameState::GameState(en::StateManager& manager)
 	mDisplay = 0;
 	mTexture.loadFromImage(mMapImage);
 
-	{
-		struct Azertyu
-		{
-			en::Array<en::U32> a;
-		};
-
-		Azertyu a1;
-		a1.a.Add(1);
-		a1.a.Add(2);
-		a1.a.Add(3);
-		a1.a.Add(4);
-		a1.a.Add(5);
-
-		Azertyu a2 = a1;
-
-	}
-
 	Vector2Test v1;
 	v1.x = -10;
 	v1.y = +10;
@@ -141,29 +124,56 @@ bool GameState::update(en::Time dt)
 
 	if (ImGui::Begin("ObjectEditor"))
 	{
-		if (ImGui::Button("Save"))
+		if (ImGui::Button("Save As"))
 		{
 			DataFile file;
-			file.CreateEmptyFile();
+			file.LoadFromFile("DataFileGame.xml");
 			file.Serialize(mAs, "As");
+			file.SaveToFile("DataFileGame.xml");
+		}
+		ImGui::SameLine(); 
+		if (ImGui::Button("Load As"))
+		{
+			mAs.DeleteAll();
+			mAs.Clear();
+
+			DataFile file;
+			file.LoadFromFile("DataFileGame.xml");
+			file.Deserialize(mAs, "As");
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Clear As"))
+		{
+			mAs.DeleteAll();
+			mAs.Clear();
+		}
+		ObjectEditor::ImGuiEditor(mAs, "As");
+
+		if (ImGui::Button("Save A"))
+		{
+			DataFile file;
+			file.LoadFromFile("DataFileGame.xml");
 			file.Serialize(mAaa, "A");
 			file.SaveToFile("DataFileGame.xml");
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Load"))
+		if (ImGui::Button("Load A"))
 		{
-			mAs.DeleteAll();
-			mAs.Clear();
 			mAaa.DeleteAll();
 			mAaa.Clear();
 
 			DataFile file;
 			file.LoadFromFile("DataFileGame.xml");
-			file.Deserialize(mAs, "As");
 			file.Deserialize(mAaa, "A");
 		}
-		ObjectEditor::ImGuiEditor(mAs, "As");
+		ImGui::SameLine();
+		if (ImGui::Button("Clear A"))
+		{
+			mAaa.DeleteAll();
+			mAaa.Clear();
+		}
 		ObjectEditor::ImGuiEditor(mAaa, "A");
+
 		if (mTestFactory != nullptr)
 		{
 			ObjectEditor::ImGuiEditor(mTestFactory, "TestFactory");

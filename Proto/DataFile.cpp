@@ -1,10 +1,9 @@
 #include "DataFile.hpp"
 
-#include <iostream>
-
-DataFile::DataFile()
+DataFile::DataFile(bool readable)
 	: mParserXml()
 	, mValid(false)
+	, mReadable(readable)
 {
 }
 
@@ -22,7 +21,7 @@ bool DataFile::CreateEmptyFile()
 	}
 	else
 	{
-		// TODO : LogError : Can't create "DataFile" root node for DataFile %s
+		enLogError(en::LogChannel::Global, "Can't create \"DataFile\" root node for new DataFile");
 		mValid = false;
 	}
 	return mValid;
@@ -38,14 +37,14 @@ bool DataFile::LoadFromFile(const std::string& filename)
 		}
 		else
 		{
+			enLogError(en::LogChannel::Global, "Can't find \"DataFile\" root node for DataFile {}", filename);
 			mValid = false;
-			// TODO : LogError : Root node "DataFile" is missing for DataFile %s
 		}
 	}
 	else
 	{
+		enLogError(en::LogChannel::Global, "Invalid DataFile file {}", filename);
 		mValid = false;
-		// TODO : LogError : Invalid filename
 	}
 	return mValid;
 }
@@ -53,4 +52,19 @@ bool DataFile::LoadFromFile(const std::string& filename)
 bool DataFile::SaveToFile(const std::string& filename)
 {
 	return mParserXml.SaveToFile(filename);
+}
+
+en::U32 DataFile::ReadCurrentType() const
+{
+	// TODO : Improve perfs of this method based on mReadable for non debug versions
+	std::string typeStr;
+	mParserXml.GetAttribute("type", typeStr);
+	if (en::IsNumber(typeStr))
+	{
+		return en::FromString<en::U32>(typeStr);
+	}
+	else
+	{
+		return en::Hash::ConstexprHash(typeStr.c_str());
+	}
 }

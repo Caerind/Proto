@@ -64,6 +64,14 @@ void ToUpper(std::string& string)
 	});
 }
 
+bool IsNumber(const std::string& string)
+{
+	return !string.empty() && std::find_if(string.begin(), string.end(), [](unsigned char c)
+	{ 
+		return !std::isdigit(c) && c != '-' && c != '.'; 
+	}) == string.end();
+}
+
 void ToLower(const std::string& string, std::string& result)
 {
 	result = string;

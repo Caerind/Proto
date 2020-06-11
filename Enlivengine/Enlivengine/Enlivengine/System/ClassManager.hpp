@@ -44,6 +44,19 @@ public:
 		}
 	}
 
+	static const char* GetClassNameFromHash(U32 classHash)
+	{
+		const auto itr = mClasses.find(classHash);
+		if (itr != mClasses.end())
+		{
+			return itr->second.name;
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+
 	static void* CreateClassFromHash(U32 classHash)
 	{
 		const auto itr = mClasses.find(classHash);
@@ -74,18 +87,9 @@ public:
 		static_assert(Meta::IsRegistered<T>() && TypeInfo<T>::IsKnown());
 		constexpr U32 hash = TypeInfo<T>::GetHash();
 		mClasses[hash].name = TypeInfo<T>::GetName();
-		mClasses[hash].size = TypeInfo<T>::GetSize();
-		mClasses[hash].align = TypeInfo<T>::GetAlign();
 		mClasses[hash].factory = []()
 		{
-#ifdef ENLIVE_ENABLE_DEBUG_MEMORY
-			constexpr U32 stringStorageSize = StringLength("ClassManager::") + StringLength(TypeInfo<T>::GetName()) + 1;
-			constexpr ConstexprStringStorage stringStorage = ConstexprStringStorage<stringStorageSize>("ClassManager::", TypeInfo<T>::GetName());
-			constexpr const char* context = stringStorage.GetData();
-#else
-			constexpr const char* context = nullptr;
-#endif // ENLIVE_ENABLE_DEBUG_MEMORY
-			return (void*)enNew(T, context); 
+			return (void*)enNew(T, TypeInfo<T>::GetName());
 		};
 		return true;
 	}
@@ -95,8 +99,6 @@ private:
 	{
 		const char* name;
 		std::function<void* ()> factory;
-		U32 size;
-		U32 align;
 	};
 	static std::unordered_map<U32, ClassInfo> mClasses;
 };

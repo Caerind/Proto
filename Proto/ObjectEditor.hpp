@@ -213,27 +213,6 @@ private:
 	}
 
 	template <typename T>
-	static bool ImGuiEditor_Basic(std::vector<T>& object, const char* name)
-	{
-		assert(name != nullptr);
-		bool modified = false;
-		if (ImGui::CollapsingHeader(name))
-		{
-			ImGui::Indent();
-			for (std::size_t i = 0; i < object.size(); ++i)
-			{
-				std::string childName(name);
-				childName.append("[");
-				childName.append(std::to_string(i));
-				childName.append("]");
-				modified = ImGuiEditor_Common(object[i], childName.c_str()) || modified;
-			}
-			ImGui::Unindent();
-		}
-		return modified;
-	}
-
-	template <typename T>
 	static bool ImGuiEditor_Basic(en::Array<T>& object, const char* name)
 	{
 		assert(name != nullptr);
@@ -247,7 +226,32 @@ private:
 				childName.append("[");
 				childName.append(std::to_string(i));
 				childName.append("]");
+				ImGui::PushID(i);
 				modified = ImGuiEditor_Common(object[i], childName.c_str()) || modified;
+				ImGui::PopID();
+			}
+			ImGui::Unindent();
+		}
+		return modified;
+	}
+
+	template <typename T>
+	static bool ImGuiEditor_Basic(std::vector<T>& object, const char* name)
+	{
+		assert(name != nullptr);
+		bool modified = false;
+		if (ImGui::CollapsingHeader(name))
+		{
+			ImGui::Indent();
+			for (std::size_t i = 0; i < object.size(); ++i)
+			{
+				std::string childName(name);
+				childName.append("[");
+				childName.append(std::to_string(i));
+				childName.append("]");
+				ImGui::PushID(i);
+				modified = ImGuiEditor_Common(object[i], childName.c_str()) || modified;
+				ImGui::PopID();
 			}
 			ImGui::Unindent();
 		}
@@ -268,35 +272,9 @@ private:
 				childName.append("[");
 				childName.append(std::to_string(i));
 				childName.append("]");
+				ImGui::PushID(i);
 				modified = ImGuiEditor_Common(object[i], childName.c_str()) || modified;
-			}
-			ImGui::Unindent();
-		}
-		return modified;
-	}
-
-	template <typename T>
-	static bool ImGuiEditor_Basic(std::vector<T*>& object, const char* name)
-	{
-		assert(name != nullptr);
-		bool modified = false;
-		if (ImGui::CollapsingHeader(name))
-		{
-			ImGui::Indent();
-			for (std::size_t i = 0; i < object.size(); ++i)
-			{
-				std::string childName(name);
-				childName.append("[");
-				childName.append(std::to_string(i));
-				childName.append("]");
-				if (object[i] != nullptr)
-				{
-					modified = ImGuiEditor_Common(*object[i], childName.c_str()) || modified;
-				}
-				else
-				{
-					// TODO : nullptr check
-				}
+				ImGui::PopID();
 			}
 			ImGui::Unindent();
 		}
@@ -319,7 +297,39 @@ private:
 				childName.append("]");
 				if (object[i] != nullptr)
 				{
+					ImGui::PushID(i);
 					modified = ImGuiEditor_Common(*object[i], childName.c_str()) || modified;
+					ImGui::PopID();
+				}
+				else
+				{
+					// TODO : nullptr check
+				}
+			}
+			ImGui::Unindent();
+		}
+		return modified;
+	}
+
+	template <typename T>
+	static bool ImGuiEditor_Basic(std::vector<T*>& object, const char* name)
+	{
+		assert(name != nullptr);
+		bool modified = false;
+		if (ImGui::CollapsingHeader(name))
+		{
+			ImGui::Indent();
+			for (std::size_t i = 0; i < object.size(); ++i)
+			{
+				std::string childName(name);
+				childName.append("[");
+				childName.append(std::to_string(i));
+				childName.append("]");
+				if (object[i] != nullptr)
+				{
+					ImGui::PushID(i);
+					modified = ImGuiEditor_Common(*object[i], childName.c_str()) || modified;
+					ImGui::PopID();
 				}
 				else
 				{
@@ -347,7 +357,9 @@ private:
 				childName.append("]");
 				if (object[i] != nullptr)
 				{
+					ImGui::PushID(i);
 					modified = ImGuiEditor_Common(*object[i], childName.c_str()) || modified;
+					ImGui::PopID();
 				}
 				else
 				{

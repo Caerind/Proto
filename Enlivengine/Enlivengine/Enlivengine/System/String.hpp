@@ -23,6 +23,8 @@ void ToUpper(std::string& string);
 void ToLower(const std::string& string, std::string& result);
 void ToUpper(const std::string& string, std::string& result);
 
+bool IsNumber(const std::string& string);
+
 bool Split(std::string& base, std::string& result, char separator);
 bool Split(std::string& base, std::string& result, const std::string& separator);
 

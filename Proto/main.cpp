@@ -19,8 +19,8 @@ int main(int argc, char** argv)
 
 	{
 		// TODO : Do something about type info for pointers
-		printf("%s\n", en::TypeInfo<en::Array<en::U32>>::GetName());
-		printf("%s\n", en::TypeInfo<en::Array<en::U32*>>::GetName());
+		enLogInfo(en::LogChannel::Global, "{}", en::TypeInfo<en::Array<en::U32>>::GetName());
+		enLogInfo(en::LogChannel::Global, "{}", en::TypeInfo<en::Array<en::U32*>>::GetName());
 
 		if (argc >= 1)
 		{
@@ -44,7 +44,7 @@ int main(int argc, char** argv)
 		const auto& blocks = en::MemoryAllocator::GetDebugAllocator().GetBlocks();
 		for (const auto& block : blocks)
 		{
-			printf("%s (%p): %d from %s:%d\n", block.context, block.ptr, block.size, block.GetFile().c_str(), block.line);
+			enLogInfo(en::LogChannel::Global, "%s (%p): %d from %s:%d\n", block.context, block.ptr, block.size, block.GetFile().c_str(), block.line);
 		}
 	}
 #endif // ENLIVE_ENABLE_DEBUG_MEMORY
