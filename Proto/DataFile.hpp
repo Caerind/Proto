@@ -156,6 +156,7 @@ bool DataFile::Deserialize_Registered(T& object, const char* name)
 	static_assert(en::Meta::IsRegistered<T>());
 	if (mParserXml.ReadNode(name))
 	{
+		bool result = true;
 		const en::U32 typeHash = ReadCurrentType();
 		if (typeHash == en::TypeInfo<T>::GetHash())
 		{
@@ -166,10 +167,11 @@ bool DataFile::Deserialize_Registered(T& object, const char* name)
 		}
 		else
 		{
-			// TODO : Type mismatch ?
+			enLogWarning(en::LogChannel::Global, "Type mismatch for {}", name);
+			result = false;
 		}
 		mParserXml.CloseNode();
-		return true;
+		return result;
 	}
 	else
 	{
@@ -431,6 +433,7 @@ bool DataFile::Deserialize_Basic(T& object, const char* name)
 	assert(name);
 	if (mParserXml.ReadNode(name))
 	{
+		bool result = true;
 		const en::U32 typeHash = ReadCurrentType();
 		if (typeHash == en::TypeInfo<T>::GetHash())
 		{
@@ -465,10 +468,11 @@ bool DataFile::Deserialize_Basic(T& object, const char* name)
 		}
 		else
 		{
-			// TODO : Type mismatch ?
+			enLogWarning(en::LogChannel::Global, "Type mismatch for {}", name);
+			result = false;
 		}
 		mParserXml.CloseNode();
-		return true;
+		return result;
 	}
 	else
 	{
@@ -488,6 +492,7 @@ bool DataFile::Deserialize_Basic(en::Array<T>& object, const char* name)
 		{
 			en::U32 size = 0;
 			mParserXml.GetAttribute("size", size);
+			object.Clear();
 			object.Resize(size);
 			if constexpr (!en::Traits::IsDefaultConstructible<T>::value)
 			{
@@ -505,7 +510,9 @@ bool DataFile::Deserialize_Basic(en::Array<T>& object, const char* name)
 		}
 		else
 		{
-			// TODO : Type mismatch ?
+			enLogWarning(en::LogChannel::Global, "Type mismatch for {}", name);
+			object.Clear();
+			result = false;
 		}
 		mParserXml.CloseNode();
 		return result;
@@ -528,6 +535,7 @@ bool DataFile::Deserialize_Basic(std::vector<T>& object, const char* name)
 		{
 			en::U32 size = 0;
 			mParserXml.GetAttribute("size", size);
+			object.clear();
 			object.resize(static_cast<std::size_t>(size));
 			if constexpr (!en::Traits::IsDefaultConstructible<T>:value)
 			{
@@ -545,7 +553,9 @@ bool DataFile::Deserialize_Basic(std::vector<T>& object, const char* name)
 		}
 		else
 		{
-			// TODO : Type mismatch ?
+			enLogWarning(en::LogChannel::Global, "Type mismatch for {}", name);
+			object.clear();
+			result = false;
 		}
 		mParserXml.CloseNode();
 		return result;
@@ -590,7 +600,8 @@ bool DataFile::Deserialize_Basic(std::array<T, N>& object, const char* name)
 		}
 		else
 		{
-			// TODO : Type mismatch ?
+			enLogWarning(en::LogChannel::Global, "Type mismatch for {}", name);
+			result = false;
 		}
 		mParserXml.CloseNode();
 		return result;
@@ -613,6 +624,7 @@ bool DataFile::Deserialize_Basic(en::Array<T*>& object, const char* name)
 		{
 			en::U32 size = 0;
 			mParserXml.GetAttribute("size", size);
+			object.Clear();
 			object.Resize(size);
 
 			for (en::U32 i = 0; i < size; ++i)
@@ -650,7 +662,9 @@ bool DataFile::Deserialize_Basic(en::Array<T*>& object, const char* name)
 		}
 		else
 		{
-			// TODO : Type mismatch ?
+			enLogWarning(en::LogChannel::Global, "Type mismatch for {}", name);
+			object.Clear();
+			result = false;
 		}
 
 		mParserXml.CloseNode();
@@ -674,6 +688,7 @@ bool DataFile::Deserialize_Basic(std::vector<T*>& object, const char* name)
 		{
 			en::U32 size = 0;
 			mParserXml.GetAttribute("size", size);
+			object.clear();
 			object.resize(static_cast<std::size_t>(size));
 
 			for (en::U32 i = 0; i < size; ++i)
@@ -711,7 +726,9 @@ bool DataFile::Deserialize_Basic(std::vector<T*>& object, const char* name)
 		}
 		else
 		{
-			// TODO : Type mismatch ?
+			enLogWarning(en::LogChannel::Global, "Type mismatch for {}", name);
+			object.clear();
+			result = false;
 		}
 
 		mParserXml.CloseNode();
@@ -777,7 +794,8 @@ bool DataFile::Deserialize_Basic(std::array<T*, N>& object, const char* name)
 		}
 		else
 		{
-			// TODO : Type mismatch ?
+			enLogWarning(en::LogChannel::Global, "Type mismatch for {}", name);
+			result = false;
 		}
 
 		mParserXml.CloseNode();
