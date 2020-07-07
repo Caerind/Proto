@@ -2,8 +2,8 @@
 
 #include <Enlivengine/System/PrimitiveTypes.hpp>
 
+#include <Enlivengine/Math/Color.hpp>
 #include <Enlivengine/Math/Vector2.hpp>
-#include <Enlivengine/Graphics/Color.hpp>
 #include <Enlivengine/Graphics/SFMLResources.hpp>
 
 namespace en

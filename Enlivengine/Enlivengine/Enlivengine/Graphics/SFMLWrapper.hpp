@@ -12,8 +12,8 @@
 #include <Enlivengine/Math/Vector4.hpp>
 #include <Enlivengine/Math/Matrix4.hpp>
 #include <Enlivengine/Math/Rect.hpp>
+#include <Enlivengine/Math/Color.hpp>
 #include <Enlivengine/System/Time.hpp>
-#include <Enlivengine/Graphics/Color.hpp>
 
 namespace en
 {

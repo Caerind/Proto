@@ -2,7 +2,7 @@
 
 #include <Enlivengine/System/Profiler.hpp>
 #include <Enlivengine/Application/Application.hpp>
-#include <Enlivengine/Graphics/LinearColor.hpp>
+#include <Enlivengine/Math/Color.hpp>
 #include <Enlivengine/Graphics/SFMLWrapper.hpp>
 #include <Enlivengine/System/ClassManager.hpp>
 
@@ -29,15 +29,15 @@ GameState::GameState(en::StateManager& manager)
 	mTemperatureNoise.SetFractalGain(5.0f);
 	mTemperatureImage.create(1024, 768);
 	//NoiseToImage(mTemperatureNoise, mTemperatureImage);
-	mTemperatureGradient[0.0f] = sf::Color(0, 0, 255);
-	mTemperatureGradient[0.25f] = sf::Color(0, 255, 255);
-	mTemperatureGradient[0.5f] = sf::Color(0, 255, 0);
-	mTemperatureGradient[0.75f] = sf::Color(255, 255, 0);
-	mTemperatureGradient[1.0f] = sf::Color(255, 0, 0);
+	mTemperatureGradient[0.0f] = en::Color(0, 0, 255);
+	mTemperatureGradient[0.25f] = en::Color(0, 255, 255);
+	mTemperatureGradient[0.5f] = en::Color(0, 255, 0);
+	mTemperatureGradient[0.75f] = en::Color(255, 255, 0);
+	mTemperatureGradient[1.0f] = en::Color(255, 0, 0);
 
-	mWaterGradient[0.0f] = sf::Color(63, 72, 204);
-	mWaterGradient[0.5f] = sf::Color(0, 162, 232);
-	mWaterGradient[1.0f] = sf::Color(153, 217, 234);
+	mWaterGradient[0.0f] = en::Color(63, 72, 204);
+	mWaterGradient[0.5f] = en::Color(0, 162, 232);
+	mWaterGradient[1.0f] = en::Color(153, 217, 234);
 	mMapImage.create(1024, 768);
 	UpdateMap();
 
@@ -268,7 +268,7 @@ void GameState::UpdateTemperature()
 		for (en::F32 y = 0; y < height; y += 1.0f)
 		{
 			const en::F32 temperature = (mTemperatureNoise.Get(x, y) * 0.5f + 0.5f);
-			mTemperatureImage.setPixel((unsigned int)x, (unsigned int)y, mTemperatureGradient.GetSampleColor(temperature));
+			mTemperatureImage.setPixel((unsigned int)x, (unsigned int)y, en::toSF(mTemperatureGradient.GetSampleColor(temperature)));
 		}
 	}
 }
@@ -285,7 +285,7 @@ void GameState::UpdateMap()
 			en::F32 humidity = mHumidityNoise.Get(xf, yf) * 0.5f + 0.5f; // [0, 1]
 			en::F32 temperature = mTemperatureNoise.Get(xf, yf) * 0.5f + 0.5f; // [0, 1]
 
-			sf::Color color;
+			en::Color color;
 			if (elevation < 0.35f)
 			{
 				const en::F32 waterDeepFactor = elevation / 0.35f;
@@ -293,35 +293,35 @@ void GameState::UpdateMap()
 			}
 			else if (elevation < 0.45f)
 			{
-				en::U8 hum = humidity * humidity * humidity * 200;
-				color = sf::Color(232, 211, 160);
+				const en::U8 hum = humidity * humidity * humidity * 200;
+				color = en::Color(232, 211, 160);
 				color.r -= hum;
 				color.g -= hum;
 				color.b -= hum;
 			}
 			else if (elevation > 0.85f)
 			{
-				color = sf::Color::White;
+				color = en::Color::White;
 			}
 			else if (elevation > 0.80f)
 			{
-				color = sf::Color(97, 97, 97);
+				color = en::Color(97, 97, 97);
 			}
 			else if (elevation > 0.70f)
 			{
-				color = sf::Color(87, 44, 0);
+				color = en::Color(87, 44, 0);
 			}
 			else
 			{
-				en::F32 invTemp = 1.0f - temperature;
-				en::U8 temp = invTemp * invTemp * invTemp * 200;
-				color = sf::Color(46, 122, 79); // Moderate
+				const en::F32 invTemp = 1.0f - temperature;
+				const en::U8 temp = invTemp * invTemp * invTemp * 200;
+				color = en::Color(46, 122, 79); // Moderate
 				color.r += temp;
 				color.g += temp;
 				color.b += temp;
 			}
 
-			mMapImage.setPixel(x, y, color);
+			mMapImage.setPixel(x, y, en::toSF(color));
 		}
 	}
 }

@@ -4,7 +4,7 @@
 
 #include <imgui/imgui.h>
 #include <Enlivengine/System/Hash.hpp>
-#include <Enlivengine/Graphics/LinearColor.hpp>
+#include <Enlivengine/Math/Color.hpp>
 
 namespace en
 {
@@ -193,8 +193,8 @@ void ImGuiProfiler::DisplayFrame(const ProfilerFrame& frame) const
 				if (width >= 1.0f)
 				{
 					const U32 taskNameHash = Hash::Meow32(task.name);
-					const LinearColor color(taskNameHash);
-					const ImVec4 imColor(color.r, color.g, color.b, 1.0f);
+					const Color color(taskNameHash);
+					const ImVec4 imColor = color.toImGuiColor();
 
 					ImGui::PushStyleColor(ImGuiCol_Button, imColor);
 					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, imColor);

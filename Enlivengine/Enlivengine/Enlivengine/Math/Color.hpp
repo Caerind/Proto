@@ -20,7 +20,6 @@ class Color
 		Color(U8 red, U8 green, U8 blue, U8 alpha = 255);
 		Color(U8 lightness);
 		Color(U32 color);
-		Color(const LinearColor& color);
 		Color(const std::string& color);
 
 		U8& operator[](U8 index);
@@ -35,9 +34,6 @@ class Color
 
 		U32 toInteger() const;
 		Color& fromInteger(U32 color);
-
-		LinearColor toLinearColor() const;
-		Color& fromLinearColor(const LinearColor& color);
 
 #ifdef ENLIVE_ENABLE_IMGUI
 		ImVec4 toImGuiColor() const;

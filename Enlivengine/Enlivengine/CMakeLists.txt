@@ -48,6 +48,8 @@ source_group("System" FILES ${SRC_SYSTEM})
 set(SRC_MATH
 	Enlivengine/Math/AABB.cpp
 	Enlivengine/Math/AABB.hpp
+	Enlivengine/Math/Color.cpp
+	Enlivengine/Math/Color.hpp
 	Enlivengine/Math/Distribution.hpp
 	Enlivengine/Math/Frustum.cpp
 	Enlivengine/Math/Frustum.hpp
@@ -84,12 +86,8 @@ set(SRC_GRAPHICS
 	Enlivengine/Graphics/AnimationController.hpp
 	Enlivengine/Graphics/AnimationStateMachine.cpp
 	Enlivengine/Graphics/AnimationStateMachine.hpp
-	Enlivengine/Graphics/Color.cpp
-	Enlivengine/Graphics/Color.hpp
 	Enlivengine/Graphics/DebugDraw.cpp
 	Enlivengine/Graphics/DebugDraw.hpp
-	Enlivengine/Graphics/LinearColor.cpp
-	Enlivengine/Graphics/LinearColor.hpp
 	Enlivengine/Graphics/ScreenshotSystem.cpp
 	Enlivengine/Graphics/ScreenshotSystem.hpp
 	Enlivengine/Graphics/SFMLResources.cpp

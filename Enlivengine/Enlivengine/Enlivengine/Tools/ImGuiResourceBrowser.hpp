@@ -46,7 +46,7 @@ public:
 
 		static Type DetectTypeFromFilename(const std::string& filename);
 		static const char* ResourceInfoTypeToString(Type type);
-		static const LinearColor& ResourceInfoTypeToColor(Type type);
+		static const Color& ResourceInfoTypeToColor(Type type);
 	};
 
 private:

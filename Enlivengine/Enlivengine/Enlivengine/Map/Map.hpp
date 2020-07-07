@@ -3,8 +3,8 @@
 #include <Enlivengine/System/PrimitiveTypes.hpp>
 
 #include <Enlivengine/Math/Vector2.hpp>
+#include <Enlivengine/Math/Color.hpp>
 #include <Enlivengine/Graphics/SFMLResources.hpp>
-#include <Enlivengine/Graphics/Color.hpp>
 
 #include <Enlivengine/Map/PropertyHolder.hpp>
 #include <Enlivengine/Map/Tileset.hpp>

@@ -1,6 +1,5 @@
-#include <Enlivengine/Graphics/Color.hpp>
+#include <Enlivengine/Math/Color.hpp>
 
-#include <Enlivengine/Graphics/LinearColor.hpp>
 #include <Enlivengine/Math/Utilities.hpp>
 #include <Enlivengine/System/Assert.hpp>
 
@@ -99,11 +98,6 @@ Color::Color(U32 color)
 	fromInteger(color);
 }
 
-Color::Color(const LinearColor& color)
-{
-	fromLinearColor(color);
-}
-
 Color::Color(const std::string& color)
 {
 	fromString(color);
@@ -170,20 +164,6 @@ Color& Color::fromInteger(U32 color)
 	g = static_cast<U8>((color & 0x00ff0000) >> 16);
 	b = static_cast<U8>((color & 0x0000ff00) >> 8);
 	a = static_cast<U8>((color & 0x000000ff) >> 0);
-	return *this;
-}
-
-LinearColor Color::toLinearColor() const
-{
-	return LinearColor(r * 0.00392156862f, g * 0.00392156862f, b * 0.00392156862f, a * 0.00392156862f);
-}
-
-Color& Color::fromLinearColor(const LinearColor& color)
-{
-	r = U8(Math::Clamp(color.r, 0.0f, 1.0f) * 255.0f);
-	g = U8(Math::Clamp(color.g, 0.0f, 1.0f) * 255.0f);
-	b = U8(Math::Clamp(color.b, 0.0f, 1.0f) * 255.0f);
-	a = U8(Math::Clamp(color.a, 0.0f, 1.0f) * 255.0f);
 	return *this;
 }
 

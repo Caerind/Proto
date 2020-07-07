@@ -9,7 +9,7 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 
-#include <Enlivengine/Graphics/Color.hpp>
+#include <Enlivengine/Math/Color.hpp>
 #include <Enlivengine/Math/Rect.hpp>
 
 namespace en

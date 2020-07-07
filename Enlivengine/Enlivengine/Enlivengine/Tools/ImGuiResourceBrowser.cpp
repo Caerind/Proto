@@ -10,8 +10,8 @@
 
 #include <Enlivengine/Application/PathManager.hpp>
 #include <Enlivengine/Application/Application.hpp>
-#include <Enlivengine/Graphics/LinearColor.hpp>
 #include <Enlivengine/System/ParserXml.hpp>
+#include <Enlivengine/Math/Color.hpp>
 
 #include <Enlivengine/Tools/ImGuiHelper.hpp>
 #include <Enlivengine/Tools/ImGuiAnimationEditor.hpp>
@@ -31,29 +31,29 @@ namespace en
 ImGuiResourceBrowser::ImGuiResourceBrowser()
 	: ImGuiTool()
 {
-	ImGuiFileDialog::Instance()->SetFilterColor(".ttf", ResourceInfo::ResourceInfoTypeToColor(ResourceInfo::Type::Font).withAlpha(0.8f).toImGuiColor());
+	ImGuiFileDialog::Instance()->SetFilterColor(".ttf", ResourceInfo::ResourceInfoTypeToColor(ResourceInfo::Type::Font).withAlpha(200).toImGuiColor());
 
-	ImGuiFileDialog::Instance()->SetFilterColor(".tmx", ResourceInfo::ResourceInfoTypeToColor(ResourceInfo::Type::Map).withAlpha(0.7f).toImGuiColor());
-	ImGuiFileDialog::Instance()->SetFilterColor(".tsx", ResourceInfo::ResourceInfoTypeToColor(ResourceInfo::Type::Tileset).withAlpha(0.8f).toImGuiColor());
+	ImGuiFileDialog::Instance()->SetFilterColor(".tmx", ResourceInfo::ResourceInfoTypeToColor(ResourceInfo::Type::Map).withAlpha(200).toImGuiColor());
+	ImGuiFileDialog::Instance()->SetFilterColor(".tsx", ResourceInfo::ResourceInfoTypeToColor(ResourceInfo::Type::Tileset).withAlpha(200).toImGuiColor());
 
-	ImGuiFileDialog::Instance()->SetFilterColor(".ogg", ResourceInfo::ResourceInfoTypeToColor(ResourceInfo::Type::Music).withAlpha(0.8f).toImGuiColor());
+	ImGuiFileDialog::Instance()->SetFilterColor(".ogg", ResourceInfo::ResourceInfoTypeToColor(ResourceInfo::Type::Music).withAlpha(200).toImGuiColor());
 
-	ImGuiFileDialog::Instance()->SetFilterColor(".wav", ResourceInfo::ResourceInfoTypeToColor(ResourceInfo::Type::Sound).withAlpha(0.8f).toImGuiColor());
+	ImGuiFileDialog::Instance()->SetFilterColor(".wav", ResourceInfo::ResourceInfoTypeToColor(ResourceInfo::Type::Sound).withAlpha(200).toImGuiColor());
 
-	ImGuiFileDialog::Instance()->SetFilterColor(".png", ResourceInfo::ResourceInfoTypeToColor(ResourceInfo::Type::Texture).withAlpha(0.8f).toImGuiColor());
-	ImGuiFileDialog::Instance()->SetFilterColor(".jpg", ResourceInfo::ResourceInfoTypeToColor(ResourceInfo::Type::Texture).withAlpha(0.8f).toImGuiColor());
+	ImGuiFileDialog::Instance()->SetFilterColor(".png", ResourceInfo::ResourceInfoTypeToColor(ResourceInfo::Type::Texture).withAlpha(200).toImGuiColor());
+	ImGuiFileDialog::Instance()->SetFilterColor(".jpg", ResourceInfo::ResourceInfoTypeToColor(ResourceInfo::Type::Texture).withAlpha(200).toImGuiColor());
 
-	ImGuiFileDialog::Instance()->SetFilterColor(".astm", ResourceInfo::ResourceInfoTypeToColor(ResourceInfo::Type::AnimationStateMachine).withAlpha(0.8f).toImGuiColor());
+	ImGuiFileDialog::Instance()->SetFilterColor(".astm", ResourceInfo::ResourceInfoTypeToColor(ResourceInfo::Type::AnimationStateMachine).withAlpha(200).toImGuiColor());
 
-	ImGuiFileDialog::Instance()->SetFilterColor(".cpp", LinearColor::Yellow.withAlpha(0.8f).toImGuiColor());
-	ImGuiFileDialog::Instance()->SetFilterColor(".h", LinearColor::Yellow.withAlpha(0.8f).toImGuiColor());
-	ImGuiFileDialog::Instance()->SetFilterColor(".hpp", LinearColor::Yellow.withAlpha(0.8f).toImGuiColor());
-	ImGuiFileDialog::Instance()->SetFilterColor(".inl", LinearColor::Yellow.withAlpha(0.8f).toImGuiColor());
+	ImGuiFileDialog::Instance()->SetFilterColor(".cpp", Color::Yellow.withAlpha(200).toImGuiColor());
+	ImGuiFileDialog::Instance()->SetFilterColor(".h", Color::Yellow.withAlpha(200).toImGuiColor());
+	ImGuiFileDialog::Instance()->SetFilterColor(".hpp", Color::Yellow.withAlpha(200).toImGuiColor());
+	ImGuiFileDialog::Instance()->SetFilterColor(".inl", Color::Yellow.withAlpha(200).toImGuiColor());
 
-	ImGuiFileDialog::Instance()->SetFilterColor(".json", LinearColor::LightGreen.withAlpha(0.8f).toImGuiColor());
-	ImGuiFileDialog::Instance()->SetFilterColor(".xml", LinearColor::LightBlue.withAlpha(0.8f).toImGuiColor());
-	ImGuiFileDialog::Instance()->SetFilterColor(".txt", LinearColor::Magenta.withAlpha(0.8f).toImGuiColor());
-	ImGuiFileDialog::Instance()->SetFilterColor(".md", LinearColor::Mint.withAlpha(0.8f).toImGuiColor());
+	ImGuiFileDialog::Instance()->SetFilterColor(".json", Color::LightGreen.withAlpha(200).toImGuiColor());
+	ImGuiFileDialog::Instance()->SetFilterColor(".xml", Color::LightBlue.withAlpha(200).toImGuiColor());
+	ImGuiFileDialog::Instance()->SetFilterColor(".txt", Color::Magenta.withAlpha(200).toImGuiColor());
+	ImGuiFileDialog::Instance()->SetFilterColor(".md", Color::Mint.withAlpha(200).toImGuiColor());
 }
 
 ImGuiToolTab ImGuiResourceBrowser::GetTab() const
@@ -383,19 +383,19 @@ const char* ImGuiResourceBrowser::ResourceInfo::ResourceInfoTypeToString(Type ty
 	return "";
 }
 
-const LinearColor& ImGuiResourceBrowser::ResourceInfo::ResourceInfoTypeToColor(Type type)
+const Color& ImGuiResourceBrowser::ResourceInfo::ResourceInfoTypeToColor(Type type)
 {
-	static const LinearColor& unknownColor = LinearColor::Red;
-	static LinearColor resourceInfoTypeColors[static_cast<U32>(ResourceInfo::Type::Count)] = 
+	static const Color& unknownColor = Color::Red;
+	static Color resourceInfoTypeColors[static_cast<U32>(ResourceInfo::Type::Count)] = 
 	{
-		LinearColor::Orange, // Font
-		LinearColor::Cyan, // Texture
-		LinearColor::Peach, // Tileset
-		LinearColor::Lime, // Map
-		LinearColor::DarkGreen, // Animation
-		LinearColor::DarkYellow, // AnimationStateMachine
-		LinearColor::BabyPink, // Music
-		LinearColor::HotPink, // Sound
+		Color::Orange, // Font
+		Color::Cyan, // Texture
+		Color::Peach, // Tileset
+		Color::Lime, // Map
+		Color::DarkGreen, // Animation
+		Color::DarkYellow, // AnimationStateMachine
+		Color::BabyPink, // Music
+		Color::HotPink, // Sound
 	};
 	if (type == ResourceInfo::Type::Unknown)
 	{

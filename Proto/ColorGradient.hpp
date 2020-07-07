@@ -2,7 +2,7 @@
 
 #include <Enlivengine/System/Assert.hpp>
 #include <Enlivengine/System/PrimitiveTypes.hpp>
-#include <SFML/Graphics/Color.hpp>
+#include <Enlivengine/Math/Color.hpp>
 #include <map>
 
 class ColorGradient
@@ -12,19 +12,19 @@ public:
 	{
 	}
 
-	sf::Color& operator[](en::F32 position)
+	en::Color& operator[](en::F32 position)
 	{
 		assert(position >= 0.0f && position <= 1.0f);
 		return mColors[position];
 	}
 
-	const sf::Color& operator[](en::F32 position) const
+	const en::Color& operator[](en::F32 position) const
 	{
 		assert(position >= 0.0f && position <= 1.0f);
 		return mColors.at(position);
 	}
 
-	sf::Color GetSampleColor(en::F32 position) const
+	en::Color GetSampleColor(en::F32 position) const
 	{
 		// Make sure the positions 0 and 1 are set
 		assert(mColors.count(0.0f) && mColors.count(1.0f));
@@ -42,19 +42,19 @@ public:
 		return BlendColors(prevColor->second, nextColor->second, interpolation);
 	}
 
-	static sf::Color BlendColors(const sf::Color& firstColor, const sf::Color& secondColor, en::F32 interpolation)
+	static en::Color BlendColors(const en::Color& firstColor, const en::Color& secondColor, en::F32 interpolation)
 	{
 		assert(interpolation >= 0.f && interpolation <= 1.f);
 
 		const en::F32 firstPart = 1.f - interpolation;
 
-		return sf::Color(
-			static_cast<sf::Uint8>(firstPart * firstColor.r + interpolation * secondColor.r),
-			static_cast<sf::Uint8>(firstPart * firstColor.g + interpolation * secondColor.g),
-			static_cast<sf::Uint8>(firstPart * firstColor.b + interpolation * secondColor.b),
-			static_cast<sf::Uint8>(firstPart * firstColor.a + interpolation * secondColor.a));
+		return en::Color(
+			static_cast<en::U8>(firstPart * firstColor.r + interpolation * secondColor.r),
+			static_cast<en::U8>(firstPart * firstColor.g + interpolation * secondColor.g),
+			static_cast<en::U8>(firstPart * firstColor.b + interpolation * secondColor.b),
+			static_cast<en::U8>(firstPart * firstColor.a + interpolation * secondColor.a));
 	}
 
 private:
-	std::map<en::F32, sf::Color> mColors;
+	std::map<en::F32, en::Color> mColors;
 };
