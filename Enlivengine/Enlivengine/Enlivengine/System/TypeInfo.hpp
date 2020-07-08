@@ -8,7 +8,6 @@
 // TODO : Define in some other place (along with math stuffs, color, date, ...)
 #include <array>
 #include <vector>
-#include <Enlivengine/System/Time.hpp>
 
 namespace en
 {
@@ -68,7 +67,6 @@ ENLIVE_DEFINE_TYPE_INFO(en::U64)
 ENLIVE_DEFINE_TYPE_INFO(en::F32)
 ENLIVE_DEFINE_TYPE_INFO(en::F64)
 ENLIVE_DEFINE_TYPE_INFO(std::string)
-ENLIVE_DEFINE_TYPE_INFO(en::Time)
 
 namespace en
 {

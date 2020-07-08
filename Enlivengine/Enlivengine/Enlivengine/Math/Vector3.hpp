@@ -2,8 +2,8 @@
 
 #include <Enlivengine/Math/Utilities.hpp>
 #include <Enlivengine/Math/Vector2.hpp>
+#include <Enlivengine/System/TypeInfo.hpp>
 
-// TODO : Vector3 Aligned ?
 // TODO : constexpr
 
 namespace en
@@ -713,3 +713,5 @@ typedef Vector3<U32> Vector3u;
 typedef Vector3f vec3; // GLSL-like
 
 } // namespace en
+
+ENLIVE_DEFINE_TYPE_INFO_TEMPLATE(en::Vector3);

@@ -2,6 +2,7 @@
 
 #include <Enlivengine/Math/Utilities.hpp>
 #include <Enlivengine/Math/Vector3.hpp>
+#include <Enlivengine/System/TypeInfo.hpp>
 
 namespace en
 {
@@ -779,3 +780,5 @@ typedef Vector4<unsigned int>	Vector4u;
 typedef Vector4f vec4; // GLSL-like
 
 } // namespace en
+
+ENLIVE_DEFINE_TYPE_INFO_TEMPLATE(en::Vector4);

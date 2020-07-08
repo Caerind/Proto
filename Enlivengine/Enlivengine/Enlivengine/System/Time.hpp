@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Enlivengine/System/PrimitiveTypes.hpp>
+#include <Enlivengine/System/TypeInfo.hpp>
 
 namespace en
 {
@@ -137,3 +138,5 @@ private:
 };
 
 } // namespace en
+
+ENLIVE_DEFINE_TYPE_INFO(en::Time);

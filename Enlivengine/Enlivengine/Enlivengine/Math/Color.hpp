@@ -3,6 +3,7 @@
 #include <string>
 
 #include <Enlivengine/System/PrimitiveTypes.hpp>
+#include <Enlivengine/System/TypeInfo.hpp>
 
 #ifdef ENLIVE_ENABLE_IMGUI
 #include <imgui/imgui.h>
@@ -123,3 +124,5 @@ Color& operator-=(Color& left, const Color& right);
 Color& operator*=(Color& left, const Color& right);
 
 } // namespace en
+
+ENLIVE_DEFINE_TYPE_INFO(en::Color);

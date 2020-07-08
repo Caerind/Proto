@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Enlivengine/Math/Utilities.hpp>
+#include <Enlivengine/System/TypeInfo.hpp>
 
 // TODO : constexpr
 
@@ -631,3 +632,5 @@ typedef Vector2<U32> Vector2u;
 typedef Vector2f vec2; // GLSL-like
 
 } // namespace en
+
+ENLIVE_DEFINE_TYPE_INFO_TEMPLATE(en::Vector2);
