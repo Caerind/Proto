@@ -97,7 +97,7 @@ struct CustomSerialization<TestClassA>
 };
 */
 
-static_assert(!en::Traits::IsPolymorphic<TestClassA>::value); // This is used to ensure we don't had any virtual to TestClassA
+static_assert(!en::Traits::IsPolymorphic<TestClassA>::value); // This is used to ensure we don't add any virtual to TestClassA
 
 ENLIVE_META_CLASS_BEGIN(TestClassA)
 	ENLIVE_META_CLASS_MEMBER("a", &TestClassA::a),

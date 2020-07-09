@@ -69,6 +69,12 @@ constexpr Member<Class, T> RegisterMember(const char* name, T Class::* memberPtr
 }
 
 template <typename T>
+constexpr bool IsRegistered()
+{
+	return false;
+}
+
+template <typename T>
 constexpr auto RegisterMembers()
 {
 	return std::make_tuple();
@@ -88,16 +94,12 @@ namespace priv
 #define ENLIVE_META_CLASS_BEGIN(className) ENLIVE_DEFINE_TYPE_INFO(className) \
 	namespace en::Meta { \
 		template <> \
+		constexpr bool IsRegistered<className>() { return true; } \
+		template <> \
 		constexpr auto RegisterMembers<className>() { return std::make_tuple(
 #define ENLIVE_META_CLASS_MEMBER(name, ptr) en::Meta::RegisterMember(name, ptr)
 #define ENLIVE_META_CLASS_MEMBER_EX(name, ptr, attributes) en::Meta::RegisterMember(name, ptr, attributes)
 #define ENLIVE_META_CLASS_END() ); } }
-
-template <typename T>
-constexpr bool IsRegistered()
-{
-	return !Traits::IsSame<std::tuple<>, decltype(RegisterMembers<T>())>::value;
-}
 
 template <typename T>
 constexpr const auto& GetMembers()

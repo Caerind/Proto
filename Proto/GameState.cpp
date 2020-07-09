@@ -97,6 +97,13 @@ GameState::GameState(en::StateManager& manager)
 	mAaa.Add(mC);
 
 	mTestFactory = (Aaa*)en::ClassManager::CreateClassFromHash(en::TypeInfo<Bbb>::GetHash());
+
+	mEntity.mManager = &mManager;
+	mEntity.mEntity = mManager.mRegistry.create();
+	auto& name = mManager.mRegistry.assign<en::NameComponent>(mEntity.mEntity);
+	name.name = "TestEntity";
+	auto& position = mManager.mRegistry.assign<en::PositionComponent>(mEntity.mEntity);
+	position.position = en::Vector2f(200.0f, 100.0f);
 }
 
 GameState::~GameState()
@@ -173,6 +180,8 @@ bool GameState::update(en::Time dt)
 			mAaa.Clear();
 		}
 		ObjectEditor::ImGuiEditor(mAaa, "A");
+
+		ObjectEditor::ImGuiEditor(mEntity, "TestEntityEditor");
 
 		if (mTestFactory != nullptr)
 		{

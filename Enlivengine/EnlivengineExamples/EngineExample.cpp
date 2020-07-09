@@ -19,7 +19,7 @@
 #include <Enlivengine/Application/StateManager.hpp>
 #include <Enlivengine/Application/Application.hpp>
 
-#include <Enlivengine/Core/Components.hpp>
+//#include <Enlivengine/Core/Components.hpp>
 
 #include <Box2D/Box2D.h>
 
@@ -100,6 +100,7 @@ public:
 
 	void render(sf::RenderTarget& target) 
 	{
+		/*
 		mRegistry.sort<en::RenderableComponent>([](const auto& lhs, const auto& rhs) 
 		{
 			return lhs.z < rhs.z;
@@ -131,10 +132,12 @@ public:
 				target.draw(mRegistry.get<en::TextComponent>(entity), states);
 			}
 		}
+		*/
 	}
 
 	void createEntity(en::F32 x, en::F32 y)
 	{
+		/*
 		auto entity = mRegistry.create();
 		auto& position = mRegistry.assign<en::PositionComponent>(entity);
 		position.setPosition(x, y);
@@ -151,6 +154,7 @@ public:
 		text.setFillColor(sf::Color::White);
 		text.setOutlineColor(sf::Color::Black);
 		text.setOutlineThickness(1.f);
+		*/
 	}
 
 private:

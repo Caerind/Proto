@@ -4,8 +4,11 @@ set(SRC_PROTO
 	BlueprintEditor.cpp
 	BlueprintEditor.hpp
 	ColorGradient.hpp
+	Components.cpp
+	Components.hpp
 	DataFile.cpp
 	DataFile.hpp
+	DataFileSpecialization.hpp
 	GameSingleton.cpp
 	GameSingleton.hpp
 	GameState.cpp
@@ -15,6 +18,7 @@ set(SRC_PROTO
 	Meta.hpp
 	ObjectEditor.cpp
 	ObjectEditor.hpp
+	ObjectEditorSpecialization.hpp
 )
 source_group("" FILES ${SRC_PROTO})
 

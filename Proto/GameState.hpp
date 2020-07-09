@@ -5,6 +5,8 @@
 #include <Enlivengine/Math/Noise.hpp>
 #include <SFML/Graphics.hpp>
 
+#include "Components.hpp"
+
 #include "ColorGradient.hpp"
 
 #include "Meta.hpp"
@@ -52,4 +54,7 @@ private:
 	en::Array<Aaa*> mAaa;
 
 	Aaa* mTestFactory;
+
+	en::EntityManager mManager;
+	en::Entity mEntity;
 };

@@ -186,6 +186,25 @@ private:
 			}
 			return false;
 		}
+		else if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, en::Time>::value)
+		{
+			static constexpr std::size_t maxSize = 256;
+			static char concatName[maxSize];
+#ifdef ENLIVE_COMPILER_MSVC
+			strcpy_s(concatName, name);
+			strcat_s(concatName, " (s)");
+#else
+			strcpy(concatName, name);
+			strcat(concatName, " (s)");
+#endif // ENLIVE_COMPILER_MSVC
+			float value = static_cast<float>(object.AsSeconds());
+			if (ImGui::InputFloat(concatName, &value))
+			{
+				object = en::Time::Seconds(value);
+				return true;
+			}
+			return false;
+		}
 		else
 		{
 			ImGui::Text("%s type is not implemented for imgui for %s", en::TypeInfo<T>::GetName(), name);

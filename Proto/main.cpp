@@ -9,6 +9,10 @@
 #include <Enlivengine/System/String.hpp>
 #include <Enlivengine/System/ClassManager.hpp>
 
+#include "Components.hpp"
+
+#include "ObjectEditorSpecialization.hpp"
+
 int main(int argc, char** argv)
 {
 	// TODO : Find a better way to register
@@ -16,6 +20,17 @@ int main(int argc, char** argv)
 	en::ClassManager::Register<Aaa>();
 	en::ClassManager::Register<Bbb>();
 	en::ClassManager::Register<Ccc>();
+
+	en::ClassManager::Register<en::Component>();
+	en::ComponentManager::Register<en::Component>();
+#ifdef ENLIVE_DEBUG
+	en::ClassManager::Register<en::NameComponent>();
+	en::ComponentManager::Register<en::NameComponent>();
+#endif // ENLIVE_DEBUG
+	en::ClassManager::Register<en::PositionComponent>();
+	en::ComponentManager::Register<en::PositionComponent>();
+
+
 
 	{
 		// TODO : Do something about type info for pointers

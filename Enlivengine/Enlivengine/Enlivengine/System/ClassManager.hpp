@@ -84,7 +84,8 @@ public:
 	template <typename T>
 	static bool Register()
 	{
-		static_assert(Meta::IsRegistered<T>() && TypeInfo<T>::IsKnown());
+		static_assert(Meta::IsRegistered<T>());
+		static_assert(TypeInfo<T>::IsKnown());
 		constexpr U32 hash = TypeInfo<T>::GetHash();
 		mClasses[hash].name = TypeInfo<T>::GetName();
 		mClasses[hash].factory = []()
@@ -102,48 +103,5 @@ private:
 	};
 	static std::unordered_map<U32, ClassInfo> mClasses;
 };
-
-// Custom ImGui Editor
-#define ENLIVE_META_CLASS_DEFAULT_TRAITS_VIRTUAL_IMGUI_EDITOR(className) \
-	template <> \
-	struct CustomImGuiEditor<className> \
-	{ \
-		static constexpr bool value = true; \
-		static bool ImGuiEditor(className& object, const char* name) \
-		{ \
-			return object.ImGuiEditor(name); \
-		} \
-	};
-#define ENLIVE_META_CLASS_DEFAULT_VIRTUAL_IMGUI_EDITOR() \
-	virtual bool ImGuiEditor(const char* name) \
-	{ \
-		 return ObjectEditor::ImGuiEditor_Registered(*this, name); \
-	}
-
-// Custom Serialization
-#define ENLIVE_META_CLASS_DEFAULT_TRAITS_VIRTUAL_SERIALIZATION(className) \
-	template <> \
-	struct CustomSerialization<className> \
-	{ \
-		static constexpr bool value = true; \
-		static bool Serialize(DataFile& dataFile, const className& object, const char* name) \
-		{ \
-			return object.Serialize(dataFile, name); \
-		} \
-		static bool Deserialize(DataFile& dataFile, className& object, const char* name) \
-		{ \
-			return object.Deserialize(dataFile, name); \
-		} \
-	};
-#define ENLIVE_META_CLASS_DEFAULT_VIRTUAL_SERIALIZATION() \
-	virtual bool Serialize(DataFile& dataFile, const char* name) const \
-	{ \
-		 return dataFile.Serialize_Registered(*this, name); \
-	} \
-	virtual bool Deserialize(DataFile& dataFile, const char* name) \
-	{ \
-		 return dataFile.Deserialize_Registered(*this, name); \
-	}
-
 
 } // namespace en

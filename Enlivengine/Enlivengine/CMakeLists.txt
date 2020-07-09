@@ -147,7 +147,6 @@ set(SRC_APPLICATION
 source_group("Application" FILES ${SRC_APPLICATION})
 
 set(SRC_CORE
-	Enlivengine/Core/Components.hpp
 )
 source_group("Core" FILES ${SRC_CORE})
 
