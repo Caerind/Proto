@@ -5,7 +5,10 @@
 #include <Enlivengine/Math/Noise.hpp>
 #include <SFML/Graphics.hpp>
 
+#include "CoreComponents.hpp"
 #include "Components.hpp"
+#include "EntityManager.hpp"
+#include "Entity.hpp"
 
 #include "ColorGradient.hpp"
 

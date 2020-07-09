@@ -42,6 +42,8 @@ public:
 
 	inline Vector3<T> getColumn(U32 i) const;
 	inline Vector3<T> getRow(U32 j) const;
+	inline Matrix3<T>& setColumn(U32 i, const Vector3<T>& column);
+	inline Matrix3<T>& setRow(U32 j, const Vector3<T>& row);
 
 	inline Matrix3<T>& operator=(const Matrix3<T> & m);
 	inline const Matrix3<T>& operator+() const;
@@ -256,6 +258,24 @@ template<typename T>
 inline Vector3<T> Matrix3<T>::getRow(U32 j) const
 {
 	return Vector3<T>(data[j], data[j + rows * 1], data[j + rows * 2]);
+}
+
+template<typename T>
+inline Matrix3<T>& Matrix3<T>::setColumn(U32 i, const Vector3<T>& column)
+{
+	data[0 + rows * i] = column.x;
+	data[1 + rows * i] = column.y;
+	data[2 + rows * i] = column.z;
+	return *this;
+}
+
+template<typename T>
+inline Matrix3<T>& Matrix3<T>::setRow(U32 j, const Vector3<T>& row)
+{
+	data[j + rows * 0] = row.x;
+	data[j + rows * 1] = row.y;
+	data[j + rows * 2] = row.z;
+	return *this;
 }
 
 template<typename T>

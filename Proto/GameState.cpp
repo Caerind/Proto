@@ -98,12 +98,12 @@ GameState::GameState(en::StateManager& manager)
 
 	mTestFactory = (Aaa*)en::ClassManager::CreateClassFromHash(en::TypeInfo<Bbb>::GetHash());
 
-	mEntity.mManager = &mManager;
-	mEntity.mEntity = mManager.mRegistry.create();
-	auto& name = mManager.mRegistry.assign<en::NameComponent>(mEntity.mEntity);
-	name.name = "TestEntity";
-	auto& position = mManager.mRegistry.assign<en::PositionComponent>(mEntity.mEntity);
-	position.position = en::Vector2f(200.0f, 100.0f);
+	mEntity = mManager.CreateEntity();
+	mEntity.Add<en::NameComponent>("TestEntity");
+	mEntity.Add<en::PositionComponent>(en::Vector2f(200.0f, 100.0f));
+
+	en::Entity tempEntity = mManager.CreateEntity();
+	tempEntity.Add<en::NameComponent>();
 }
 
 GameState::~GameState()
@@ -128,6 +128,23 @@ bool GameState::update(en::Time dt)
 	{
 		return false;
 	}
+
+
+	int i = 0;
+	mManager.Each([&i, this](auto ent)
+	{
+		en::Entity entity(mManager, ent);
+		enLogInfo(en::LogChannel::System, "TestEntity {} : {}", i, entity.GetName()); ++i; }
+	);
+
+	int j = 0;
+	auto view = mManager.View<en::PositionComponent>();
+	for (auto ent : view)
+	{
+		en::Entity entity(mManager, ent);
+		enLogInfo(en::LogChannel::System, "TestPositionEntity {}", j); ++j;
+	}
+
 
 	if (ImGui::Begin("ObjectEditor"))
 	{
@@ -182,6 +199,7 @@ bool GameState::update(en::Time dt)
 		ObjectEditor::ImGuiEditor(mAaa, "A");
 
 		ObjectEditor::ImGuiEditor(mEntity, "TestEntityEditor");
+		ObjectEditor::ImGuiEditor(mManager, "TestEntityManager");
 
 		if (mTestFactory != nullptr)
 		{

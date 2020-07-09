@@ -4,11 +4,17 @@ set(SRC_PROTO
 	BlueprintEditor.cpp
 	BlueprintEditor.hpp
 	ColorGradient.hpp
-	Components.cpp
+	ComponentManager.cpp
+	ComponentManager.hpp
 	Components.hpp
+	CoreComponents.hpp
 	DataFile.cpp
 	DataFile.hpp
 	DataFileSpecialization.hpp
+	Entity.cpp
+	Entity.hpp
+	EntityManager.cpp
+	EntityManager.hpp
 	GameSingleton.cpp
 	GameSingleton.hpp
 	GameState.cpp

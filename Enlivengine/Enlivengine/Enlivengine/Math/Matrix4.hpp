@@ -47,6 +47,8 @@ public:
 
 	inline Vector4<T> getColumn(U32 i) const;
 	inline Vector4<T> getRow(U32 j) const;
+	inline Matrix4<T>& setColumn(U32 i, const Vector4<T>& column);
+	inline Matrix4<T>& setRow(U32 j, const Vector4<T>& row);
 
 	inline Matrix4<T>& operator=(const Matrix4<T>& m);
 	inline const Matrix4<T>& operator+() const;
@@ -409,6 +411,26 @@ template<typename T>
 inline Vector4<T> Matrix4<T>::getRow(U32 j) const
 {
 	return Vector4<T>(data[j + rows * 0], data[j + rows * 1], data[j + rows * 2], data[j + rows * 3]);
+}
+
+template<typename T>
+inline Matrix4<T>& Matrix4<T>::setColumn(U32 i, const Vector4<T>& column)
+{
+	data[0 + rows * i] = column.x;
+	data[1 + rows * i] = column.y;
+	data[2 + rows * i] = column.z;
+	data[3 + rows * i] = column.w;
+	return *this;
+}
+
+template<typename T>
+inline Matrix4<T>& Matrix4<T>::setRow(U32 j, const Vector4<T>& row)
+{
+	data[j + rows * 0] = row.x;
+	data[j + rows * 1] = row.y;
+	data[j + rows * 2] = row.z;
+	data[j + rows * 3] = row.w;
+	return *this;
 }
 
 template<typename T>
