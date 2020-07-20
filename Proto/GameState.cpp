@@ -13,9 +13,6 @@ GameState::GameState(en::StateManager& manager)
 	, mAs("mAs")
 	, mAaa("mAaa")
 {
-	en::ImGuiBlueprintEditor::GetInstance().Register();
-	en::ImGuiBlueprintEditor::GetInstance().Initialize();
-
 	mElevationNoise.SetNoiseType(en::Noise::NoiseType::SimplexFractal);
 	mElevationImage.create(1024, 768);
 	NoiseToImage(mElevationNoise, mElevationImage);
@@ -129,7 +126,7 @@ bool GameState::update(en::Time dt)
 		return false;
 	}
 
-
+	/*
 	int i = 0;
 	mManager.Each([&i, this](auto ent)
 	{
@@ -144,7 +141,7 @@ bool GameState::update(en::Time dt)
 		en::Entity entity(mManager, ent);
 		enLogInfo(en::LogChannel::System, "TestPositionEntity {}", j); ++j;
 	}
-
+	*/
 
 	if (ImGui::Begin("ObjectEditor"))
 	{

@@ -11,8 +11,6 @@
 #include <Enlivengine/Math/Matrix4.hpp>
 #include <Enlivengine/Math/Quaternion.hpp>
 
-#include "Entity.hpp"
-
 // en::Time
 template <>
 struct CustomImGuiEditor<en::Time>
@@ -291,4 +289,7 @@ struct CustomImGuiEditor<en::Quaternion<T>>
 };
 
 // en::Entity
+// TODO : Figure how to move it here
+
+// en::EntityManager
 // TODO : Figure how to move it here

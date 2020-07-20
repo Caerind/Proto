@@ -2,7 +2,6 @@
 
 #include <Enlivengine/Math/Utilities.hpp>
 #include <Enlivengine/Math/Vector2.hpp>
-#include <Enlivengine/System/TypeInfo.hpp>
 
 // TODO : constexpr
 

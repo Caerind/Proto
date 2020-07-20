@@ -3,7 +3,7 @@
 #include <string>
 
 #include <Enlivengine/System/PrimitiveTypes.hpp>
-#include <Enlivengine/System/TypeInfo.hpp>
+#include <Enlivengine/System/Meta.hpp>
 
 #ifdef ENLIVE_ENABLE_IMGUI
 #include <imgui/imgui.h>
@@ -11,8 +11,6 @@
 
 namespace en
 {
-
-class LinearColor;
 
 class Color
 {
@@ -125,4 +123,9 @@ Color& operator*=(Color& left, const Color& right);
 
 } // namespace en
 
-ENLIVE_DEFINE_TYPE_INFO(en::Color);
+ENLIVE_META_CLASS_BEGIN(en::Color)
+	ENLIVE_META_CLASS_MEMBER("r", &en::Color::r),
+	ENLIVE_META_CLASS_MEMBER("g", &en::Color::g),
+	ENLIVE_META_CLASS_MEMBER("b", &en::Color::b),
+	ENLIVE_META_CLASS_MEMBER("a", &en::Color::a)
+ENLIVE_META_CLASS_END()

@@ -86,7 +86,7 @@ template <>
 struct CustomSerialization<TestClassA>
 {
 	static constexpr bool value = true;
-	static bool Serialize(DataFile& dataFile, const TestClassA& object, const char* name) const
+	static bool Serialize(DataFile& dataFile, const TestClassA& object, const char* name)
 	{
 		return dataFile.Serialize_Registered(object, name);
 	}

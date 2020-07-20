@@ -14,7 +14,6 @@
 
 #include "Meta.hpp"
 
-#include "BlueprintEditor.hpp"
 #include "ObjectEditor.hpp"
 #include "DataFile.hpp"
 

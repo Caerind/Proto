@@ -13,6 +13,7 @@
 #include "Components.hpp"
 
 #include "ObjectEditorSpecialization.hpp"
+#include "DataFileSpecialization.hpp"
 
 int main(int argc, char** argv)
 {

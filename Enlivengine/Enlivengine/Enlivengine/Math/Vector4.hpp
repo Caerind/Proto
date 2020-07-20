@@ -2,7 +2,6 @@
 
 #include <Enlivengine/Math/Utilities.hpp>
 #include <Enlivengine/Math/Vector3.hpp>
-#include <Enlivengine/System/TypeInfo.hpp>
 
 namespace en
 {

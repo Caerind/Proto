@@ -1,8 +1,4 @@
 set(SRC_PROTO
-	Blueprint.cpp
-	Blueprint.hpp
-	BlueprintEditor.cpp
-	BlueprintEditor.hpp
 	ColorGradient.hpp
 	ComponentManager.cpp
 	ComponentManager.hpp
