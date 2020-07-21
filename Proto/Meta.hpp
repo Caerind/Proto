@@ -70,7 +70,7 @@ private:
 // This is the default behavior for ImGui edition
 /*
 template <>
-struct CustomImGuiEditor<TestClassA>
+struct CustomObjectEditor<TestClassA>
 {
 	static constexpr bool value = true;
 	static bool ImGuiEditor(TestClassA& object, const char* name)
@@ -83,7 +83,7 @@ struct CustomImGuiEditor<TestClassA>
 // This is the default behavior for Serialization
 /*
 template <>
-struct CustomSerialization<TestClassA>
+struct CustomXmlSerialization<TestClassA>
 {
 	static constexpr bool value = true;
 	static bool Serialize(DataFile& dataFile, const TestClassA& object, const char* name)

@@ -12,9 +12,6 @@
 #include "CoreComponents.hpp"
 #include "Components.hpp"
 
-#include "ObjectEditorSpecialization.hpp"
-#include "DataFileSpecialization.hpp"
-
 int main(int argc, char** argv)
 {
 	// TODO : Find a better way to register

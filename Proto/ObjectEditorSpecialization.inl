@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ObjectEditor.hpp"
+#include <imgui/imgui.h>
 
 #include <Enlivengine/System/Time.hpp>
 #include <Enlivengine/Math/Color.hpp>
@@ -11,9 +11,11 @@
 #include <Enlivengine/Math/Matrix4.hpp>
 #include <Enlivengine/Math/Quaternion.hpp>
 
+#include "CustomObjectEditor.hpp"
+
 // en::Time
 template <>
-struct CustomImGuiEditor<en::Time>
+struct CustomObjectEditor<en::Time>
 {
 	static constexpr bool value = true;
 	static bool ImGuiEditor(en::Time& object, const char* name)
@@ -39,7 +41,7 @@ struct CustomImGuiEditor<en::Time>
 
 // en::Color
 template <>
-struct CustomImGuiEditor<en::Color>
+struct CustomObjectEditor<en::Color>
 {
 	static constexpr bool value = true;
 	static bool ImGuiEditor(en::Color& object, const char* name)
@@ -57,7 +59,7 @@ struct CustomImGuiEditor<en::Color>
 
 // en::Vector2
 template <typename T>
-struct CustomImGuiEditor<en::Vector2<T>>
+struct CustomObjectEditor<en::Vector2<T>>
 {
 	static constexpr bool value = true;
 	static bool ImGuiEditor(en::Vector2<T>& object, const char* name)
@@ -107,7 +109,7 @@ struct CustomImGuiEditor<en::Vector2<T>>
 
 // en::Vector3
 template <typename T>
-struct CustomImGuiEditor<en::Vector3<T>>
+struct CustomObjectEditor<en::Vector3<T>>
 {
 	static constexpr bool value = true;
 	static bool ImGuiEditor(en::Vector3<T>& object, const char* name)
@@ -162,7 +164,7 @@ struct CustomImGuiEditor<en::Vector3<T>>
 
 // en::Vector4
 template <typename T>
-struct CustomImGuiEditor<en::Vector4<T>>
+struct CustomObjectEditor<en::Vector4<T>>
 {
 	static constexpr bool value = true;
 	static bool ImGuiEditor(en::Vector4<T>& object, const char* name)
@@ -222,7 +224,7 @@ struct CustomImGuiEditor<en::Vector4<T>>
 
 // en::Matrix3
 template <typename T>
-struct CustomImGuiEditor<en::Matrix3<T>>
+struct CustomObjectEditor<en::Matrix3<T>>
 {
 	static constexpr bool value = true;
 	static bool ImGuiEditor(en::Matrix3<T>& object, const char* name)
@@ -234,7 +236,7 @@ struct CustomImGuiEditor<en::Matrix3<T>>
 			{
 				static en::Vector3<T> matrixRow;
 				matrixRow = object.getRow(row);
-				if (CustomImGuiEditor<en::Vector3<T>>::ImGuiEditor(matrixRow, ""))
+				if (CustomObjectEditor<en::Vector3<T>>::ImGuiEditor(matrixRow, ""))
 				{
 					object.setRow(row, matrixRow);
 					modified = true;
@@ -247,7 +249,7 @@ struct CustomImGuiEditor<en::Matrix3<T>>
 
 // en::Matrix4
 template <typename T>
-struct CustomImGuiEditor<en::Matrix4<T>>
+struct CustomObjectEditor<en::Matrix4<T>>
 {
 	static constexpr bool value = true;
 	static bool ImGuiEditor(en::Matrix4<T>& object, const char* name)
@@ -259,7 +261,7 @@ struct CustomImGuiEditor<en::Matrix4<T>>
 			{
 				static en::Vector4<T> matrixRow;
 				matrixRow = object.getRow(row);
-				if (CustomImGuiEditor<en::Vector4<T>>::ImGuiEditor(matrixRow, ""))
+				if (CustomObjectEditor<en::Vector4<T>>::ImGuiEditor(matrixRow, ""))
 				{
 					object.setRow(row, matrixRow);
 					modified = true;
@@ -272,14 +274,14 @@ struct CustomImGuiEditor<en::Matrix4<T>>
 
 // en::Quaternion
 template <typename T>
-struct CustomImGuiEditor<en::Quaternion<T>>
+struct CustomObjectEditor<en::Quaternion<T>>
 {
 	static constexpr bool value = true;
 	static bool ImGuiEditor(en::Quaternion<T>& object, const char* name)
 	{
 		static en::Vector4<T> quat;
 		quat = object.toVector4();
-		if (CustomImGuiEditor<en::Vector4<T>>::ImGuiEditor(quat, name))
+		if (CustomObjectEditor<en::Vector4<T>>::ImGuiEditor(quat, name))
 		{
 			object.fromVector4(quat);
 			return true;

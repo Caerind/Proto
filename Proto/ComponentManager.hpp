@@ -7,6 +7,7 @@
 #ifdef ENLIVE_ENABLE_IMGUI
 #include "ObjectEditor.hpp"
 #endif // ENLIVE_ENABLE_IMGUI
+#include "DataFile.hpp"
 
 namespace en
 {
@@ -51,6 +52,10 @@ public:
 			reg.remove<T>(ent);
 		};
 #endif // ENLIVE_ENABLE_IMGUI
+		mComponents[hash].serialize = [](DataFile& dataFile, const entt::registry& reg, entt::entity ent)
+		{
+			return dataFile.Serialize(reg.get<T>(ent), TypeInfo<T>::GetName());
+		};
 		return true;
 	}
 
@@ -59,6 +64,7 @@ public:
 	using AddCallback = std::function<void(entt::registry&, entt::entity)>;
 	using RemoveCallback = std::function<void(entt::registry&, entt::entity)>;
 #endif // ENLIVE_ENABLE_IMGUI
+	using SerializeCallback = std::function<bool(DataFile&, const entt::registry&, entt::entity)>;
 
 	struct ComponentInfo
 	{
@@ -69,6 +75,7 @@ public:
 		AddCallback add;
 		RemoveCallback remove;
 #endif // ENLIVE_ENABLE_IMGUI
+		SerializeCallback serialize;
 	};
 
 	static const std::unordered_map<U32, ComponentInfo>& GetComponentInfos() 

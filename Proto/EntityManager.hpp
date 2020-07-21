@@ -51,7 +51,7 @@ ENLIVE_META_CLASS_END()
 
 // TODO : Figure out how to move it elsewhere
 template <>
-struct CustomImGuiEditor<en::EntityManager>
+struct CustomObjectEditor<en::EntityManager>
 {
 	static constexpr bool value = true;
 	static bool ImGuiEditor(en::EntityManager& object, const char* name)
@@ -79,7 +79,7 @@ struct CustomImGuiEditor<en::EntityManager>
 					else
 					{
 						ImGui::SameLine();
-						if (CustomImGuiEditor<en::Entity>::ImGuiEditor(entity, entity.GetName()))
+						if (CustomObjectEditor<en::Entity>::ImGuiEditor(entity, entity.GetName()))
 						{
 							modified = true;
 						}
@@ -89,5 +89,42 @@ struct CustomImGuiEditor<en::EntityManager>
 			});
 		}
 		return modified;
+	}
+};
+
+// TODO : Figure out how to move it elsewhere
+template <>
+struct CustomXmlSerialization<en::EntityManager>
+{
+	static constexpr bool value = true;
+	static bool Serialize(DataFile& dataFile, const en::EntityManager& object, const char* name)
+	{
+		auto& parser = dataFile.GetParser();
+		if (parser.CreateNode(name))
+		{
+			bool anyError = false;
+			dataFile.WriteCurrentType<en::EntityManager>();
+			object.Each([&dataFile, &object, &anyError](auto entityEntt)
+			{
+				en::Entity entity(const_cast<en::EntityManager&>(object), entityEntt);
+				if (entity.IsValid())
+				{
+					if (!CustomXmlSerialization<en::Entity>::Serialize(dataFile, entity, entity.GetName()))
+					{
+						anyError = true;
+					}
+				}
+			});
+			parser.CloseNode();
+			return !anyError;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	static bool Deserialize(DataFile& dataFile, en::EntityManager& object, const char* name)
+	{
+		return true;
 	}
 };

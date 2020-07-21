@@ -11,6 +11,14 @@
  * Copyright (C) 2003, by Kristen Wegner (kristen@tima.net)
  */
 
+///////////////////////////////////////////////////
+// DISCLAIMER : 
+// Modified version with non XML spec conform feature :
+// Using this commit, I also don't escape the '<' in attributes
+// https://github.com/zeux/pugixml/commit/c6607740a0ebc9abfc74169d54236e5a3c5b84f3
+///////////////////////////////////////////////////
+
+
 #ifndef SOURCE_PUGIXML_CPP
 #define SOURCE_PUGIXML_CPP
 
@@ -1861,7 +1869,7 @@ PUGI__NS_BEGIN
 	enum chartypex_t
 	{
 		ctx_special_pcdata = 1,   // Any symbol >= 0 and < 32 (except \t, \r, \n), &, <, >
-		ctx_special_attr = 2,     // Any symbol >= 0 and < 32, &, <, ", '
+		ctx_special_attr = 2,     // Any symbol >= 0 and < 32, &, ", '
 		ctx_start_symbol = 4,	  // Any symbol > 127, a-z, A-Z, _
 		ctx_digit = 8,			  // 0-9
 		ctx_symbol = 16			  // Any symbol > 127, a-z, A-Z, 0-9, _, -, .
@@ -1872,7 +1880,7 @@ PUGI__NS_BEGIN
 		3,  3,  3,  3,  3,  3,  3,  3,     3,  2,  2,  3,  3,  2,  3,  3,     // 0-15
 		3,  3,  3,  3,  3,  3,  3,  3,     3,  3,  3,  3,  3,  3,  3,  3,     // 16-31
 		0,  0,  2,  0,  0,  0,  3,  2,     0,  0,  0,  0,  0, 16, 16,  0,     // 32-47
-		24, 24, 24, 24, 24, 24, 24, 24,    24, 24, 0,  0,  3,  0,  1,  0,     // 48-63
+		24, 24, 24, 24, 24, 24, 24, 24,    24, 24, 0,  0,  1,  0,  1,  0,     // 48-63
 
 		0,  20, 20, 20, 20, 20, 20, 20,    20, 20, 20, 20, 20, 20, 20, 20,    // 64-79
 		20, 20, 20, 20, 20, 20, 20, 20,    20, 20, 20, 0,  0,  0,  0,  20,    // 80-95

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Enlivengine/System/PrimitiveTypes.hpp>
-
 #include <Enlivengine/System/Meta.hpp>
 #include <Enlivengine/System/MetaEnum.hpp>
 #include <Enlivengine/System/String.hpp>
@@ -13,11 +12,7 @@
 
 #include <imgui/imgui.h>
 
-template <typename T>
-struct CustomImGuiEditor
-{
-	static constexpr bool value = false;
-};
+#include "CustomObjectEditor.hpp"
 
 class ObjectEditor
 {
@@ -81,9 +76,9 @@ private:
 	template <typename T>
 	static bool ImGuiEditor_Common(T& object, const char* name)
 	{
-		if constexpr (CustomImGuiEditor<T>::value)
+		if constexpr (CustomObjectEditor<T>::value)
 		{
-			return CustomImGuiEditor<T>::ImGuiEditor(object, name);
+			return CustomObjectEditor<T>::ImGuiEditor(object, name);
 		}
 		else if constexpr (en::Meta::IsRegistered<T>())
 		{
@@ -352,3 +347,5 @@ private:
 		return modified;
 	}
 };
+
+#include "ObjectEditorSpecialization.inl"

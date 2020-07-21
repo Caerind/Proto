@@ -198,6 +198,15 @@ bool GameState::update(en::Time dt)
 		ObjectEditor::ImGuiEditor(mEntity, "TestEntityEditor");
 		ObjectEditor::ImGuiEditor(mManager, "TestEntityManager");
 
+		if (ImGui::Button("SerializeEntities"))
+		{
+			DataFile file;
+			file.CreateEmptyFile();
+			file.Serialize(mManager, "World");
+			file.SaveToFile("DataFileWorld.xml");
+		}
+
+
 		if (mTestFactory != nullptr)
 		{
 			ObjectEditor::ImGuiEditor(mTestFactory, "TestFactory");

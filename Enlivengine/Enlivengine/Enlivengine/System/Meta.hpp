@@ -189,7 +189,7 @@ constexpr U32 GetClassVersion()
 // Custom ImGui Editor
 #define ENLIVE_META_CLASS_DEFAULT_TRAITS_VIRTUAL_IMGUI_EDITOR(className) \
 	template <> \
-	struct CustomImGuiEditor<className> \
+	struct CustomObjectEditor<className> \
 	{ \
 		static constexpr bool value = true; \
 		static bool ImGuiEditor(className& object, const char* name) \
@@ -207,7 +207,7 @@ constexpr U32 GetClassVersion()
 // Custom Serialization
 #define ENLIVE_META_CLASS_DEFAULT_TRAITS_VIRTUAL_SERIALIZATION(className) \
 	template <> \
-	struct CustomSerialization<className> \
+	struct CustomXmlSerialization<className> \
 	{ \
 		static constexpr bool value = true; \
 		static bool Serialize(DataFile& dataFile, const className& object, const char* name) \

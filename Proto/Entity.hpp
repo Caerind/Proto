@@ -125,10 +125,8 @@ ENLIVE_META_CLASS_END()
 
 // TODO : Figure out how to move it elsewhere
 template <>
-struct CustomImGuiEditor<en::Entity>
+struct CustomObjectEditor<en::Entity>
 {
-	using ComponentTypeID = ENTT_ID_TYPE;
-
 	static constexpr bool value = true;
 	static bool ImGuiEditor(en::Entity& object, const char* name)
 	{
@@ -211,8 +209,54 @@ struct CustomImGuiEditor<en::Entity>
 	}
 
 private:
-	static bool HasComponent(const en::Entity& entity, en::U32 enttComponentID)
+	using ComponentTypeID = ENTT_ID_TYPE;
+	static bool HasComponent(const en::Entity& entity, ComponentTypeID enttComponentID)
 	{
+		// TODO : Factorize with CustomXmlSerialization<en::Entity>
+		const ComponentTypeID type[] = { enttComponentID };
+		return entity.GetRegistry().runtime_view(std::cbegin(type), std::cend(type)).contains(entity.GetEntity());
+	}
+};
+
+// TODO : Figure out how to move it elsewhere
+template <>
+struct CustomXmlSerialization<en::Entity>
+{
+	static constexpr bool value = true;
+	static bool Serialize(DataFile& dataFile, const en::Entity& object, const char* name)
+	{
+		auto& parser = dataFile.GetParser();
+		if (parser.CreateNode(name))
+		{
+			dataFile.WriteCurrentType<en::Entity>();
+			const auto& componentInfos = en::ComponentManager::GetComponentInfos();
+			const auto endItr = componentInfos.cend();
+			for (auto itr = componentInfos.cbegin(); itr != endItr; ++itr)
+			{
+				const auto& ci = itr->second;
+				if (HasComponent(object, ci.enttID))
+				{
+					ci.serialize(dataFile, object.GetRegistry(), object.GetEntity());
+				}
+			}
+			parser.CloseNode();
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	static bool Deserialize(DataFile& dataFile, en::Entity& object, const char* name)
+	{
+		return true;
+	}
+
+private:
+	using ComponentTypeID = ENTT_ID_TYPE;
+	static bool HasComponent(const en::Entity& entity, ComponentTypeID enttComponentID)
+	{
+		// TODO : Factorize with CustomObjectEditor<en::Entity>
 		const ComponentTypeID type[] = { enttComponentID };
 		return entity.GetRegistry().runtime_view(std::cbegin(type), std::cend(type)).contains(entity.GetEntity());
 	}

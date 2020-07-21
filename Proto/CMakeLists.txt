@@ -4,9 +4,11 @@ set(SRC_PROTO
 	ComponentManager.hpp
 	Components.hpp
 	CoreComponents.hpp
+	CustomObjectEditor.hpp
+	CustomXmlSerialization.hpp
 	DataFile.cpp
 	DataFile.hpp
-	DataFileSpecialization.hpp
+	DataFileSpecialization.inl
 	Entity.cpp
 	Entity.hpp
 	EntityManager.cpp
@@ -20,7 +22,7 @@ set(SRC_PROTO
 	Meta.hpp
 	ObjectEditor.cpp
 	ObjectEditor.hpp
-	ObjectEditorSpecialization.hpp
+	ObjectEditorSpecialization.inl
 )
 source_group("" FILES ${SRC_PROTO})
 
