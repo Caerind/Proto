@@ -34,7 +34,7 @@ const char* Entity::GetName() const
 {
 	if (!IsValid())
 	{
-		return "<Invalid>";
+		return "";
 	}
 	else if (Has<NameComponent>())
 	{
@@ -42,7 +42,7 @@ const char* Entity::GetName() const
 	}
 	else
 	{
-		return "<Unknown>";
+		return "";
 	}
 }
 #endif // ENLIVE_DEBUG
@@ -54,13 +54,13 @@ bool Entity::HasManager() const
 
 EntityManager& Entity::GetManager()
 {
-	assert(mManager != nullptr);
+	enAssert(mManager != nullptr);
 	return *mManager;
 }
 
 const EntityManager& Entity::GetManager() const
 {
-	assert(mManager != nullptr);
+	enAssert(mManager != nullptr);
 	return *mManager;
 }
 
@@ -71,13 +71,13 @@ const entt::entity& Entity::GetEntity() const
 
 entt::registry& Entity::GetRegistry()
 {
-	assert(mManager != nullptr);
+	enAssert(mManager != nullptr);
 	return mManager->GetRegistry();
 }
 
 const entt::registry& Entity::GetRegistry() const
 {
-	assert(mManager != nullptr);
+	enAssert(mManager != nullptr);
 	return mManager->GetRegistry();
 }
 

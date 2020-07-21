@@ -65,8 +65,8 @@ private:
 template <typename T> 
 T& Entity::Add()
 {
-	assert(ComponentManager::IsRegistered<T>());
-	assert(IsValid());
+	enAssert(ComponentManager::IsRegistered<T>());
+	enAssert(IsValid());
 
 	return GetRegistry().assign<T>(mEntity); 
 }
@@ -74,8 +74,8 @@ T& Entity::Add()
 template <typename T, typename ...Args>
 T& Entity::Add(Args&& ...args)
 {
-	assert(ComponentManager::IsRegistered<T>());
-	assert(IsValid()); 
+	enAssert(ComponentManager::IsRegistered<T>());
+	enAssert(IsValid());
 	
 	return GetRegistry().emplace<T>(mEntity, std::forward<Args>(args)...); 
 }
@@ -83,7 +83,7 @@ T& Entity::Add(Args&& ...args)
 template <typename ...Components> 
 bool Entity::Has() const 
 { 
-	assert(IsValid()); 
+	enAssert(IsValid());
 
 	return GetRegistry().has<Components...>(mEntity); 
 }
@@ -91,9 +91,9 @@ bool Entity::Has() const
 template <typename T> 
 void Entity::Remove()
 {
-	assert(ComponentManager::IsRegistered<T>());
-	assert(IsValid());
-	assert(Has<T>());
+	enAssert(ComponentManager::IsRegistered<T>());
+	enAssert(IsValid());
+	enAssert(Has<T>());
 	
 	GetRegistry().remove<T>(mEntity); 
 }
@@ -101,9 +101,9 @@ void Entity::Remove()
 template <typename T> 
 T& Entity::Get()
 {
-	assert(ComponentManager::IsRegistered<T>());
-	assert(IsValid());
-	assert(Has<T>());
+	enAssert(ComponentManager::IsRegistered<T>());
+	enAssert(IsValid());
+	enAssert(Has<T>());
 
 	return GetRegistry().get<T>(mEntity); 
 }
@@ -111,9 +111,9 @@ T& Entity::Get()
 template <typename T> 
 const T& Entity::Get() const 
 {
-	assert(ComponentManager::IsRegistered<T>());
-	assert(IsValid());
-	assert(Has<T>());
+	enAssert(ComponentManager::IsRegistered<T>());
+	enAssert(IsValid());
+	enAssert(Has<T>());
 
 	return GetRegistry().get<T>(mEntity); 
 }
@@ -249,10 +249,70 @@ struct CustomXmlSerialization<en::Entity>
 	}
 	static bool Deserialize(DataFile& dataFile, en::Entity& object, const char* name)
 	{
-		return true;
+		auto& parser = dataFile.GetParser();
+		if (name == "")
+		{
+			bool anyError = false;
+
+			// We should already be on the node of the entity : See explanation on EntityManager::Deserialize
+			enAssert(dataFile.ReadCurrentType() == en::TypeInfo<en::Entity>::GetHash());
+			if (parser.ReadFirstNode())
+			{
+				static std::vector<DeserializationComponentNode> componentNodes; // TODO : Move to Array
+				componentNodes.clear();
+				do
+				{
+					const std::string nodeName = parser.GetNodeName();
+					const en::U32 nodeNameHash = en::Hash::ConstexprHash(nodeName);
+					const en::U32 nodeType = dataFile.ReadCurrentType();
+					const bool registeredComponent = en::ComponentManager::IsRegistered(nodeNameHash);
+					if (nodeNameHash == nodeType && registeredComponent)
+					{
+						componentNodes.push_back({ nodeName, nodeNameHash });
+					}
+					else
+					{
+						if (nodeNameHash != nodeType)
+						{
+							enLogWarning(en::LogChannel::Global, "Incompatible component : %d(%s) <-> %d ?", nodeNameHash, nodeName, nodeType);
+						}
+						if (!registeredComponent)
+						{
+							enLogWarning(en::LogChannel::Global, "Unregistered component : %s", nodeName);
+						}
+						anyError = true;
+					}
+				} while (parser.NextSibling());
+				parser.CloseNode();
+
+				// Now, we are back at the entity level, parse components
+				for (const auto& componentNode : componentNodes)
+				{
+					const auto& componentInfos = en::ComponentManager::GetComponentInfos();
+					enAssert(componentInfos.find(componentNode.hash) != componentInfos.end());
+					if (!componentInfos.at(componentNode.hash).deserialize(dataFile, object.GetRegistry(), object.GetEntity()))
+					{
+						anyError = true;
+					}
+				}
+			}
+			return !anyError;
+		}
+		else
+		{
+			// Single entity deserialization is not supported yet
+			enAssert(false);
+			return false;
+		}
 	}
 
 private:
+	struct DeserializationComponentNode
+	{
+		std::string name;
+		en::U32 hash;
+	};
+
 	using ComponentTypeID = ENTT_ID_TYPE;
 	static bool HasComponent(const en::Entity& entity, ComponentTypeID enttComponentID)
 	{

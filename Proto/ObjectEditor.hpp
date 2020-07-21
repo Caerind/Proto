@@ -20,8 +20,8 @@ public:
 	template <typename T>
 	static bool ImGuiEditorWindow(const char* windowName, T& object, const char* name)
 	{
-		assert(windowName != nullptr);
-		assert(name != nullptr);
+		enAssert(windowName != nullptr);
+		enAssert(name != nullptr);
 		bool modified = false;
 		if (ImGui::Begin(windowName))
 		{
@@ -34,24 +34,24 @@ public:
 	template <typename T>
 	static bool ImGuiEditorWindow(const char* windowName, T* object, const char* name)
 	{
-		assert(windowName != nullptr);
-		assert(object != nullptr);
-		assert(name != nullptr);
+		enAssert(windowName != nullptr);
+		enAssert(object != nullptr);
+		enAssert(name != nullptr);
 		return ImGuiEditorWindow(windowName, *object, name);
 	}
 
 	template <typename T>
 	static bool ImGuiEditor(T& object, const char* name)
 	{
-		assert(name != nullptr);
+		enAssert(name != nullptr);
 		return ImGuiEditor_Common(object, name);
 	}
 
 	template <typename T>
 	static bool ImGuiEditor(T* object, const char* name)
 	{
-		assert(name != nullptr);
-		assert(object != nullptr);
+		enAssert(name != nullptr);
+		enAssert(object != nullptr);
 		return ImGuiEditor_Common(*object, name);
 	}
 
@@ -93,7 +93,7 @@ private:
 	template <typename T>
 	static bool ImGuiEditor_Basic(T& object, const char* name)
 	{
-		assert(name != nullptr);
+		enAssert(name != nullptr);
 
 		if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, bool>::value)
 		{
@@ -191,7 +191,7 @@ private:
 	template <typename T>
 	static bool ImGuiEditor_Basic(en::Array<T>& object, const char* name)
 	{
-		assert(name != nullptr);
+		enAssert(name != nullptr);
 		bool modified = false;
 		if (ImGui::CollapsingHeader(name))
 		{
@@ -214,7 +214,7 @@ private:
 	template <typename T>
 	static bool ImGuiEditor_Basic(std::vector<T>& object, const char* name)
 	{
-		assert(name != nullptr);
+		enAssert(name != nullptr);
 		bool modified = false;
 		if (ImGui::CollapsingHeader(name))
 		{
@@ -237,7 +237,7 @@ private:
 	template <typename T, std::size_t N>
 	static bool ImGuiEditor_Basic(std::array<T, N>& object, const char* name)
 	{
-		assert(name != nullptr);
+		enAssert(name != nullptr);
 		bool modified = false;
 		if (ImGui::CollapsingHeader(name))
 		{
@@ -260,7 +260,7 @@ private:
 	template <typename T>
 	static bool ImGuiEditor_Basic(en::Array<T*>& object, const char* name)
 	{
-		assert(name != nullptr);
+		enAssert(name != nullptr);
 		bool modified = false;
 		if (ImGui::CollapsingHeader(name))
 		{
@@ -290,7 +290,7 @@ private:
 	template <typename T>
 	static bool ImGuiEditor_Basic(std::vector<T*>& object, const char* name)
 	{
-		assert(name != nullptr);
+		enAssert(name != nullptr);
 		bool modified = false;
 		if (ImGui::CollapsingHeader(name))
 		{
@@ -320,7 +320,7 @@ private:
 	template <typename T, std::size_t N>
 	static bool ImGuiEditor_Basic(std::array<T*, N>& object, const char* name)
 	{
-		assert(name != nullptr);
+		enAssert(name != nullptr);
 		bool modified = false;
 		if (ImGui::CollapsingHeader(name))
 		{

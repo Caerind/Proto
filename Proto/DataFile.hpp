@@ -14,7 +14,7 @@
 
 #include "CustomXmlSerialization.hpp"
 
-// TODO : Factorise common code in Serialize/Deserialize(Array/vector/array)
+// TODO : Factorise common code in Serialize/Deserialize (Array/vector/array)
 
 class DataFile
 {
@@ -97,8 +97,8 @@ private:
 template <typename T>
 bool DataFile::Serialize(const T& object, const char* name)
 {
-	assert(mValid);
-	assert(name != nullptr);
+	enAssert(mValid);
+	enAssert(name != nullptr);
 	if (mParserXml.HasNode(name))
 	{
 		mParserXml.RemoveNode(name);
@@ -109,7 +109,7 @@ bool DataFile::Serialize(const T& object, const char* name)
 template <typename T>
 bool DataFile::Serialize(const T* object, const char* name)
 {
-	assert(object != nullptr);
+	enAssert(object != nullptr);
 	return Serialize(*object, name);
 }
 
@@ -137,15 +137,15 @@ bool DataFile::Serialize_Registered(const T& object, const char* name)
 template <typename T>
 bool DataFile::Deserialize(T& object, const char* name)
 {
-	assert(mValid);
-	assert(name != nullptr);
+	enAssert(mValid);
+	enAssert(name != nullptr);
 	return Deserialize_Common(object, name);
 }
 
 template <typename T>
 bool DataFile::Deserialize(T* object, const char* name)
 {
-	assert(object != nullptr);
+	enAssert(object != nullptr);
 	return Deserialize(*object, name);
 }
 
@@ -199,7 +199,7 @@ bool DataFile::Serialize_Common(const T& object, const char* name)
 template <typename T>
 bool DataFile::Serialize_Basic(const T& object, const char* name)
 {
-	assert(name);
+	enAssert(name);
 	if (mParserXml.CreateNode(name))
 	{
 		WriteCurrentType<T>();
@@ -232,7 +232,7 @@ bool DataFile::Serialize_Basic(const T& object, const char* name)
 template <typename T>
 bool DataFile::Serialize_Basic(const en::Array<T>& object, const char* name)
 {
-	assert(name);
+	enAssert(name);
 	if (mParserXml.CreateNode(name))
 	{
 		bool result = true;
@@ -257,7 +257,7 @@ bool DataFile::Serialize_Basic(const en::Array<T>& object, const char* name)
 template <typename T>
 bool DataFile::Serialize_Basic(const std::vector<T>& object, const char* name)
 {
-	assert(name);
+	enAssert(name);
 	if (mParserXml.CreateNode(name))
 	{
 		bool result = true;
@@ -282,7 +282,7 @@ bool DataFile::Serialize_Basic(const std::vector<T>& object, const char* name)
 template <typename T, std::size_t N>
 bool DataFile::Serialize_Basic(const std::array<T, N>& object, const char* name)
 {
-	assert(name);
+	enAssert(name);
 	if (mParserXml.CreateNode(name))
 	{
 		bool result = true;
@@ -307,7 +307,7 @@ bool DataFile::Serialize_Basic(const std::array<T, N>& object, const char* name)
 template <typename T>
 bool DataFile::Serialize_Basic(const en::Array<T*>& object, const char* name)
 {
-	assert(name);
+	enAssert(name);
 	if (mParserXml.CreateNode(name))
 	{
 		en::U32 size = object.Size();
@@ -341,7 +341,7 @@ bool DataFile::Serialize_Basic(const en::Array<T*>& object, const char* name)
 template <typename T>
 bool DataFile::Serialize_Basic(const std::vector<T*>& object, const char* name)
 {
-	assert(name);
+	enAssert(name);
 	if (mParserXml.CreateNode(name))
 	{
 		en::U32 size = static_cast<en::U32>(object.size());
@@ -375,7 +375,7 @@ bool DataFile::Serialize_Basic(const std::vector<T*>& object, const char* name)
 template <typename T, std::size_t N>
 bool DataFile::Serialize_Basic(const std::array<T*, N>& object, const char* name)
 {
-	assert(name);
+	enAssert(name);
 	if (mParserXml.CreateNode(name))
 	{
 		en::U32 size = static_cast<en::U32>(object.size());
@@ -426,7 +426,7 @@ bool DataFile::Deserialize_Common(T& object, const char* name)
 template <typename T>
 bool DataFile::Deserialize_Basic(T& object, const char* name)
 {
-	assert(name);
+	enAssert(name);
 	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
@@ -473,7 +473,7 @@ bool DataFile::Deserialize_Basic(T& object, const char* name)
 template <typename T>
 bool DataFile::Deserialize_Basic(en::Array<T>& object, const char* name)
 {
-	assert(name);
+	enAssert(name);
 	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
@@ -516,7 +516,7 @@ bool DataFile::Deserialize_Basic(en::Array<T>& object, const char* name)
 template <typename T>
 bool DataFile::Deserialize_Basic(std::vector<T>& object, const char* name)
 {
-	assert(name);
+	enAssert(name);
 	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
@@ -559,7 +559,7 @@ bool DataFile::Deserialize_Basic(std::vector<T>& object, const char* name)
 template <typename T, std::size_t N>
 bool DataFile::Deserialize_Basic(std::array<T, N>& object, const char* name)
 {
-	assert(name);
+	enAssert(name);
 	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
@@ -605,7 +605,7 @@ bool DataFile::Deserialize_Basic(std::array<T, N>& object, const char* name)
 template <typename T>
 bool DataFile::Deserialize_Basic(en::Array<T*>& object, const char* name)
 {
-	assert(name);
+	enAssert(name);
 	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
@@ -669,7 +669,7 @@ bool DataFile::Deserialize_Basic(en::Array<T*>& object, const char* name)
 template <typename T>
 bool DataFile::Deserialize_Basic(std::vector<T*>& object, const char* name)
 {
-	assert(name);
+	enAssert(name);
 	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
@@ -733,7 +733,7 @@ bool DataFile::Deserialize_Basic(std::vector<T*>& object, const char* name)
 template <typename T, std::size_t N>
 bool DataFile::Deserialize_Basic(std::array<T*, N>& object, const char* name)
 {
-	assert(name);
+	enAssert(name);
 	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;

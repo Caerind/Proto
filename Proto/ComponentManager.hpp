@@ -56,6 +56,11 @@ public:
 		{
 			return dataFile.Serialize(reg.get<T>(ent), TypeInfo<T>::GetName());
 		};
+		mComponents[hash].deserialize = [](DataFile& dataFile, entt::registry& reg, entt::entity ent)
+		{
+			T& component = reg.assign<T>(ent);
+			return dataFile.Deserialize(component, TypeInfo<T>::GetName());
+		};
 		return true;
 	}
 
@@ -65,6 +70,7 @@ public:
 	using RemoveCallback = std::function<void(entt::registry&, entt::entity)>;
 #endif // ENLIVE_ENABLE_IMGUI
 	using SerializeCallback = std::function<bool(DataFile&, const entt::registry&, entt::entity)>;
+	using DeserializeCallback = std::function<bool(DataFile&, entt::registry&, entt::entity)>;
 
 	struct ComponentInfo
 	{
@@ -76,6 +82,7 @@ public:
 		RemoveCallback remove;
 #endif // ENLIVE_ENABLE_IMGUI
 		SerializeCallback serialize;
+		DeserializeCallback deserialize;
 	};
 
 	static const std::unordered_map<U32, ComponentInfo>& GetComponentInfos() 

@@ -95,12 +95,18 @@ GameState::GameState(en::StateManager& manager)
 
 	mTestFactory = (Aaa*)en::ClassManager::CreateClassFromHash(en::TypeInfo<Bbb>::GetHash());
 
+	/*
 	mEntity = mManager.CreateEntity();
 	mEntity.Add<en::NameComponent>("TestEntity");
 	mEntity.Add<en::PositionComponent>(en::Vector2f(200.0f, 100.0f));
 
 	en::Entity tempEntity = mManager.CreateEntity();
 	tempEntity.Add<en::NameComponent>();
+	*/
+
+	DataFile file;
+	file.LoadFromFile("DataFileWorld.xml");
+	file.Deserialize(mManager, "World");
 }
 
 GameState::~GameState()
@@ -195,10 +201,14 @@ bool GameState::update(en::Time dt)
 		}
 		ObjectEditor::ImGuiEditor(mAaa, "A");
 
-		ObjectEditor::ImGuiEditor(mEntity, "TestEntityEditor");
+		if (mEntity.IsValid())
+		{
+			ObjectEditor::ImGuiEditor(mEntity, "TestEntityEditor");
+		}
+		
 		ObjectEditor::ImGuiEditor(mManager, "TestEntityManager");
 
-		if (ImGui::Button("SerializeEntities"))
+		if (ImGui::Button("SerializeEntities") && false) // TEMP
 		{
 			DataFile file;
 			file.CreateEmptyFile();

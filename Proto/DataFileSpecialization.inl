@@ -36,7 +36,7 @@ struct CustomXmlSerialization<en::Time>
 		auto& parser = dataFile.GetParser();
 		if (parser.ReadNode(name))
 		{
-			assert(dataFile.ReadCurrentType() == en::TypeInfo<en::Time>::GetHash());
+			enAssert(dataFile.ReadCurrentType() == en::TypeInfo<en::Time>::GetHash());
 			std::string value;
 			parser.GetValue(value);
 			object = en::Time::Seconds(en::FromString<en::F32>(value));
@@ -74,7 +74,7 @@ struct CustomXmlSerialization<en::Color>
 		auto& parser = dataFile.GetParser();
 		if (parser.ReadNode(name))
 		{
-			assert(dataFile.ReadCurrentType() == en::TypeInfo<en::Color>::GetHash());
+			enAssert(dataFile.ReadCurrentType() == en::TypeInfo<en::Color>::GetHash());
 			std::string value;
 			parser.GetValue(value);
 			object.fromString(value);
@@ -114,7 +114,7 @@ struct CustomXmlSerialization<en::Vector2<T>>
 		auto& parser = dataFile.GetParser();
 		if (parser.ReadNode(name))
 		{
-			assert(dataFile.ReadCurrentType() == en::TypeInfo<en::Vector2<T>>::GetHash());
+			enAssert(dataFile.ReadCurrentType() == en::TypeInfo<en::Vector2<T>>::GetHash());
 			dataFile.Deserialize_Basic(object.x, "x");
 			dataFile.Deserialize_Basic(object.y, "y");
 			parser.CloseNode();
@@ -154,7 +154,7 @@ struct CustomXmlSerialization<en::Vector3<T>>
 		auto& parser = dataFile.GetParser();
 		if (parser.ReadNode(name))
 		{
-			assert(dataFile.ReadCurrentType() == en::TypeInfo<en::Vector3<T>>::GetHash());
+			enAssert(dataFile.ReadCurrentType() == en::TypeInfo<en::Vector3<T>>::GetHash());
 			dataFile.Deserialize_Basic(object.x, "x");
 			dataFile.Deserialize_Basic(object.y, "y");
 			dataFile.Deserialize_Basic(object.z, "z");
@@ -196,7 +196,7 @@ struct CustomXmlSerialization<en::Vector4<T>>
 		auto& parser = dataFile.GetParser();
 		if (parser.ReadNode(name))
 		{
-			assert(dataFile.ReadCurrentType() == en::TypeInfo<en::Vector4<T>>::GetHash());
+			enAssert(dataFile.ReadCurrentType() == en::TypeInfo<en::Vector4<T>>::GetHash());
 			dataFile.Deserialize_Basic(object.x, "x");
 			dataFile.Deserialize_Basic(object.y, "y");
 			dataFile.Deserialize_Basic(object.z, "z");
@@ -240,7 +240,7 @@ struct CustomXmlSerialization<en::Matrix3<T>>
 		auto& parser = dataFile.GetParser();
 		if (parser.ReadNode(name))
 		{
-			assert(dataFile.ReadCurrentType() == en::TypeInfo<en::Matrix3<T>>::GetHash());
+			enAssert(dataFile.ReadCurrentType() == en::TypeInfo<en::Matrix3<T>>::GetHash());
 			for (std::size_t i = 0; i < en::Matrix3<T>::elements; ++i)
 			{
 				std::string childName(std::to_string(i));
@@ -285,7 +285,7 @@ struct CustomXmlSerialization<en::Matrix4<T>>
 		auto& parser = dataFile.GetParser();
 		if (parser.ReadNode(name))
 		{
-			assert(dataFile.ReadCurrentType() == en::TypeInfo<en::Matrix4<T>>::GetHash());
+			enAssert(dataFile.ReadCurrentType() == en::TypeInfo<en::Matrix4<T>>::GetHash());
 			for (std::size_t i = 0; i < en::Matrix4<T>::elements; ++i)
 			{
 				std::string childName(std::to_string(i));
@@ -329,7 +329,7 @@ struct CustomXmlSerialization<en::Quaternion<T>>
 		auto& parser = dataFile.GetParser();
 		if (parser.ReadNode(name))
 		{
-			assert(dataFile.ReadCurrentType() == en::TypeInfo<en::Quaternion<T>>::GetHash());
+			enAssert(dataFile.ReadCurrentType() == en::TypeInfo<en::Quaternion<T>>::GetHash());
 			dataFile.Deserialize_Common(v.x, "x");
 			dataFile.Deserialize_Common(v.y, "y");
 			dataFile.Deserialize_Common(v.z, "z");

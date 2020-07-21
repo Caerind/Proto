@@ -14,20 +14,20 @@ public:
 
 	en::Color& operator[](en::F32 position)
 	{
-		assert(position >= 0.0f && position <= 1.0f);
+		enAssert(position >= 0.0f && position <= 1.0f);
 		return mColors[position];
 	}
 
 	const en::Color& operator[](en::F32 position) const
 	{
-		assert(position >= 0.0f && position <= 1.0f);
+		enAssert(position >= 0.0f && position <= 1.0f);
 		return mColors.at(position);
 	}
 
 	en::Color GetSampleColor(en::F32 position) const
 	{
 		// Make sure the positions 0 and 1 are set
-		assert(mColors.count(0.0f) && mColors.count(1.0f));
+		enAssert(mColors.count(0.0f) && mColors.count(1.0f));
 
 		// Find first entry >= position, return color if entry == position
 		auto nextColor = mColors.lower_bound(position);
@@ -44,7 +44,7 @@ public:
 
 	static en::Color BlendColors(const en::Color& firstColor, const en::Color& secondColor, en::F32 interpolation)
 	{
-		assert(interpolation >= 0.f && interpolation <= 1.f);
+		enAssert(interpolation >= 0.f && interpolation <= 1.f);
 
 		const en::F32 firstPart = 1.f - interpolation;
 

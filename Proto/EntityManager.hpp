@@ -56,7 +56,7 @@ struct CustomObjectEditor<en::EntityManager>
 	static constexpr bool value = true;
 	static bool ImGuiEditor(en::EntityManager& object, const char* name)
 	{
-		assert(name != nullptr);
+		enAssert(name != nullptr);
 		bool modified = false;
 		if (ImGui::CollapsingHeader(name))
 		{
@@ -125,6 +125,33 @@ struct CustomXmlSerialization<en::EntityManager>
 	}
 	static bool Deserialize(DataFile& dataFile, en::EntityManager& object, const char* name)
 	{
-		return true;
+		auto& parser = dataFile.GetParser();
+		if (parser.ReadNode(name))
+		{
+			bool anyError = false;
+			enAssert(dataFile.ReadCurrentType() == en::TypeInfo<en::EntityManager>::GetHash());
+			if (parser.ReadFirstNode())
+			{
+				do
+				{
+					en::Entity entity = object.CreateEntity();
+					if (entity.IsValid())
+					{
+						static const char* invalidEntityName = ""; // We already have the node open + we can have many entities with the same name
+						if (!CustomXmlSerialization<en::Entity>::Deserialize(dataFile, entity, invalidEntityName))
+						{
+							anyError = true;
+						}
+					}
+				} while (parser.NextSibling());
+				parser.CloseNode();
+			}
+			parser.CloseNode();
+			return !anyError;
+		}
+		else
+		{
+			return false;
+		}
 	}
 };
