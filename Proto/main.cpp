@@ -23,12 +23,8 @@ int main(int argc, char** argv)
 	// TODO : Register engine components in classManager & componentManager
 	en::ClassManager::Register<en::NameComponent>();
 	en::ComponentManager::Register<en::NameComponent>();
-
-
-	en::ClassManager::Register<PositionComponent>();
-	en::ComponentManager::Register<PositionComponent>();
-	en::ClassManager::Register<RotationComponent>();
-	en::ComponentManager::Register<RotationComponent>();
+	en::ClassManager::Register<en::TransformComponent>();
+	en::ComponentManager::Register<en::TransformComponent>();
 
 
 	{

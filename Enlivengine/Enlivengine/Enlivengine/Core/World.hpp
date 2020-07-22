@@ -37,5 +37,5 @@ private:
 } // namespace en
 
 ENLIVE_META_CLASS_BEGIN(en::World)
-	ENLIVE_META_CLASS_MEMBER("EntityManager", &World::mEntityManager)
+	ENLIVE_META_CLASS_MEMBER("EntityManager", &en::World::mEntityManager)
 ENLIVE_META_CLASS_END()

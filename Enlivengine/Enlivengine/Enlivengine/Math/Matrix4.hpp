@@ -1336,6 +1336,7 @@ inline Matrix4<T> Matrix4<T>::translation(const T & tx, const T & ty, const T & 
 template<typename T>
 inline Matrix4<T> Matrix4<T>::transform(const Vector3<T>& translation, const Quaternion<T>& rotation)
 {
+	enAssert(false); // Wrong, do not use
 	Matrix4<T> m;
 	m.setRotation(rotation);
 	m.setTranslation(translation);
@@ -1349,6 +1350,7 @@ inline Matrix4<T> Matrix4<T>::transform(const Vector3<T>& translation, const Qua
 template<typename T>
 inline Matrix4<T> Matrix4<T>::transform(const Vector3<T>& translation, const Quaternion<T>& rotation, const Vector3<T>& scale)
 {
+	enAssert(false); // Wrong, do not use
 	Matrix4<T> m;
 	m.setRotation(rotation);
 	m.setTranslation(translation);
