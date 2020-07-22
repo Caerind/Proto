@@ -5,8 +5,8 @@
 #include <array>
 #include <vector>
 
-#include "DataFile.hpp"
-#include "ObjectEditor.hpp"
+#include <Enlivengine/Core/DataFile.hpp>
+#include <Enlivengine/Core/ObjectEditor.hpp>
 
 
 enum class MyEnum

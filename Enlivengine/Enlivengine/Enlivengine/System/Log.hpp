@@ -33,6 +33,7 @@ enum class LogChannel
 	Graphics,
 	Map,
 	Animation,
+	Core,
 
 	// TODO : Add others
 

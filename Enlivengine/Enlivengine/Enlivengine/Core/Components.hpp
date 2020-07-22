@@ -4,7 +4,6 @@
 
 #include <string>
 
-#ifdef ENLIVE_DEBUG
 
 namespace en
 {
@@ -23,6 +22,4 @@ struct NameComponent
 ENLIVE_META_CLASS_BEGIN(en::NameComponent)
 	ENLIVE_META_CLASS_MEMBER("name", &en::NameComponent::name)
 ENLIVE_META_CLASS_END()
-
-#endif // ENLIVE_DEBUG
 

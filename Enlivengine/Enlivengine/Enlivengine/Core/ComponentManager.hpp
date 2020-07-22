@@ -5,9 +5,9 @@
 #include <Enlivengine/System/Meta.hpp>
 
 #ifdef ENLIVE_ENABLE_IMGUI
-#include "ObjectEditor.hpp"
+#include <Enlivengine/Core/ObjectEditor.hpp>
 #endif // ENLIVE_ENABLE_IMGUI
-#include "DataFile.hpp"
+#include <Enlivengine/Core/DataFile.hpp>
 
 namespace en
 {

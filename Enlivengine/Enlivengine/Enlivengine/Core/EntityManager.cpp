@@ -1,4 +1,4 @@
-#include "EntityManager.hpp"
+#include <Enlivengine/Core/EntityManager.hpp>
 
 namespace en
 {

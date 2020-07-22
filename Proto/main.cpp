@@ -2,15 +2,14 @@
 #include <Enlivengine/Application/Application.hpp>
 #include <Enlivengine/Application/Window.hpp>
 #include <Enlivengine/Graphics/View.hpp>
-
-#include "GameState.hpp"
-#include "Meta.hpp"
-
 #include <Enlivengine/System/String.hpp>
 #include <Enlivengine/System/ClassManager.hpp>
+#include <Enlivengine/Core/Components.hpp>
+#include <Enlivengine/Core/ComponentManager.hpp>
 
-#include "CoreComponents.hpp"
 #include "Components.hpp"
+#include "GameState.hpp"
+#include "Meta.hpp"
 
 int main(int argc, char** argv)
 {
@@ -20,14 +19,16 @@ int main(int argc, char** argv)
 	en::ClassManager::Register<Bbb>();
 	en::ClassManager::Register<Ccc>();
 
-#ifdef ENLIVE_DEBUG
+
+	// TODO : Register engine components in classManager & componentManager
 	en::ClassManager::Register<en::NameComponent>();
 	en::ComponentManager::Register<en::NameComponent>();
-#endif // ENLIVE_DEBUG
-	en::ClassManager::Register<en::PositionComponent>();
-	en::ComponentManager::Register<en::PositionComponent>();
-	en::ClassManager::Register<en::RotationComponent>();
-	en::ComponentManager::Register<en::RotationComponent>();
+
+
+	en::ClassManager::Register<PositionComponent>();
+	en::ComponentManager::Register<PositionComponent>();
+	en::ClassManager::Register<RotationComponent>();
+	en::ComponentManager::Register<RotationComponent>();
 
 
 	{

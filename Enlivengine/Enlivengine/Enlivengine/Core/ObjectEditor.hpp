@@ -14,6 +14,9 @@
 
 #include "CustomObjectEditor.hpp"
 
+namespace en
+{
+
 class ObjectEditor
 {
 public:
@@ -58,12 +61,12 @@ public:
 	template <typename T>
 	static bool ImGuiEditor_Registered(T& object, const char* name)
 	{
-		static_assert(en::Meta::IsRegistered<T>());
+		static_assert(Meta::IsRegistered<T>());
 		bool modified = false;
 		if (ImGui::CollapsingHeader(name))
 		{
 			ImGui::Indent();
-			en::Meta::ForEachMember<T>([&object, &modified](const auto& member)
+			Meta::ForEachMember<T>([&object, &modified](const auto& member)
 			{
 				modified = ImGuiEditor_Common(member.Get(object), member.GetName()) || modified;
 			});
@@ -80,7 +83,7 @@ private:
 		{
 			return CustomObjectEditor<T>::ImGuiEditor(object, name);
 		}
-		else if constexpr (en::Meta::IsRegistered<T>())
+		else if constexpr (Meta::IsRegistered<T>())
 		{
 			return ImGuiEditor_Registered(object, name);
 		}
@@ -95,11 +98,11 @@ private:
 	{
 		enAssert(name != nullptr);
 
-		if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, bool>::value)
+		if constexpr (Traits::IsSame<Traits::Decay<T>::type, bool>::value)
 		{
 			return ImGui::Checkbox(name, &object);
 		}
-		else if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, char>::value)
+		else if constexpr (Traits::IsSame<Traits::Decay<T>::type, char>::value)
 		{
 			static char c;
 			c = object;
@@ -110,37 +113,37 @@ private:
 			}
 			return false;
 		}
-		else if constexpr (en::Traits::IsEnum<T>::value)
+		else if constexpr (Traits::IsEnum<T>::value)
 		{
 			static bool initializedEnum = false;
-			static constexpr en::U32 enumCount = en::Meta::GetEnumCount<T>();
+			static constexpr U32 enumCount = Meta::GetEnumCount<T>();
 			static std::string stringsStorage[enumCount];
 			static const char* stringsImGui[enumCount];
 			if (!initializedEnum)
 			{
-				auto enumNames = en::Meta::GetEnumNames<T>();
-				for (en::U32 i = 0; i < enumCount; ++i)
+				auto enumNames = Meta::GetEnumNames<T>();
+				for (U32 i = 0; i < enumCount; ++i)
 				{
 					stringsStorage[i] = enumNames[i];
 					stringsImGui[i] = stringsStorage[i].c_str();
 				}
 				initializedEnum = true;
 			}
-			int index = static_cast<int>(en::Meta::GetEnumIndex(object));
+			int index = static_cast<int>(Meta::GetEnumIndex(object));
 			if (ImGui::Combo(name, &index, stringsImGui, IM_ARRAYSIZE(stringsImGui)))
 			{
-				object = en::Meta::GetEnumFromIndex<T>(static_cast<en::U32>(index));
+				object = Meta::GetEnumFromIndex<T>(static_cast<U32>(index));
 				return true;
 			}
 			return false;
 		}
-		else if constexpr (en::Traits::IsIntegral<T>::value)
+		else if constexpr (Traits::IsIntegral<T>::value)
 		{
 			int value = static_cast<int>(object);
 			if (ImGui::InputInt(name, &value))
 			{
 				// TODO : NumericLimits<T> Max
-				if constexpr (en::Traits::IsUnsigned<T>::value)
+				if constexpr (Traits::IsUnsigned<T>::value)
 				{
 					object = static_cast<T>((value >= 0) ? value : 0);
 				}
@@ -152,7 +155,7 @@ private:
 			}
 			return false;
 		}
-		else if constexpr (en::Traits::IsFloatingPoint<T>::value)
+		else if constexpr (Traits::IsFloatingPoint<T>::value)
 		{
 			float value = static_cast<float>(object);
 			if (ImGui::InputFloat(name, &value))
@@ -162,7 +165,7 @@ private:
 			}
 			return false;
 		}
-		else if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, std::string>::value)
+		else if constexpr (Traits::IsSame<Traits::Decay<T>::type, std::string>::value)
 		{
 			static constexpr std::size_t maxSize = 256;
 			static char inputBuffer[maxSize];
@@ -183,20 +186,20 @@ private:
 		}
 		else
 		{
-			ImGui::Text("%s type is not implemented for imgui for %s", en::TypeInfo<T>::GetName(), name);
+			ImGui::Text("%s type is not implemented for imgui for %s", TypeInfo<T>::GetName(), name);
 			return false;
 		}
 	}
 
 	template <typename T>
-	static bool ImGuiEditor_Basic(en::Array<T>& object, const char* name)
+	static bool ImGuiEditor_Basic(Array<T>& object, const char* name)
 	{
 		enAssert(name != nullptr);
 		bool modified = false;
 		if (ImGui::CollapsingHeader(name))
 		{
 			ImGui::Indent();
-			for (en::U32 i = 0; i < object.Size(); ++i)
+			for (U32 i = 0; i < object.Size(); ++i)
 			{
 				std::string childName(name);
 				childName.append("[");
@@ -258,14 +261,14 @@ private:
 	}
 
 	template <typename T>
-	static bool ImGuiEditor_Basic(en::Array<T*>& object, const char* name)
+	static bool ImGuiEditor_Basic(Array<T*>& object, const char* name)
 	{
 		enAssert(name != nullptr);
 		bool modified = false;
 		if (ImGui::CollapsingHeader(name))
 		{
 			ImGui::Indent();
-			for (en::U32 i = 0; i < object.Size(); ++i)
+			for (U32 i = 0; i < object.Size(); ++i)
 			{
 				std::string childName(name);
 				childName.append("[");
@@ -347,5 +350,7 @@ private:
 		return modified;
 	}
 };
+
+} // namespace en
 
 #include "ObjectEditorSpecialization.inl"

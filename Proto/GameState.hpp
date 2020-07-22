@@ -2,20 +2,18 @@
 
 #include <Enlivengine/Application/StateManager.hpp>
 
-#include <Enlivengine/Math/Noise.hpp>
 #include <SFML/Graphics.hpp>
+#include <Enlivengine/Math/Noise.hpp>
+#include <Enlivengine/Graphics/ColorGradient.hpp>
 
-#include "CoreComponents.hpp"
-#include "Components.hpp"
-#include "EntityManager.hpp"
-#include "Entity.hpp"
-
-#include "ColorGradient.hpp"
+#include <Enlivengine/Core/Components.hpp>
+#include <Enlivengine/Core/EntityManager.hpp>
+#include <Enlivengine/Core/Entity.hpp>
+#include <Enlivengine/Core/ObjectEditor.hpp>
+#include <Enlivengine/Core/DataFile.hpp>
 
 #include "Meta.hpp"
-
-#include "ObjectEditor.hpp"
-#include "DataFile.hpp"
+#include "Components.hpp"
 
 class GameState : public en::State
 {
@@ -44,10 +42,10 @@ private:
 
 	en::Noise mTemperatureNoise;
 	sf::Image mTemperatureImage;
-	ColorGradient mTemperatureGradient;
+	en::ColorGradient mTemperatureGradient;
 
 	sf::Image mMapImage;
-	ColorGradient mWaterGradient;
+	en::ColorGradient mWaterGradient;
 
 	int mDisplay;
 	sf::Texture mTexture;

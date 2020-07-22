@@ -9,15 +9,15 @@
 #include <Enlivengine/Math/Matrix4.hpp>
 #include <Enlivengine/Math/Quaternion.hpp>
 
-#include "CustomXmlSerialization.hpp"
-#include "DataFile.hpp"
+#include <Enlivengine/Core/CustomXmlSerialization.hpp>
+#include <Enlivengine/Core/DataFile.hpp>
 
 // en::Time
 template <>
 struct CustomXmlSerialization<en::Time>
 {
 	static constexpr bool value = true;
-	static bool Serialize(DataFile& dataFile, const en::Time& object, const char* name)
+	static bool Serialize(en::DataFile& dataFile, const en::Time& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.CreateNode(name))
@@ -31,15 +31,15 @@ struct CustomXmlSerialization<en::Time>
 			return false;
 		}
 	}
-	static bool Deserialize(DataFile& dataFile, en::Time& object, const char* name)
+	static bool Deserialize(en::DataFile& dataFile, en::Time& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.ReadNode(name))
 		{
 			enAssert(dataFile.ReadCurrentType() == en::TypeInfo<en::Time>::GetHash());
-			std::string value;
-			parser.GetValue(value);
-			object = en::Time::Seconds(en::FromString<en::F32>(value));
+			std::string valueString;
+			parser.GetValue(valueString);
+			object = en::Time::Seconds(en::FromString<en::F32>(valueString));
 			parser.CloseNode();
 			return true;
 		}
@@ -55,7 +55,7 @@ template <>
 struct CustomXmlSerialization<en::Color>
 {
 	static constexpr bool value = true;
-	static bool Serialize(DataFile& dataFile, const en::Color& object, const char* name)
+	static bool Serialize(en::DataFile& dataFile, const en::Color& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.CreateNode(name))
@@ -69,15 +69,15 @@ struct CustomXmlSerialization<en::Color>
 			return false;
 		}
 	}
-	static bool Deserialize(DataFile& dataFile, en::Color& object, const char* name)
+	static bool Deserialize(en::DataFile& dataFile, en::Color& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.ReadNode(name))
 		{
 			enAssert(dataFile.ReadCurrentType() == en::TypeInfo<en::Color>::GetHash());
-			std::string value;
-			parser.GetValue(value);
-			object.fromString(value);
+			std::string valueString;
+			parser.GetValue(valueString);
+			object.fromString(valueString);
 			parser.CloseNode();
 			return true;
 		}
@@ -93,7 +93,7 @@ template <typename T>
 struct CustomXmlSerialization<en::Vector2<T>>
 {
 	static constexpr bool value = true;
-	static bool Serialize(DataFile& dataFile, const en::Vector2<T>& object, const char* name)
+	static bool Serialize(en::DataFile& dataFile, const en::Vector2<T>& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.CreateNode(name))
@@ -109,7 +109,7 @@ struct CustomXmlSerialization<en::Vector2<T>>
 			return false;
 		}
 	}
-	static bool Deserialize(DataFile& dataFile, en::Vector2<T>& object, const char* name)
+	static bool Deserialize(en::DataFile& dataFile, en::Vector2<T>& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.ReadNode(name))
@@ -132,7 +132,7 @@ template <typename T>
 struct CustomXmlSerialization<en::Vector3<T>>
 {
 	static constexpr bool value = true;
-	static bool Serialize(DataFile& dataFile, const en::Vector3<T>& object, const char* name)
+	static bool Serialize(en::DataFile& dataFile, const en::Vector3<T>& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.CreateNode(name))
@@ -149,7 +149,7 @@ struct CustomXmlSerialization<en::Vector3<T>>
 			return false;
 		}
 	}
-	static bool Deserialize(DataFile& dataFile, en::Vector3<T>& object, const char* name)
+	static bool Deserialize(en::DataFile& dataFile, en::Vector3<T>& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.ReadNode(name))
@@ -173,7 +173,7 @@ template <typename T>
 struct CustomXmlSerialization<en::Vector4<T>>
 {
 	static constexpr bool value = true;
-	static bool Serialize(DataFile& dataFile, const en::Vector4<T>& object, const char* name)
+	static bool Serialize(en::DataFile& dataFile, const en::Vector4<T>& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.CreateNode(name))
@@ -191,7 +191,7 @@ struct CustomXmlSerialization<en::Vector4<T>>
 			return false;
 		}
 	}
-	static bool Deserialize(DataFile& dataFile, en::Vector4<T>& object, const char* name)
+	static bool Deserialize(en::DataFile& dataFile, en::Vector4<T>& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.ReadNode(name))
@@ -216,7 +216,7 @@ template <typename T>
 struct CustomXmlSerialization<en::Matrix3<T>>
 {
 	static constexpr bool value = true;
-	static bool Serialize(DataFile& dataFile, const en::Matrix3<T>& object, const char* name)
+	static bool Serialize(en::DataFile& dataFile, const en::Matrix3<T>& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.CreateNode(name))
@@ -235,7 +235,7 @@ struct CustomXmlSerialization<en::Matrix3<T>>
 			return false;
 		}
 	}
-	static bool Deserialize(DataFile& dataFile, en::Matrix3<T>& object, const char* name)
+	static bool Deserialize(en::DataFile& dataFile, en::Matrix3<T>& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.ReadNode(name))
@@ -261,7 +261,7 @@ template <typename T>
 struct CustomXmlSerialization<en::Matrix4<T>>
 {
 	static constexpr bool value = true;
-	static bool Serialize(DataFile& dataFile, const en::Matrix4<T>& object, const char* name)
+	static bool Serialize(en::DataFile& dataFile, const en::Matrix4<T>& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.CreateNode(name))
@@ -280,7 +280,7 @@ struct CustomXmlSerialization<en::Matrix4<T>>
 			return false;
 		}
 	}
-	static bool Deserialize(DataFile& dataFile, en::Matrix4<T>& object, const char* name)
+	static bool Deserialize(en::DataFile& dataFile, en::Matrix4<T>& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.ReadNode(name))
@@ -306,7 +306,7 @@ template <typename T>
 struct CustomXmlSerialization<en::Quaternion<T>>
 {
 	static constexpr bool value = true;
-	static bool Serialize(DataFile& dataFile, const en::Quaternion<T>& object, const char* name)
+	static bool Serialize(en::DataFile& dataFile, const en::Quaternion<T>& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.CreateNode(name))
@@ -324,7 +324,7 @@ struct CustomXmlSerialization<en::Quaternion<T>>
 			return false;
 		}
 	}
-	static bool Deserialize(DataFile& dataFile, en::Quaternion<T>& object, const char* name)
+	static bool Deserialize(en::DataFile& dataFile, en::Quaternion<T>& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.ReadNode(name))

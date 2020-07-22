@@ -1,4 +1,4 @@
-#include "ComponentManager.hpp"
+#include <Enlivengine/Core/ComponentManager.hpp>
 
 namespace en
 {

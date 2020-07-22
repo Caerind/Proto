@@ -104,7 +104,7 @@ GameState::GameState(en::StateManager& manager)
 	tempEntity.Add<en::NameComponent>();
 	*/
 
-	DataFile file;
+	en::DataFile file;
 	file.LoadFromFile("DataFileWorld.xml");
 	file.Deserialize(mManager, "World");
 }
@@ -141,7 +141,7 @@ bool GameState::update(en::Time dt)
 	);
 
 	int j = 0;
-	auto view = mManager.View<en::PositionComponent>();
+	auto view = mManager.View<PositionComponent>();
 	for (auto ent : view)
 	{
 		en::Entity entity(mManager, ent);
@@ -153,7 +153,7 @@ bool GameState::update(en::Time dt)
 	{
 		if (ImGui::Button("Save As"))
 		{
-			DataFile file;
+			en::DataFile file;
 			file.LoadFromFile("DataFileGame.xml");
 			file.Serialize(mAs, "As");
 			file.SaveToFile("DataFileGame.xml");
@@ -164,7 +164,7 @@ bool GameState::update(en::Time dt)
 			mAs.DeleteAll();
 			mAs.Clear();
 
-			DataFile file;
+			en::DataFile file;
 			file.LoadFromFile("DataFileGame.xml");
 			file.Deserialize(mAs, "As");
 		}
@@ -174,11 +174,11 @@ bool GameState::update(en::Time dt)
 			mAs.DeleteAll();
 			mAs.Clear();
 		}
-		ObjectEditor::ImGuiEditor(mAs, "As");
+		en::ObjectEditor::ImGuiEditor(mAs, "As");
 
 		if (ImGui::Button("Save A"))
 		{
-			DataFile file;
+			en::DataFile file;
 			file.LoadFromFile("DataFileGame.xml");
 			file.Serialize(mAaa, "A");
 			file.SaveToFile("DataFileGame.xml");
@@ -189,7 +189,7 @@ bool GameState::update(en::Time dt)
 			mAaa.DeleteAll();
 			mAaa.Clear();
 
-			DataFile file;
+			en::DataFile file;
 			file.LoadFromFile("DataFileGame.xml");
 			file.Deserialize(mAaa, "A");
 		}
@@ -199,18 +199,18 @@ bool GameState::update(en::Time dt)
 			mAaa.DeleteAll();
 			mAaa.Clear();
 		}
-		ObjectEditor::ImGuiEditor(mAaa, "A");
+		en::ObjectEditor::ImGuiEditor(mAaa, "A");
 
 		if (mEntity.IsValid())
 		{
-			ObjectEditor::ImGuiEditor(mEntity, "TestEntityEditor");
+			en::ObjectEditor::ImGuiEditor(mEntity, "TestEntityEditor");
 		}
 		
-		ObjectEditor::ImGuiEditor(mManager, "TestEntityManager");
+		en::ObjectEditor::ImGuiEditor(mManager, "TestEntityManager");
 
 		if (ImGui::Button("SerializeEntities") && false) // TEMP
 		{
-			DataFile file;
+			en::DataFile file;
 			file.CreateEmptyFile();
 			file.Serialize(mManager, "World");
 			file.SaveToFile("DataFileWorld.xml");
@@ -219,7 +219,7 @@ bool GameState::update(en::Time dt)
 
 		if (mTestFactory != nullptr)
 		{
-			ObjectEditor::ImGuiEditor(mTestFactory, "TestFactory");
+			en::ObjectEditor::ImGuiEditor(mTestFactory, "TestFactory");
 			if (ImGui::Button("Remove"))
 			{
 				enDelete(Aaa, mTestFactory);

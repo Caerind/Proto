@@ -4,7 +4,7 @@
 
 #include <Enlivengine/System/Meta.hpp>
 
-#include "ComponentManager.hpp"
+#include <Enlivengine/Core/ComponentManager.hpp>
 
 namespace en
 {
@@ -23,9 +23,7 @@ public:
 	bool IsValid() const;
 	U32 GetID() const;
 
-#ifdef ENLIVE_DEBUG
 	const char* GetName() const;
-#endif // ENLIVE_DEBUG
 
 	template <typename T> 
 	T& Add();
@@ -223,7 +221,7 @@ template <>
 struct CustomXmlSerialization<en::Entity>
 {
 	static constexpr bool value = true;
-	static bool Serialize(DataFile& dataFile, const en::Entity& object, const char* name)
+	static bool Serialize(en::DataFile& dataFile, const en::Entity& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.CreateNode(name))
@@ -247,10 +245,10 @@ struct CustomXmlSerialization<en::Entity>
 			return false;
 		}
 	}
-	static bool Deserialize(DataFile& dataFile, en::Entity& object, const char* name)
+	static bool Deserialize(en::DataFile& dataFile, en::Entity& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
-		if (name == "")
+		if (strcmp(name, "") == 0)
 		{
 			bool anyError = false;
 
@@ -274,11 +272,11 @@ struct CustomXmlSerialization<en::Entity>
 					{
 						if (nodeNameHash != nodeType)
 						{
-							enLogWarning(en::LogChannel::Global, "Incompatible component : %d(%s) <-> %d ?", nodeNameHash, nodeName, nodeType);
+							enLogWarning(en::LogChannel::Core, "Incompatible component : {}({}) <-> {} ?", nodeNameHash, nodeName, nodeType);
 						}
 						if (!registeredComponent)
 						{
-							enLogWarning(en::LogChannel::Global, "Unregistered component : %s", nodeName);
+							enLogWarning(en::LogChannel::Core, "Unregistered component : {}", nodeName);
 						}
 						anyError = true;
 					}

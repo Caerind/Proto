@@ -1,8 +1,7 @@
-#include "Entity.hpp"
+#include <Enlivengine/Core/Entity.hpp>
 
-#include "EntityManager.hpp"
-
-#include "CoreComponents.hpp"
+#include <Enlivengine/Core/EntityManager.hpp>
+#include <Enlivengine/Core/Components.hpp>
 
 namespace en
 {
@@ -29,7 +28,6 @@ U32 Entity::GetID() const
 	return static_cast<U32>(entt::to_integral(mEntity));
 }
 
-#ifdef ENLIVE_DEBUG
 const char* Entity::GetName() const
 {
 	if (!IsValid())
@@ -45,7 +43,6 @@ const char* Entity::GetName() const
 		return "";
 	}
 }
-#endif // ENLIVE_DEBUG
 
 bool Entity::HasManager() const
 {

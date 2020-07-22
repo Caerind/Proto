@@ -12,9 +12,12 @@
 
 #include <Enlivengine/System/ParserXml.hpp>
 
-#include "CustomXmlSerialization.hpp"
+#include <Enlivengine/Core/CustomXmlSerialization.hpp>
 
 // TODO : Factorise common code in Serialize/Deserialize (Array/vector/array)
+
+namespace en
+{
 
 class DataFile
 {
@@ -49,13 +52,13 @@ private:
 	template <typename T>
 	bool Serialize_Basic(const T& object, const char* name);
 	template <typename T>
-	bool Serialize_Basic(const en::Array<T>& object, const char* name);
+	bool Serialize_Basic(const Array<T>& object, const char* name);
 	template <typename T>
 	bool Serialize_Basic(const std::vector<T>& object, const char* name);
 	template <typename T, std::size_t N>
 	bool Serialize_Basic(const std::array<T, N>& object, const char* name);
 	template <typename T>
-	bool Serialize_Basic(const en::Array<T*>& object, const char* name);
+	bool Serialize_Basic(const Array<T*>& object, const char* name);
 	template <typename T>
 	bool Serialize_Basic(const std::vector<T*>& object, const char* name);
 	template <typename T, std::size_t N>
@@ -67,13 +70,13 @@ private:
 	template <typename T>
 	bool Deserialize_Basic(T& object, const char* name);
 	template <typename T>
-	bool Deserialize_Basic(en::Array<T>& object, const char* name);
+	bool Deserialize_Basic(Array<T>& object, const char* name);
 	template <typename T>
 	bool Deserialize_Basic(std::vector<T>& object, const char* name);
 	template <typename T, std::size_t N>
 	bool Deserialize_Basic(std::array<T, N>& object, const char* name);
 	template <typename T>
-	bool Deserialize_Basic(en::Array<T*>& object, const char* name);
+	bool Deserialize_Basic(Array<T*>& object, const char* name);
 	template <typename T>
 	bool Deserialize_Basic(std::vector<T*>& object, const char* name);
 	template <typename T, std::size_t N>
@@ -82,14 +85,14 @@ private:
 private:
 	template <typename T>
 	void WriteCurrentType();
-	en::U32 ReadCurrentType() const;
+	U32 ReadCurrentType() const;
 
-	template <typename T> friend class CustomXmlSerialization;
-	en::ParserXml& GetParser() { return mParserXml; }
-	const en::ParserXml& GetParser() const { return mParserXml; }
+	template <typename T> friend struct ::CustomXmlSerialization;
+	ParserXml& GetParser() { return mParserXml; }
+	const ParserXml& GetParser() const { return mParserXml; }
 
 private:
-	en::ParserXml mParserXml;
+	ParserXml mParserXml;
 	bool mValid;
 	bool mReadable;
 };
@@ -116,12 +119,12 @@ bool DataFile::Serialize(const T* object, const char* name)
 template <typename T>
 bool DataFile::Serialize_Registered(const T& object, const char* name)
 {
-	static_assert(en::Meta::IsRegistered<T>());
+	static_assert(Meta::IsRegistered<T>());
 	if (mParserXml.CreateNode(name))
 	{
 		// TODO : Use return of Serialize_Common for return
 		WriteCurrentType<T>();
-		en::Meta::ForEachMember<T>([this, &object](const auto& member)
+		Meta::ForEachMember<T>([this, &object](const auto& member)
 		{
 			Serialize_Common(member.Get(object), member.GetName());
 		});
@@ -152,22 +155,22 @@ bool DataFile::Deserialize(T* object, const char* name)
 template <typename T>
 bool DataFile::Deserialize_Registered(T& object, const char* name)
 {
-	static_assert(en::Meta::IsRegistered<T>());
+	static_assert(Meta::IsRegistered<T>());
 	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
-		const en::U32 typeHash = ReadCurrentType();
-		if (typeHash == en::TypeInfo<T>::GetHash())
+		const U32 typeHash = ReadCurrentType();
+		if (typeHash == TypeInfo<T>::GetHash())
 		{
 			// TODO : Use return of Serialize_Common for return
-			en::Meta::ForEachMember<T>([this, &object](const auto& member)
+			Meta::ForEachMember<T>([this, &object](const auto& member)
 			{
 				Deserialize_Common(member.Get(object), member.GetName());
 			});
 		}
 		else
 		{
-			enLogWarning(en::LogChannel::Global, "Type mismatch for {}", name);
+			enLogWarning(LogChannel::Core, "Type mismatch for {}", name);
 			result = false;
 		}
 		mParserXml.CloseNode();
@@ -186,7 +189,7 @@ bool DataFile::Serialize_Common(const T& object, const char* name)
 	{
 		return CustomXmlSerialization<T>::Serialize(*this, object, name);
 	}
-	else if constexpr (en::Meta::IsRegistered<T>())
+	else if constexpr (Meta::IsRegistered<T>())
 	{
 		return Serialize_Registered(object, name);
 	}
@@ -203,22 +206,22 @@ bool DataFile::Serialize_Basic(const T& object, const char* name)
 	if (mParserXml.CreateNode(name))
 	{
 		WriteCurrentType<T>();
-		if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, bool>::value)
+		if constexpr (Traits::IsSame<Traits::Decay<T>::type, bool>::value)
 		{
-			mParserXml.SetValue(en::ToBoolString(object));
+			mParserXml.SetValue(ToBoolString(object));
 		}
-		else if constexpr (en::Traits::IsEnum<T>::value)
+		else if constexpr (Traits::IsEnum<T>::value)
 		{
-			const std::string enumValueStr(en::Meta::GetEnumName(object));
+			const std::string enumValueStr(Meta::GetEnumName(object));
 			mParserXml.SetValue(enumValueStr);
 		}
-		else if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, std::string>::value)
+		else if constexpr (Traits::IsSame<Traits::Decay<T>::type, std::string>::value)
 		{
 			mParserXml.SetValue(object);
 		}
 		else
 		{
-			mParserXml.SetValue(en::ToString(object));
+			mParserXml.SetValue(ToString(object));
 		}
 		mParserXml.CloseNode();
 		return true;
@@ -230,13 +233,13 @@ bool DataFile::Serialize_Basic(const T& object, const char* name)
 }
 
 template <typename T>
-bool DataFile::Serialize_Basic(const en::Array<T>& object, const char* name)
+bool DataFile::Serialize_Basic(const Array<T>& object, const char* name)
 {
 	enAssert(name);
 	if (mParserXml.CreateNode(name))
 	{
 		bool result = true;
-		for (en::U32 i = 0; i < object.Size(); ++i)
+		for (U32 i = 0; i < object.Size(); ++i)
 		{
 			std::string childName(name);
 			childName.append("_");
@@ -269,7 +272,7 @@ bool DataFile::Serialize_Basic(const std::vector<T>& object, const char* name)
 			result = Serialize_Common(object[i], childName.c_str()) && result;
 		}
 		WriteCurrentType<T>();
-		mParserXml.SetAttribute("size", static_cast<en::U32>(object.size()));
+		mParserXml.SetAttribute("size", static_cast<U32>(object.size()));
 		mParserXml.CloseNode();
 		return result;
 	}
@@ -294,7 +297,7 @@ bool DataFile::Serialize_Basic(const std::array<T, N>& object, const char* name)
 			result = Serialize_Common(object[i], childName.c_str()) && result;
 		}
 		WriteCurrentType<T>();
-		mParserXml.SetAttribute("size", static_cast<en::U32>(object.size()));
+		mParserXml.SetAttribute("size", static_cast<U32>(object.size()));
 		mParserXml.CloseNode();
 		return result;
 	}
@@ -305,14 +308,14 @@ bool DataFile::Serialize_Basic(const std::array<T, N>& object, const char* name)
 }
 
 template <typename T>
-bool DataFile::Serialize_Basic(const en::Array<T*>& object, const char* name)
+bool DataFile::Serialize_Basic(const Array<T*>& object, const char* name)
 {
 	enAssert(name);
 	if (mParserXml.CreateNode(name))
 	{
-		en::U32 size = object.Size();
+		U32 size = object.Size();
 		bool result = true;
-		for (en::U32 i = 0; i < object.Size(); ++i)
+		for (U32 i = 0; i < object.Size(); ++i)
 		{
 			std::string childName(name);
 			childName.append("_");
@@ -324,7 +327,7 @@ bool DataFile::Serialize_Basic(const en::Array<T*>& object, const char* name)
 			else
 			{
 				size--;
-				enLogWarning(en::LogChannel::Global, "Skipped nullptr object in {}", name);
+				enLogWarning(LogChannel::Core, "Skipped nullptr object in {}", name);
 			}
 		}
 		WriteCurrentType<T>();
@@ -344,7 +347,7 @@ bool DataFile::Serialize_Basic(const std::vector<T*>& object, const char* name)
 	enAssert(name);
 	if (mParserXml.CreateNode(name))
 	{
-		en::U32 size = static_cast<en::U32>(object.size());
+		U32 size = static_cast<U32>(object.size());
 		bool result = true;
 		for (std::size_t i = 0; i < object.size(); ++i)
 		{
@@ -358,7 +361,7 @@ bool DataFile::Serialize_Basic(const std::vector<T*>& object, const char* name)
 			else
 			{
 				size--;
-				enLogWarning(en::LogChannel::Global, "Skipped nullptr object in {}", name);
+				enLogWarning(LogChannel::Core, "Skipped nullptr object in {}", name);
 			}
 		}
 		WriteCurrentType<T>();
@@ -378,7 +381,7 @@ bool DataFile::Serialize_Basic(const std::array<T*, N>& object, const char* name
 	enAssert(name);
 	if (mParserXml.CreateNode(name))
 	{
-		en::U32 size = static_cast<en::U32>(object.size());
+		U32 size = static_cast<U32>(object.size());
 		bool result = true;
 		for (std::size_t i = 0; i < object.size(); ++i)
 		{
@@ -392,7 +395,7 @@ bool DataFile::Serialize_Basic(const std::array<T*, N>& object, const char* name
 			else
 			{
 				size--;
-				enLogWarning(en::LogChannel::Global, "Skipped nullptr object in {}", name);
+				enLogWarning(LogChannel::Core, "Skipped nullptr object in {}", name);
 			}
 		}
 		WriteCurrentType<T>();
@@ -413,7 +416,7 @@ bool DataFile::Deserialize_Common(T& object, const char* name)
 	{
 		return CustomXmlSerialization<T>::Deserialize(*this, object, name);
 	}
-	else if constexpr (en::Meta::IsRegistered<T>())
+	else if constexpr (Meta::IsRegistered<T>())
 	{
 		return Deserialize_Registered(object, name);
 	}
@@ -430,22 +433,22 @@ bool DataFile::Deserialize_Basic(T& object, const char* name)
 	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
-		const en::U32 typeHash = ReadCurrentType();
-		if (typeHash == en::TypeInfo<T>::GetHash())
+		const U32 typeHash = ReadCurrentType();
+		if (typeHash == TypeInfo<T>::GetHash())
 		{
-			if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, bool>::value)
+			if constexpr (Traits::IsSame<Traits::Decay<T>::type, bool>::value)
 			{
 				std::string value;
 				mParserXml.GetValue(value);
-				object = en::FromBoolString(value);
+				object = FromBoolString(value);
 			}
-			else if constexpr (en::Traits::IsEnum<T>::value)
+			else if constexpr (Traits::IsEnum<T>::value)
 			{
 				std::string value;
 				mParserXml.GetValue(value);
-				object = en::Meta::EnumCast<MyEnum>(value);
+				object = Meta::EnumCast<MyEnum>(value);
 			}
-			else if constexpr (en::Traits::IsSame<en::Traits::Decay<T>::type, std::string>::value)
+			else if constexpr (Traits::IsSame<Traits::Decay<T>::type, std::string>::value)
 			{
 				mParserXml.GetValue(object);
 			}
@@ -453,12 +456,12 @@ bool DataFile::Deserialize_Basic(T& object, const char* name)
 			{
 				std::string value;
 				mParserXml.GetValue(value);
-				object = en::FromString<T>(value);
+				object = FromString<T>(value);
 			}
 		}
 		else
 		{
-			enLogWarning(en::LogChannel::Global, "Type mismatch for {}", name);
+			enLogWarning(LogChannel::Core, "Type mismatch for {}", name);
 			result = false;
 		}
 		mParserXml.CloseNode();
@@ -471,26 +474,26 @@ bool DataFile::Deserialize_Basic(T& object, const char* name)
 }
 
 template <typename T>
-bool DataFile::Deserialize_Basic(en::Array<T>& object, const char* name)
+bool DataFile::Deserialize_Basic(Array<T>& object, const char* name)
 {
 	enAssert(name);
 	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
-		const en::U32 typeHash = ReadCurrentType();
-		if (typeHash == en::TypeInfo<T>::GetHash())
+		const U32 typeHash = ReadCurrentType();
+		if (typeHash == TypeInfo<T>::GetHash())
 		{
-			en::U32 size = 0;
+			U32 size = 0;
 			mParserXml.GetAttribute("size", size);
 			object.Clear();
 			object.Resize(size);
-			if constexpr (!en::Traits::IsDefaultConstructible<T>::value)
+			if constexpr (!Traits::IsDefaultConstructible<T>::value)
 			{
 				// For now T must be default constructible
-				static_assert(en::Traits::IsDefaultConstructible<T>::value);
+				static_assert(Traits::IsDefaultConstructible<T>::value);
 			}
 
-			for (en::U32 i = 0; i < size; ++i)
+			for (U32 i = 0; i < size; ++i)
 			{
 				std::string childName(name);
 				childName.append("_");
@@ -500,7 +503,7 @@ bool DataFile::Deserialize_Basic(en::Array<T>& object, const char* name)
 		}
 		else
 		{
-			enLogWarning(en::LogChannel::Global, "Type mismatch for {}", name);
+			enLogWarning(LogChannel::Core, "Type mismatch for {}", name);
 			object.Clear();
 			result = false;
 		}
@@ -520,20 +523,20 @@ bool DataFile::Deserialize_Basic(std::vector<T>& object, const char* name)
 	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
-		const en::U32 typeHash = ReadCurrentType();
-		if (typeHash == en::TypeInfo<T>::GetHash())
+		const U32 typeHash = ReadCurrentType();
+		if (typeHash == TypeInfo<T>::GetHash())
 		{
-			en::U32 size = 0;
+			U32 size = 0;
 			mParserXml.GetAttribute("size", size);
 			object.clear();
 			object.resize(static_cast<std::size_t>(size));
-			if constexpr (!en::Traits::IsDefaultConstructible<T>:value)
+			if constexpr (!Traits::IsDefaultConstructible<T>:value)
 			{
 				// For now T must be default constructible
-				static_assert(en::Traits::IsDefaultConstructible<T>::value);
+				static_assert(Traits::IsDefaultConstructible<T>::value);
 			}
 
-			for (en::U32 i = 0; i < size; ++i)
+			for (U32 i = 0; i < size; ++i)
 			{
 				std::string childName(name);
 				childName.append("_");
@@ -543,7 +546,7 @@ bool DataFile::Deserialize_Basic(std::vector<T>& object, const char* name)
 		}
 		else
 		{
-			enLogWarning(en::LogChannel::Global, "Type mismatch for {}", name);
+			enLogWarning(LogChannel::Core, "Type mismatch for {}", name);
 			object.clear();
 			result = false;
 		}
@@ -563,24 +566,24 @@ bool DataFile::Deserialize_Basic(std::array<T, N>& object, const char* name)
 	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
-		const en::U32 typeHash = ReadCurrentType();
-		if (typeHash == en::TypeInfo<T>::GetHash())
+		const U32 typeHash = ReadCurrentType();
+		if (typeHash == TypeInfo<T>::GetHash())
 		{
-			en::U32 size = 0;
+			U32 size = 0;
 			mParserXml.GetAttribute("size", size);
-			if (size != static_cast<en::U32>(N))
+			if (size != static_cast<U32>(N))
 			{
 				// TODO : Find a solution to allow updates
-				enLogError(en::LogChannel::Global, "Invalid size of {} for std::array named {} of size {}", size, name, N);
+				enLogError(LogChannel::Core, "Invalid size of {} for std::array named {} of size {}", size, name, N);
 				return false;
 			}
-			if constexpr (!en::Traits::IsDefaultConstructible<T>::value)
+			if constexpr (!Traits::IsDefaultConstructible<T>::value)
 			{
 				// For now T must be default constructible
-				static_assert(en::Traits::IsDefaultConstructible<T>::value);
+				static_assert(Traits::IsDefaultConstructible<T>::value);
 			}
 
-			for (en::U32 i = 0; i < size; ++i)
+			for (U32 i = 0; i < size; ++i)
 			{
 				std::string childName(name);
 				childName.append("_");
@@ -590,7 +593,7 @@ bool DataFile::Deserialize_Basic(std::array<T, N>& object, const char* name)
 		}
 		else
 		{
-			enLogWarning(en::LogChannel::Global, "Type mismatch for {}", name);
+			enLogWarning(LogChannel::Core, "Type mismatch for {}", name);
 			result = false;
 		}
 		mParserXml.CloseNode();
@@ -603,21 +606,21 @@ bool DataFile::Deserialize_Basic(std::array<T, N>& object, const char* name)
 }
 
 template <typename T>
-bool DataFile::Deserialize_Basic(en::Array<T*>& object, const char* name)
+bool DataFile::Deserialize_Basic(Array<T*>& object, const char* name)
 {
 	enAssert(name);
 	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
-		const en::U32 typeHash = ReadCurrentType();
-		if (typeHash == en::TypeInfo<T>::GetHash())
+		const U32 typeHash = ReadCurrentType();
+		if (typeHash == TypeInfo<T>::GetHash())
 		{
-			en::U32 size = 0;
+			U32 size = 0;
 			mParserXml.GetAttribute("size", size);
 			object.Clear();
 			object.Resize(size);
 
-			for (en::U32 i = 0; i < size; ++i)
+			for (U32 i = 0; i < size; ++i)
 			{
 				std::string childName(name);
 				childName.append("_");
@@ -625,15 +628,15 @@ bool DataFile::Deserialize_Basic(en::Array<T*>& object, const char* name)
 
 				if (!mParserXml.ReadNode(childName))
 				{
-					enLogError(en::LogChannel::Global, "Can't read node {} for {}", childName, name);
+					enLogError(LogChannel::Core, "Can't read node {} for {}", childName, name);
 					result = false;
 					continue;
 				}
-				const en::U32 childTypeHash = ReadCurrentType();
+				const U32 childTypeHash = ReadCurrentType();
 				mParserXml.CloseNode();
 
 				// TODO : Check inheritance childTypeHash is child of typeHash
-				T* childObject = (T*)en::ClassManager::CreateClassFromHash(childTypeHash);
+				T* childObject = (T*)ClassManager::CreateClassFromHash(childTypeHash);
 				if (childObject != nullptr)
 				{
 					const bool thisResult = Deserialize_Common(*childObject, childName.c_str());
@@ -645,14 +648,14 @@ bool DataFile::Deserialize_Basic(en::Array<T*>& object, const char* name)
 				}
 				else
 				{
-					enLogError(en::LogChannel::Global, "Can't create object of type {} for {}", en::ClassManager::GetClassNameFromHash(childTypeHash), name);
+					enLogError(LogChannel::Core, "Can't create object of type {} for {}", ClassManager::GetClassNameFromHash(childTypeHash), name);
 					result = false;
 				}
 			}
 		}
 		else
 		{
-			enLogWarning(en::LogChannel::Global, "Type mismatch for {}", name);
+			enLogWarning(LogChannel::Core, "Type mismatch for {}", name);
 			object.Clear();
 			result = false;
 		}
@@ -673,15 +676,15 @@ bool DataFile::Deserialize_Basic(std::vector<T*>& object, const char* name)
 	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
-		const en::U32 typeHash = ReadCurrentType();
-		if (typeHash == en::TypeInfo<T>::GetHash())
+		const U32 typeHash = ReadCurrentType();
+		if (typeHash == TypeInfo<T>::GetHash())
 		{
-			en::U32 size = 0;
+			U32 size = 0;
 			mParserXml.GetAttribute("size", size);
 			object.clear();
 			object.resize(static_cast<std::size_t>(size));
 
-			for (en::U32 i = 0; i < size; ++i)
+			for (U32 i = 0; i < size; ++i)
 			{
 				std::string childName(name);
 				childName.append("_");
@@ -689,15 +692,15 @@ bool DataFile::Deserialize_Basic(std::vector<T*>& object, const char* name)
 
 				if (!mParserXml.ReadNode(childName))
 				{
-					enLogError(en::LogChannel::Global, "Can't read node {} for {}", childName, name);
+					enLogError(LogChannel::Core, "Can't read node {} for {}", childName, name);
 					result = false;
 					continue;
 				}
-				const en::U32 childTypeHash = ReadCurrentType();
+				const U32 childTypeHash = ReadCurrentType();
 				mParserXml.CloseNode();
 
 				// TODO : Check inheritance childTypeHash is child of typeHash
-				T* childObject = (T*)en::ClassManager::CreateClassFromHash(childTypeHash);
+				T* childObject = (T*)ClassManager::CreateClassFromHash(childTypeHash);
 				if (childObject != nullptr)
 				{
 					const bool thisResult = Deserialize_Common(*childObject, childName.c_str());
@@ -709,14 +712,14 @@ bool DataFile::Deserialize_Basic(std::vector<T*>& object, const char* name)
 				}
 				else
 				{
-					enLogError(en::LogChannel::Global, "Can't create object of type {} for {}", en::ClassManager::GetClassNameFromHash(childTypeHash), name);
+					enLogError(LogChannel::Core, "Can't create object of type {} for {}", ClassManager::GetClassNameFromHash(childTypeHash), name);
 					result = false;
 				}
 			}
 		}
 		else
 		{
-			enLogWarning(en::LogChannel::Global, "Type mismatch for {}", name);
+			enLogWarning(LogChannel::Core, "Type mismatch for {}", name);
 			object.clear();
 			result = false;
 		}
@@ -737,19 +740,19 @@ bool DataFile::Deserialize_Basic(std::array<T*, N>& object, const char* name)
 	if (mParserXml.ReadNode(name))
 	{
 		bool result = true;
-		const en::U32 typeHash = ReadCurrentType();
-		if (typeHash == en::TypeInfo<T>::GetHash())
+		const U32 typeHash = ReadCurrentType();
+		if (typeHash == TypeInfo<T>::GetHash())
 		{
-			en::U32 size = 0;
+			U32 size = 0;
 			mParserXml.GetAttribute("size", size);
-			if (size != static_cast<en::U32>(N))
+			if (size != static_cast<U32>(N))
 			{
 				// TODO : Find a solution to allow updates
-				enLogError(en::LogChannel::Global, "Invalid size of {} for std::array named {} of size {}", size, name, N);
+				enLogError(LogChannel::Core, "Invalid size of {} for std::array named {} of size {}", size, name, N);
 				return false;
 			}
 
-			for (en::U32 i = 0; i < size; ++i)
+			for (U32 i = 0; i < size; ++i)
 			{
 				std::string childName(name);
 				childName.append("_");
@@ -757,15 +760,15 @@ bool DataFile::Deserialize_Basic(std::array<T*, N>& object, const char* name)
 
 				if (!mParserXml.ReadNode(childName))
 				{
-					enLogError(en::LogChannel::Global, "Can't read node {} for {}", childName, name);
+					enLogError(LogChannel::Core, "Can't read node {} for {}", childName, name);
 					result = false;
 					continue;
 				}
-				const en::U32 childTypeHash = ReadCurrentType();
+				const U32 childTypeHash = ReadCurrentType();
 				mParserXml.CloseNode();
 
 				// TODO : Check inheritance childTypeHash is child of typeHash
-				T* childObject = (T*)en::ClassManager::CreateClassFromHash(childTypeHash);
+				T* childObject = (T*)ClassManager::CreateClassFromHash(childTypeHash);
 				if (childObject != nullptr)
 				{
 					const bool thisResult = Deserialize_Common(*childObject, childName.c_str());
@@ -777,14 +780,14 @@ bool DataFile::Deserialize_Basic(std::array<T*, N>& object, const char* name)
 				}
 				else
 				{
-					enLogError(en::LogChannel::Global, "Can't create object of type {} for {}", en::ClassManager::GetClassNameFromHash(childTypeHash), name);
+					enLogError(LogChannel::Core, "Can't create object of type {} for {}", ClassManager::GetClassNameFromHash(childTypeHash), name);
 					result = false;
 				}
 			}
 		}
 		else
 		{
-			enLogWarning(en::LogChannel::Global, "Type mismatch for {}", name);
+			enLogWarning(LogChannel::Core, "Type mismatch for {}", name);
 			result = false;
 		}
 
@@ -802,12 +805,14 @@ void DataFile::WriteCurrentType()
 {
 	if (mReadable)
 	{
-		mParserXml.SetAttribute("type", en::TypeInfo<T>::GetName());
+		mParserXml.SetAttribute("type", TypeInfo<T>::GetName());
 	}
 	else
 	{
-		mParserXml.SetAttribute("type", en::TypeInfo<T>::GetHash());
+		mParserXml.SetAttribute("type", TypeInfo<T>::GetHash());
 	}
 }
+
+} // namespace en
 
 #include "DataFileSpecialization.inl"

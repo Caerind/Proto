@@ -2,7 +2,7 @@
 
 #include <entt/entt.hpp>
 
-#include "Entity.hpp"
+#include <Enlivengine/Core/Entity.hpp>
 
 namespace en
 {
@@ -97,7 +97,7 @@ template <>
 struct CustomXmlSerialization<en::EntityManager>
 {
 	static constexpr bool value = true;
-	static bool Serialize(DataFile& dataFile, const en::EntityManager& object, const char* name)
+	static bool Serialize(en::DataFile& dataFile, const en::EntityManager& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.CreateNode(name))
@@ -123,7 +123,7 @@ struct CustomXmlSerialization<en::EntityManager>
 			return false;
 		}
 	}
-	static bool Deserialize(DataFile& dataFile, en::EntityManager& object, const char* name)
+	static bool Deserialize(en::DataFile& dataFile, en::EntityManager& object, const char* name)
 	{
 		auto& parser = dataFile.GetParser();
 		if (parser.ReadNode(name))

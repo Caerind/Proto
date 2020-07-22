@@ -200,7 +200,7 @@ constexpr U32 GetClassVersion()
 #define ENLIVE_META_CLASS_DEFAULT_VIRTUAL_IMGUI_EDITOR() \
 	virtual bool ImGuiEditor(const char* name) \
 	{ \
-		 return ObjectEditor::ImGuiEditor_Registered(*this, name); \
+		 return en::ObjectEditor::ImGuiEditor_Registered(*this, name); \
 	}
 
 // TODO : Move to DataFile ?
@@ -210,21 +210,21 @@ constexpr U32 GetClassVersion()
 	struct CustomXmlSerialization<className> \
 	{ \
 		static constexpr bool value = true; \
-		static bool Serialize(DataFile& dataFile, const className& object, const char* name) \
+		static bool Serialize(en::DataFile& dataFile, const className& object, const char* name) \
 		{ \
 			return object.Serialize(dataFile, name); \
 		} \
-		static bool Deserialize(DataFile& dataFile, className& object, const char* name) \
+		static bool Deserialize(en::DataFile& dataFile, className& object, const char* name) \
 		{ \
 			return object.Deserialize(dataFile, name); \
 		} \
 	};
 #define ENLIVE_META_CLASS_DEFAULT_VIRTUAL_SERIALIZATION() \
-	virtual bool Serialize(DataFile& dataFile, const char* name) const \
+	virtual bool Serialize(en::DataFile& dataFile, const char* name) const \
 	{ \
 		 return dataFile.Serialize_Registered(*this, name); \
 	} \
-	virtual bool Deserialize(DataFile& dataFile, const char* name) \
+	virtual bool Deserialize(en::DataFile& dataFile, const char* name) \
 	{ \
 		 return dataFile.Deserialize_Registered(*this, name); \
 	}

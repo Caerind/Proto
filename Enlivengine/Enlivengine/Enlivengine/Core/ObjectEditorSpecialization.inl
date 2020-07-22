@@ -29,10 +29,10 @@ struct CustomObjectEditor<en::Time>
 		strcpy(concatName, name);
 		strcat(concatName, " (s)");
 #endif // ENLIVE_COMPILER_MSVC
-		float value = static_cast<float>(object.AsSeconds());
-		if (ImGui::InputFloat(concatName, &value))
+		float valueFloat = static_cast<float>(object.AsSeconds());
+		if (ImGui::InputFloat(concatName, &valueFloat))
 		{
-			object = en::Time::Seconds(value);
+			object = en::Time::Seconds(static_cast<en::F32>(valueFloat));
 			return true;
 		}
 		return false;

@@ -1,4 +1,7 @@
-#include "DataFile.hpp"
+#include <Enlivengine/Core/DataFile.hpp>
+
+namespace en
+{
 
 DataFile::DataFile(bool readable)
 	: mParserXml()
@@ -21,7 +24,7 @@ bool DataFile::CreateEmptyFile()
 	}
 	else
 	{
-		enLogError(en::LogChannel::Global, "Can't create \"DataFile\" root node for new DataFile");
+		enLogError(LogChannel::Core, "Can't create \"DataFile\" root node for new DataFile");
 		mValid = false;
 	}
 	return mValid;
@@ -37,13 +40,13 @@ bool DataFile::LoadFromFile(const std::string& filename)
 		}
 		else
 		{
-			enLogError(en::LogChannel::Global, "Can't find \"DataFile\" root node for DataFile {}", filename);
+			enLogError(LogChannel::Core, "Can't find \"DataFile\" root node for DataFile {}", filename);
 			mValid = false;
 		}
 	}
 	else
 	{
-		enLogError(en::LogChannel::Global, "Invalid DataFile file {}", filename);
+		enLogError(LogChannel::Core, "Invalid DataFile file {}", filename);
 		mValid = false;
 	}
 	return mValid;
@@ -54,17 +57,19 @@ bool DataFile::SaveToFile(const std::string& filename)
 	return mParserXml.SaveToFile(filename);
 }
 
-en::U32 DataFile::ReadCurrentType() const
+U32 DataFile::ReadCurrentType() const
 {
 	// TODO : Improve perfs of this method based on mReadable for non debug versions
 	std::string typeStr;
 	mParserXml.GetAttribute("type", typeStr);
-	if (en::IsNumber(typeStr))
+	if (IsNumber(typeStr))
 	{
-		return en::FromString<en::U32>(typeStr);
+		return FromString<en::U32>(typeStr);
 	}
 	else
 	{
-		return en::Hash::ConstexprHash(typeStr.c_str());
+		return Hash::ConstexprHash(typeStr.c_str());
 	}
 }
+
+} // namespac en

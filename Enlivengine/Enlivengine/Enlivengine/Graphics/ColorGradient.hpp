@@ -5,6 +5,9 @@
 #include <Enlivengine/Math/Color.hpp>
 #include <map>
 
+namespace en
+{
+
 class ColorGradient
 {
 public:
@@ -12,19 +15,19 @@ public:
 	{
 	}
 
-	en::Color& operator[](en::F32 position)
+	Color& operator[](F32 position)
 	{
 		enAssert(position >= 0.0f && position <= 1.0f);
 		return mColors[position];
 	}
 
-	const en::Color& operator[](en::F32 position) const
+	const Color& operator[](F32 position) const
 	{
 		enAssert(position >= 0.0f && position <= 1.0f);
 		return mColors.at(position);
 	}
 
-	en::Color GetSampleColor(en::F32 position) const
+	Color GetSampleColor(F32 position) const
 	{
 		// Make sure the positions 0 and 1 are set
 		enAssert(mColors.count(0.0f) && mColors.count(1.0f));
@@ -38,23 +41,25 @@ public:
 		auto prevColor = std::prev(nextColor);
 
 		// Interpolate color between 2 entries
-		const en::F32 interpolation = (position - prevColor->first) / (nextColor->first - prevColor->first);
+		const F32 interpolation = (position - prevColor->first) / (nextColor->first - prevColor->first);
 		return BlendColors(prevColor->second, nextColor->second, interpolation);
 	}
 
-	static en::Color BlendColors(const en::Color& firstColor, const en::Color& secondColor, en::F32 interpolation)
+	static Color BlendColors(const Color& firstColor, const Color& secondColor, F32 interpolation)
 	{
 		enAssert(interpolation >= 0.f && interpolation <= 1.f);
 
-		const en::F32 firstPart = 1.f - interpolation;
+		const F32 firstPart = 1.f - interpolation;
 
-		return en::Color(
-			static_cast<en::U8>(firstPart * firstColor.r + interpolation * secondColor.r),
-			static_cast<en::U8>(firstPart * firstColor.g + interpolation * secondColor.g),
-			static_cast<en::U8>(firstPart * firstColor.b + interpolation * secondColor.b),
-			static_cast<en::U8>(firstPart * firstColor.a + interpolation * secondColor.a));
+		return Color(
+			static_cast<U8>(firstPart * firstColor.r + interpolation * secondColor.r),
+			static_cast<U8>(firstPart * firstColor.g + interpolation * secondColor.g),
+			static_cast<U8>(firstPart * firstColor.b + interpolation * secondColor.b),
+			static_cast<U8>(firstPart * firstColor.a + interpolation * secondColor.a));
 	}
 
 private:
-	std::map<en::F32, en::Color> mColors;
+	std::map<F32, Color> mColors;
 };
+
+} // namespace en
