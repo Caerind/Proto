@@ -163,6 +163,8 @@ set(SRC_CORE
 	Enlivengine/Core/ObjectEditor.cpp
 	Enlivengine/Core/ObjectEditor.hpp
 	Enlivengine/Core/ObjectEditorSpecialization.inl
+	Enlivengine/Core/World.cpp
+	Enlivengine/Core/World.hpp
 )
 source_group("Core" FILES ${SRC_CORE})
 

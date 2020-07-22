@@ -10,6 +10,7 @@ namespace en
 {
 
 class EntityManager;
+class World;
 
 // This is only a handle of an entity in a registry
 // It does not create or destroy entity from registry
@@ -46,6 +47,9 @@ public:
 	bool HasManager() const;
 	EntityManager& GetManager();
 	const EntityManager& GetManager() const;
+
+	World& GetWorld();
+	const World& GetWorld() const;
 
 	// Using these should be avoided if possible
 	const entt::entity& GetEntity() const;

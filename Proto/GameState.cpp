@@ -13,34 +13,6 @@ GameState::GameState(en::StateManager& manager)
 	, mAs("mAs")
 	, mAaa("mAaa")
 {
-	mElevationNoise.SetNoiseType(en::Noise::NoiseType::SimplexFractal);
-	mElevationImage.create(1024, 768);
-	NoiseToImage(mElevationNoise, mElevationImage);
-
-	mHumidityNoise.SetNoiseType(en::Noise::NoiseType::PerlinFractal);
-	mHumidityImage.create(1024, 768);
-	NoiseToImage(mHumidityNoise, mHumidityImage);
-
-	mTemperatureNoise.SetNoiseType(en::Noise::NoiseType::CubicFractal);
-	mTemperatureNoise.SetFractalOctaves(1);
-	mTemperatureNoise.SetFractalGain(5.0f);
-	mTemperatureImage.create(1024, 768);
-	//NoiseToImage(mTemperatureNoise, mTemperatureImage);
-	mTemperatureGradient[0.0f] = en::Color(0, 0, 255);
-	mTemperatureGradient[0.25f] = en::Color(0, 255, 255);
-	mTemperatureGradient[0.5f] = en::Color(0, 255, 0);
-	mTemperatureGradient[0.75f] = en::Color(255, 255, 0);
-	mTemperatureGradient[1.0f] = en::Color(255, 0, 0);
-
-	mWaterGradient[0.0f] = en::Color(63, 72, 204);
-	mWaterGradient[0.5f] = en::Color(0, 162, 232);
-	mWaterGradient[1.0f] = en::Color(153, 217, 234);
-	mMapImage.create(1024, 768);
-	UpdateMap();
-
-	mDisplay = 0;
-	mTexture.loadFromImage(mMapImage);
-
 	Vector2Test v1;
 	v1.x = -10;
 	v1.y = +10;
@@ -95,18 +67,41 @@ GameState::GameState(en::StateManager& manager)
 
 	mTestFactory = (Aaa*)en::ClassManager::CreateClassFromHash(en::TypeInfo<Bbb>::GetHash());
 
-	/*
-	mEntity = mManager.CreateEntity();
-	mEntity.Add<en::NameComponent>("TestEntity");
-	mEntity.Add<en::PositionComponent>(en::Vector2f(200.0f, 100.0f));
-
-	en::Entity tempEntity = mManager.CreateEntity();
-	tempEntity.Add<en::NameComponent>();
-	*/
-
 	en::DataFile file;
 	file.LoadFromFile("DataFileWorld.xml");
-	file.Deserialize(mManager, "World");
+	file.Deserialize(mWorld, "World");
+#ifdef ENLIVE_DEBUG
+	mWorld.GetFreeCamView().setCenter(getApplication().GetWindow().getMainView().getSize() * 0.5f);
+	mWorld.GetFreeCamView().setSize(getApplication().GetWindow().getMainView().getSize());
+#endif // ENLIVE_DEBUG
+
+	mElevationNoise.SetNoiseType(en::Noise::NoiseType::SimplexFractal);
+	mElevationImage.create(1024, 768);
+	NoiseToImage(mElevationNoise, mElevationImage);
+
+	mHumidityNoise.SetNoiseType(en::Noise::NoiseType::PerlinFractal);
+	mHumidityImage.create(1024, 768);
+	NoiseToImage(mHumidityNoise, mHumidityImage);
+
+	mTemperatureNoise.SetNoiseType(en::Noise::NoiseType::CubicFractal);
+	mTemperatureNoise.SetFractalOctaves(1);
+	mTemperatureNoise.SetFractalGain(5.0f);
+	mTemperatureImage.create(1024, 768);
+	//NoiseToImage(mTemperatureNoise, mTemperatureImage);
+	mTemperatureGradient[0.0f] = en::Color(0, 0, 255);
+	mTemperatureGradient[0.25f] = en::Color(0, 255, 255);
+	mTemperatureGradient[0.5f] = en::Color(0, 255, 0);
+	mTemperatureGradient[0.75f] = en::Color(255, 255, 0);
+	mTemperatureGradient[1.0f] = en::Color(255, 0, 0);
+
+	mWaterGradient[0.0f] = en::Color(63, 72, 204);
+	mWaterGradient[0.5f] = en::Color(0, 162, 232);
+	mWaterGradient[1.0f] = en::Color(153, 217, 234);
+	mMapImage.create(1024, 768);
+	UpdateMap();
+
+	mDisplay = 0;
+	mTexture.loadFromImage(mMapImage);
 }
 
 GameState::~GameState()
@@ -131,6 +126,38 @@ bool GameState::update(en::Time dt)
 	{
 		return false;
 	}
+
+#ifdef ENLIVE_DEBUG
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+	{
+		constexpr en::F32 speed = 400.0f;
+		en::F32 speedMulti = (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) ? 2.0f : 1.0f;
+		en::F32 speedDiv = (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt)) ? 0.5f : 1.0f;
+		en::Vector2f velocity(en::Vector2f::zero);
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+		{
+			velocity.y -= 1.0f;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+		{
+			velocity.y += 1.0f;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		{
+			velocity.x -= 1.0f;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		{
+			velocity.x += 1.0f;
+		}
+		if (velocity.getSquaredLength() > 0.01f)
+		{
+			velocity.normalize();
+		}
+		velocity *= speed * speedMulti * speedDiv * dt.AsSeconds();
+		mWorld.GetFreeCamView().move(velocity);
+	}
+#endif // ENLIVE_DEBUG
 
 	/*
 	int i = 0;
@@ -200,19 +227,14 @@ bool GameState::update(en::Time dt)
 			mAaa.Clear();
 		}
 		en::ObjectEditor::ImGuiEditor(mAaa, "A");
-
-		if (mEntity.IsValid())
-		{
-			en::ObjectEditor::ImGuiEditor(mEntity, "TestEntityEditor");
-		}
 		
-		en::ObjectEditor::ImGuiEditor(mManager, "TestEntityManager");
+		en::ObjectEditor::ImGuiEditor(mWorld.GetEntityManager(), "EntityManager");
 
-		if (ImGui::Button("SerializeEntities") && false) // TEMP
+		if (ImGui::Button("SerializeEntities")) // TEMP
 		{
 			en::DataFile file;
 			file.CreateEmptyFile();
-			file.Serialize(mManager, "World");
+			file.Serialize(mWorld, "World");
 			file.SaveToFile("DataFileWorld.xml");
 		}
 
@@ -298,8 +320,25 @@ bool GameState::update(en::Time dt)
 void GameState::render(sf::RenderTarget& target)
 {
 	ENLIVE_PROFILE_FUNCTION();
+
+#ifdef ENLIVE_DEBUG
+	bool editor = true;
+	if (editor)
+	{
+		getApplication().GetWindow().setView(mWorld.GetFreeCamView());
+	}
+	else
+	{
+		getApplication().GetWindow().setView(mWorld.GetGameView());
+	}
+#else
+	getApplication().GetWindow().setView(mWorld.GetGameView());
+#endif // ENLIVE_DEBUG
+
 	sf::Sprite sprite(mTexture);
 	target.draw(sprite);
+
+	getApplication().GetWindow().applyMainView();
 }
 
 void GameState::UpdateTemperature()

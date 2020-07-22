@@ -7,6 +7,7 @@
 #include <Enlivengine/Graphics/ColorGradient.hpp>
 
 #include <Enlivengine/Core/Components.hpp>
+#include <Enlivengine/Core/World.hpp>
 #include <Enlivengine/Core/EntityManager.hpp>
 #include <Enlivengine/Core/Entity.hpp>
 #include <Enlivengine/Core/ObjectEditor.hpp>
@@ -55,6 +56,5 @@ private:
 
 	Aaa* mTestFactory;
 
-	en::EntityManager mManager;
-	en::Entity mEntity;
+	en::World mWorld;
 };

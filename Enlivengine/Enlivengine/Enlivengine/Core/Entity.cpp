@@ -61,6 +61,18 @@ const EntityManager& Entity::GetManager() const
 	return *mManager;
 }
 
+World& Entity::GetWorld()
+{
+	enAssert(mManager != nullptr);
+	return mManager->GetWorld();
+}
+
+const World& Entity::GetWorld() const
+{
+	enAssert(mManager != nullptr);
+	return mManager->GetWorld();
+}
+
 const entt::entity& Entity::GetEntity() const
 {
 	return mEntity;

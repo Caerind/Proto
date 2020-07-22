@@ -7,10 +7,12 @@
 namespace en
 {
 
+class World;
+
 class EntityManager
 {
 public:
-	EntityManager();
+	EntityManager(World& world);
 
 	Entity CreateEntity();
 	void DestroyEntity(Entity& entity);
@@ -34,13 +36,17 @@ public:
 		return mRegistry.view<Component...>(exclusion);
 	}
 
+	World& GetWorld();
+	const World& GetWorld() const;
+
 private:
 	friend class Entity;
 
-	entt::registry& GetRegistry() { return mRegistry; }
-	const entt::registry& GetRegistry() const { return mRegistry; }
+	entt::registry& GetRegistry();
+	const entt::registry& GetRegistry() const;
 
 private:
+	World& mWorld;
 	entt::registry mRegistry;
 };
 
