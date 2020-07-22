@@ -10,7 +10,7 @@
 #ifdef ENLIVE_ENABLE_IMGUI
 #include <Enlivengine/Application/ImGuiToolManager.hpp>
 #include <Enlivengine/Tools/ImGuiConsole.hpp>
-#include <Enlivengine/Tools/ImGuiEntt.hpp>
+#include <Enlivengine/Tools/ImGuiEntityBrowser.hpp>
 #include <Enlivengine/Tools/ImGuiLogger.hpp>
 #include <Enlivengine/Tools/ImGuiProfiler.hpp>
 #include <Enlivengine/Tools/ImGuiDemoWindow.hpp>
@@ -502,7 +502,7 @@ void Application::RegisterTools()
 	ImGuiConsole::GetInstance().Register();
 	ImGuiDemoWindow::GetInstance().Register();
 	// Engine
-	ImGuiEntt::GetInstance().Register();
+	ImGuiEntityBrowser::GetInstance().Register();
 #ifdef ENLIVE_ENABLE_DEBUG_MEMORY
 	ImGuiMemoryDebugger::GetInstance().Register();
 #endif // ENLIVE_ENABLE_DEBUG_MEMORY

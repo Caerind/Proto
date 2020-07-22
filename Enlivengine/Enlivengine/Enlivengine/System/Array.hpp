@@ -341,12 +341,12 @@ public:
 	void RemoveAtIndex(U32 index)
 	{
 		enAssert(index < mSize);
+		if constexpr (!Traits::IsTriviallyDestructible<T>::value)
+		{
+			mArray[index].~T();
+		}
 		if (index + 1 < mSize)
 		{
-			if constexpr (!Traits::IsTriviallyDestructible<T>::value)
-			{
-				mArray[index].~T();
-			}
 			mArray[index] = mArray[mSize - 1];
 		}
 		mSize--;

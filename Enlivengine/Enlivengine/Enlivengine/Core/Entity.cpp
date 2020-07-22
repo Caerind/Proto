@@ -2,6 +2,7 @@
 
 #include <Enlivengine/Core/EntityManager.hpp>
 #include <Enlivengine/Core/Components.hpp>
+#include <Enlivengine/Core/World.hpp>
 
 namespace en
 {
@@ -16,6 +17,13 @@ Entity::Entity(EntityManager& manager, entt::entity entity)
 	: mManager(&manager)
 	, mEntity(entity)
 {
+}
+
+Entity::Entity(World& world, entt::entity entity)
+	: mManager(&world.GetEntityManager())
+	, mEntity(entity)
+{
+
 }
 
 bool Entity::IsValid() const

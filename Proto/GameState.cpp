@@ -5,6 +5,7 @@
 #include <Enlivengine/Math/Color.hpp>
 #include <Enlivengine/Graphics/SFMLWrapper.hpp>
 #include <Enlivengine/System/ClassManager.hpp>
+#include <Enlivengine/Tools/ImGuiEntityBrowser.hpp>
 
 #include <imgui/imgui.h>
 
@@ -74,6 +75,7 @@ GameState::GameState(en::StateManager& manager)
 	mWorld.GetFreeCamView().setCenter(getApplication().GetWindow().getMainView().getSize() * 0.5f);
 	mWorld.GetFreeCamView().setSize(getApplication().GetWindow().getMainView().getSize());
 #endif // ENLIVE_DEBUG
+	en::ImGuiEntityBrowser::GetInstance().SetCurrentWorld(&mWorld);
 
 	mElevationNoise.SetNoiseType(en::Noise::NoiseType::SimplexFractal);
 	mElevationImage.create(1024, 768);
@@ -128,10 +130,10 @@ bool GameState::update(en::Time dt)
 	}
 
 #ifdef ENLIVE_DEBUG
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
 	{
 		constexpr en::F32 speed = 400.0f;
-		en::F32 speedMulti = (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) ? 2.0f : 1.0f;
+		en::F32 speedMulti = (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) ? 2.0f : 1.0f;
 		en::F32 speedDiv = (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt)) ? 0.5f : 1.0f;
 		en::Vector2f velocity(en::Vector2f::zero);
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
@@ -176,6 +178,7 @@ bool GameState::update(en::Time dt)
 	}
 	*/
 
+	/*
 	if (ImGui::Begin("ObjectEditor"))
 	{
 		if (ImGui::Button("Save As"))
@@ -265,7 +268,9 @@ bool GameState::update(en::Time dt)
 		}
 		ImGui::End();
 	}
+	*/
 
+	/*
 	ImGui::Begin("Noise");
 	static const char* strings[] = { "Map", "Elevation", "Humidity", "Temperature" };
 	if (ImGui::Combo("", &mDisplay, strings, IM_ARRAYSIZE(strings)))
@@ -313,6 +318,7 @@ bool GameState::update(en::Time dt)
 		UpdateMap();
 		mTexture.loadFromImage(mMapImage);
 	}
+	*/
 
 	return false;
 }

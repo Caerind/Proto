@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 		const auto& blocks = en::MemoryAllocator::GetDebugAllocator().GetBlocks();
 		for (const auto& block : blocks)
 		{
-			enLogInfo(en::LogChannel::Global, "%s (%p): %d from %s:%d\n", block.context, block.ptr, block.size, block.GetFile().c_str(), block.line);
+			enLogInfo(en::LogChannel::Global, "{} ({}): {} from {}:{}\n", block.context, block.ptr, block.size, block.GetFile().c_str(), block.line);
 		}
 	}
 #endif // ENLIVE_ENABLE_DEBUG_MEMORY

@@ -20,6 +20,7 @@ class Entity
 public:
 	Entity();
 	Entity(EntityManager& manager, entt::entity entity);
+	Entity(World& world, entt::entity entity);
 
 	bool IsValid() const;
 	U32 GetID() const;
@@ -132,10 +133,21 @@ struct CustomObjectEditor<en::Entity>
 	static constexpr bool value = true;
 	static bool ImGuiEditor(en::Entity& object, const char* name)
 	{
-		if (ImGui::CollapsingHeader(name))
+		const bool fromEntityBrowser = name == nullptr;
+		bool display = true;
+
+		if (!fromEntityBrowser)
+		{
+			display = ImGui::CollapsingHeader(name);
+		}
+
+		if (display)
 		{
 			bool result = false;
-			ImGui::Indent();
+			if (!fromEntityBrowser)
+			{
+				ImGui::Indent();
+			}
 			if (object.IsValid())
 			{
 				const en::U32 entityID = object.GetID();
@@ -205,7 +217,10 @@ struct CustomObjectEditor<en::Entity>
 			{
 				ImGui::Text("Invalid entity");
 			}
-			ImGui::Unindent();
+			if (!fromEntityBrowser)
+			{
+				ImGui::Unindent();
+			}
 		}
 		return true;
 	}
