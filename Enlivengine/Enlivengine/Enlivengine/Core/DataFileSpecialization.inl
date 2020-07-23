@@ -63,6 +63,7 @@ struct CustomXmlSerialization<en::Color>
 		auto& parser = dataFile.GetParser();
 		if (parser.CreateNode(name))
 		{
+			dataFile.WriteCurrentType<en::Color>();
 			parser.SetValue(object.toString());
 			parser.CloseNode();
 			return true;
