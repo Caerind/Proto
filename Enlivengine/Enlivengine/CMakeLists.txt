@@ -95,6 +95,10 @@ set(SRC_GRAPHICS
 	Enlivengine/Graphics/SFMLResources.hpp
 	Enlivengine/Graphics/SFMLWrapper.cpp
 	Enlivengine/Graphics/SFMLWrapper.hpp
+	Enlivengine/Graphics/Sprite.cpp
+	Enlivengine/Graphics/Sprite.hpp
+	Enlivengine/Graphics/Text.cpp
+	Enlivengine/Graphics/Text.hpp
 	Enlivengine/Graphics/View.cpp
 	Enlivengine/Graphics/View.hpp
 )

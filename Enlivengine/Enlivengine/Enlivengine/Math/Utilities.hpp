@@ -2,6 +2,7 @@
 
 #include <Enlivengine/System/Assert.hpp>
 #include <Enlivengine/System/PrimitiveTypes.hpp>
+#include <Enlivengine/System/Meta.hpp>
 
 #include <cmath>
 #include <cstring> // memcpy

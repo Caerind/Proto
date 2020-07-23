@@ -4,6 +4,8 @@
 
 #include <string>
 #include <Enlivengine/Core/Transform.hpp>
+#include <Enlivengine/Graphics/Sprite.hpp>
+#include <Enlivengine/Graphics/Text.hpp>
 
 namespace en
 {
@@ -25,6 +27,22 @@ struct TransformComponent
 	Transform transform;
 };
 
+struct SpriteComponent
+{
+	SpriteComponent() : sprite() {}
+	SpriteComponent(const Sprite& pSprite) : sprite(pSprite) {}
+
+	Sprite sprite;
+};
+
+struct TextComponent
+{
+	TextComponent() : text() {}
+	TextComponent(const Text& pText) : text(pText) {}
+
+	Text text;
+};
+
 } // namespace en
 
 ENLIVE_META_CLASS_BEGIN(en::NameComponent)
@@ -33,5 +51,13 @@ ENLIVE_META_CLASS_BEGIN(en::NameComponent)
 
 ENLIVE_META_CLASS_BEGIN(en::TransformComponent)
 	ENLIVE_META_CLASS_MEMBER("transform", &en::TransformComponent::transform)
+	ENLIVE_META_CLASS_END()
+
+ENLIVE_META_CLASS_BEGIN(en::SpriteComponent)
+	ENLIVE_META_CLASS_MEMBER("sprite", &en::SpriteComponent::sprite)
+ENLIVE_META_CLASS_END()
+
+ENLIVE_META_CLASS_BEGIN(en::TextComponent)
+	ENLIVE_META_CLASS_MEMBER("text", &en::TextComponent::text)
 ENLIVE_META_CLASS_END()
 

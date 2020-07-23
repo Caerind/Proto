@@ -19,8 +19,6 @@ constexpr ResourceID InvalidResourceID = U32_Max;
 namespace priv
 {
 
-ResourceID StringToResourceID(const std::string& str);
-
 class BaseResource : private NonCopyable
 {
 public:
@@ -119,6 +117,8 @@ public:
 	void ReleaseAll();
 
 	U32 Count() const;
+
+	static ResourceID StringToResourceID(const std::string& str);
 
 private:
 	template <typename T> friend class ResourcePtr;

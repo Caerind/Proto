@@ -80,7 +80,7 @@ bool ResourceLoader<T>::Load(T& resource) const
 template <typename T> 
 ResourcePtr<T> ResourceManager::Create(const std::string& str, const ResourceLoader<T>& loader, ResourceKnownStrategy knownStrategy)
 {
-	ResourceID id = priv::StringToResourceID(str);
+	ResourceID id = StringToResourceID(str);
 	const auto itr = mResources.find(id);
 	if (itr == mResources.end() || knownStrategy == ResourceKnownStrategy::Reload)
 	{
@@ -113,7 +113,7 @@ ResourcePtr<T> ResourceManager::Create(const std::string& str, const ResourceLoa
 template <typename T> 
 ResourcePtr<T> ResourceManager::Get(const std::string& str)
 {
-	return Get<T>(priv::StringToResourceID(str));
+	return Get<T>(StringToResourceID(str));
 }
 
 template <typename T> 

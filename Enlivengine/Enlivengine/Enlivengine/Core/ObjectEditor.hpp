@@ -167,7 +167,7 @@ private:
 		}
 		else if constexpr (Traits::IsSame<Traits::Decay<T>::type, std::string>::value)
 		{
-			static constexpr std::size_t maxSize = 256;
+			static constexpr std::size_t maxSize = 512;
 			static char inputBuffer[maxSize];
 			if (strcmp(inputBuffer, object.c_str()) != 0)
 			{

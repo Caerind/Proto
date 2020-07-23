@@ -10,8 +10,14 @@
 #include <Enlivengine/Math/Matrix3.hpp>
 #include <Enlivengine/Math/Matrix4.hpp>
 #include <Enlivengine/Math/Quaternion.hpp>
+#include <Enlivengine/Math/Rect.hpp>
+#include <Enlivengine/Core/Transform.hpp>
+#include <Enlivengine/Graphics/Sprite.hpp>
+#include <Enlivengine/Graphics/Text.hpp>
 
 #include "CustomObjectEditor.hpp"
+#include <Enlivengine/Core/ObjectEditor.hpp>
+#include <Enlivengine/Tools/ImGuiHelper.hpp>
 
 // en::Time
 template <>
@@ -287,6 +293,232 @@ struct CustomObjectEditor<en::Quaternion<T>>
 			return true;
 		}
 		return false;
+	}
+};
+
+// en::Rect
+template <typename T>
+struct CustomObjectEditor<en::Rect<T>>
+{
+	static constexpr bool value = true;
+	static bool ImGuiEditor(en::Rect<T>& object, const char* name)
+	{
+		bool modified = false;
+		if (ImGui::CollapsingHeader(name))
+		{
+			ImGui::Indent();
+			en::Vector2<T> min = object.getMinimum();
+			if (CustomObjectEditor<en::Vector2<T>>::ImGuiEditor(min, "Min"))
+			{
+				object.setMinimum(min);
+				modified = true;
+			}
+			en::Vector2<T> size = object.getSize();
+			if (CustomObjectEditor<en::Vector2<T>>::ImGuiEditor(size, "Size"))
+			{
+				object.setSize(size);
+				modified = true;
+			}
+			ImGui::Unindent();
+		}
+		return modified;
+	}
+};
+
+// en::Transform
+template <>
+struct CustomObjectEditor<en::Transform>
+{
+	static constexpr bool value = true;
+	static bool ImGuiEditor(en::Transform& object, const char* name)
+	{
+		bool modified = false;
+		if (ImGui::CollapsingHeader(name))
+		{
+			ImGui::Indent();
+
+			en::Vector3f position = object.GetPosition();
+			if (en::ObjectEditor::ImGuiEditor(position, "Position"))
+			{
+				object.SetPosition(position);
+				modified = true;
+			}
+
+			en::F32 rotation = object.GetRotation2D();
+			if (en::ObjectEditor::ImGuiEditor(rotation, "Rotation"))
+			{
+				object.SetRotation2D(rotation);
+				modified = true;
+			}
+
+			en::Vector3f scale = object.GetScale();
+			if (en::ObjectEditor::ImGuiEditor(scale, "Scale"))
+			{
+				object.SetScale(scale);
+				modified = true;
+			}
+
+			ImGui::Unindent();
+		}
+		return modified;
+	}
+};
+
+// en::Sprite
+template <>
+struct CustomObjectEditor<en::Sprite>
+{
+	static constexpr bool value = true;
+	static bool ImGuiEditor(en::Sprite& object, const char* name)
+	{
+		bool modified = false;
+		if (ImGui::CollapsingHeader(name))
+		{
+			ImGui::Indent();
+
+			if (object.GetTexture() != nullptr)
+			{
+				const en::Recti iTexRect = object.GetTextureRect();
+				en::Rectu uTexRect;
+				// TODO : Ugly conv from recti to rectu...
+				uTexRect.setMinimum(static_cast<en::U32>(iTexRect.getMinimum().x), static_cast<en::U32>(iTexRect.getMinimum().y));
+				uTexRect.setSize(static_cast<en::U32>(iTexRect.getSize().x), static_cast<en::U32>(iTexRect.getSize().y));
+				ImGui::PreviewTexture(*object.GetTexture(), uTexRect, 100.0f, false);
+			}
+			else
+			{
+				ImGui::TextColored(en::Color::Orange.toImGuiColor(), "Invalid texture");
+			}
+
+			static constexpr en::U32 resourceNameMaxSize = 255;
+			static char resourceName[resourceNameMaxSize];
+			if (ImGui::InputText("TextureIdentifier", resourceName, resourceNameMaxSize))
+			{
+				const std::string resourceNameStr = resourceName;
+				const en::ResourceID resourceID = en::ResourceManager::StringToResourceID(resourceNameStr);
+				auto& resourceManager = en::ResourceManager::GetInstance();
+				if (resourceManager.Has(resourceID))
+				{
+					en::TexturePtr texturePtr = en::ResourceManager::GetInstance().Get<en::Texture>(resourceID);
+					if (texturePtr.IsValid())
+					{
+						object.SetTexture(texturePtr.Get());
+						modified = true;
+					}
+				}
+			}
+
+			en::Recti textureRect = object.GetTextureRect();
+			if (en::ObjectEditor::ImGuiEditor(textureRect, "TextureRect"))
+			{
+				object.SetTextureRect(textureRect);
+				modified = true;
+			}
+
+			en::Vector2f origin = object.GetOrigin();
+			if (en::ObjectEditor::ImGuiEditor(origin, "Origin"))
+			{
+				object.SetOrigin(origin);
+				modified = true;
+			}
+
+			ImGui::Unindent();
+		}
+		return modified;
+	}
+};
+
+// en::Text
+template <>
+struct CustomObjectEditor<en::Text>
+{
+	static constexpr bool value = true;
+	static bool ImGuiEditor(en::Text& object, const char* name)
+	{
+		bool modified = false;
+		if (ImGui::CollapsingHeader(name))
+		{
+			ImGui::Indent();
+
+			static constexpr en::U32 resourceNameMaxSize = 255;
+			static char resourceName[resourceNameMaxSize];
+			if (ImGui::InputText("FontIdentifier", resourceName, resourceNameMaxSize))
+			{
+				const std::string resourceNameStr = resourceName;
+				const en::ResourceID resourceID = en::ResourceManager::StringToResourceID(resourceNameStr);
+				auto& resourceManager = en::ResourceManager::GetInstance();
+				if (resourceManager.Has(resourceID))
+				{
+					en::FontPtr fontPtr = en::ResourceManager::GetInstance().Get<en::Font>(resourceID);
+					if (fontPtr.IsValid())
+					{
+						object.SetFont(fontPtr.Get());
+						modified = true;
+					}
+				}
+			}
+
+			std::string str = object.GetString();
+			if (en::ObjectEditor::ImGuiEditor(str, "String"))
+			{
+				object.SetString(str);
+				modified = true;
+			}
+
+			en::U32 characterSize = object.GetCharacterSize();
+			if (en::ObjectEditor::ImGuiEditor(characterSize, "CharacterSize"))
+			{
+				object.SetCharacterSize(characterSize);
+				modified = true;
+			}
+
+			en::F32 lineSpacing = object.GetLineSpacing();
+			if (en::ObjectEditor::ImGuiEditor(lineSpacing, "LineSpacing"))
+			{
+				object.SetLineSpacing(lineSpacing);
+				modified = true;
+			}
+
+			en::F32 letterSpacing = object.GetLetterSpacing();
+			if (en::ObjectEditor::ImGuiEditor(letterSpacing, "LetterSpacing"))
+			{
+				object.SetLetterSpacing(letterSpacing);
+				modified = true;
+			}
+
+			// TODO : Style
+
+			en::Color fillColor = object.GetFillColor();
+			if (en::ObjectEditor::ImGuiEditor(fillColor, "FillColor"))
+			{
+				object.SetFillColor(fillColor);
+				modified = true;
+			}
+
+			en::Color outlineColor = object.GetOutlineColor();
+			if (en::ObjectEditor::ImGuiEditor(outlineColor, "OutlineColor"))
+			{
+				object.SetOutlineColor(outlineColor);
+				modified = true;
+			}
+
+			en::F32 outlineThickness = object.GetOutlineThickness();
+			if (en::ObjectEditor::ImGuiEditor(outlineThickness, "OutlineThickness"))
+			{
+				object.SetOutlineThickness(outlineThickness);
+				modified = true;
+			}
+
+			en::Vector2f origin = object.GetOrigin();
+			if (en::ObjectEditor::ImGuiEditor(origin, "Origin"))
+			{
+				object.SetOrigin(origin);
+				modified = true;
+			}
+
+			ImGui::Unindent();
+		}
+		return modified;
 	}
 };
 

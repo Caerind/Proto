@@ -8,6 +8,9 @@
 #include <Enlivengine/Math/Matrix3.hpp>
 #include <Enlivengine/Math/Matrix4.hpp>
 #include <Enlivengine/Math/Quaternion.hpp>
+#include <Enlivengine/Math/Rect.hpp>
+#include <Enlivengine/Graphics/Sprite.hpp>
+#include <Enlivengine/Graphics/Text.hpp>
 
 #include <Enlivengine/Core/CustomXmlSerialization.hpp>
 #include <Enlivengine/Core/DataFile.hpp>
@@ -334,6 +337,181 @@ struct CustomXmlSerialization<en::Quaternion<T>>
 			dataFile.Deserialize_Common(v.y, "y");
 			dataFile.Deserialize_Common(v.z, "z");
 			dataFile.Deserialize_Common(s, "s");
+			parser.CloseNode();
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+};
+
+// en::Rect
+template <typename T>
+struct CustomXmlSerialization<en::Rect<T>>
+{
+	static constexpr bool value = true;
+	static bool Serialize(en::DataFile& dataFile, const en::Rect<T>& object, const char* name)
+	{
+		auto& parser = dataFile.GetParser();
+		if (parser.CreateNode(name))
+		{
+			dataFile.WriteCurrentType<en::Rect<T>>();
+			dataFile.Serialize_Common(object.getMinimum(), "Min");
+			dataFile.Serialize_Common(object.getSize(), "Size");
+			parser.CloseNode();
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	static bool Deserialize(en::DataFile& dataFile, en::Rect<T>& object, const char* name)
+	{
+		auto& parser = dataFile.GetParser();
+		if (parser.ReadNode(name))
+		{
+			enAssert(dataFile.ReadCurrentType() == en::TypeInfo<en::Rect<T>>::GetHash());
+			en::Vector2<T> vec;
+			dataFile.Serialize_Common(vec, "Min");
+			object.setMinimum(vec);
+			dataFile.Serialize_Common(vec, "Size");
+			object.setSize(vec);
+			parser.CloseNode();
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+};
+
+// en::Sprite
+template <>
+struct CustomXmlSerialization<en::Sprite>
+{
+	static constexpr bool value = true;
+	static bool Serialize(en::DataFile& dataFile, const en::Sprite& object, const char* name)
+	{
+		auto& parser = dataFile.GetParser();
+		if (parser.CreateNode(name))
+		{
+			dataFile.WriteCurrentType<en::Sprite>();
+			dataFile.Serialize_Common(static_cast<en::U32>(object.GetTextureID()), "TextureID");
+			dataFile.Serialize_Common(object.GetTextureRect(), "TextureRect");
+			dataFile.Serialize_Common(object.GetOrigin(), "Origin");
+			parser.CloseNode();
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	static bool Deserialize(en::DataFile& dataFile, en::Sprite& object, const char* name)
+	{
+		auto& parser = dataFile.GetParser();
+		if (parser.ReadNode(name))
+		{
+			enAssert(dataFile.ReadCurrentType() == en::TypeInfo<en::Sprite>::GetHash());
+
+			en::U32 textureID;
+			// TODO : Crash risk if invalid texture id
+			dataFile.Deserialize_Common(textureID, "TextureID");
+			object.SetTextureID(static_cast<en::ResourceID>(textureID));
+
+			en::Recti textureRect;
+			dataFile.Deserialize_Common(textureRect, "TextureRect");
+			object.SetTextureRect(textureRect);
+
+			en::Vector2f origin;
+			dataFile.Deserialize_Common(origin, "Origin");
+			object.SetOrigin(origin);
+
+			parser.CloseNode();
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+};
+
+// en::Text
+template <>
+struct CustomXmlSerialization<en::Text>
+{
+	static constexpr bool value = true;
+	static bool Serialize(en::DataFile& dataFile, const en::Text& object, const char* name)
+	{
+		auto& parser = dataFile.GetParser();
+		if (parser.CreateNode(name))
+		{
+			dataFile.WriteCurrentType<en::Text>();
+			dataFile.Serialize_Common(static_cast<en::U32>(object.GetFontID()), "FontID");
+			std::string str = object.GetString();
+			dataFile.Serialize_Common(str, "String");
+			dataFile.Serialize_Common(object.GetCharacterSize(), "CharacterSize");
+			dataFile.Serialize_Common(object.GetLineSpacing(), "LineSpacing");
+			dataFile.Serialize_Common(object.GetLetterSpacing(), "LetterSpacing");
+			// TODO : Style
+			dataFile.Serialize_Common(object.GetFillColor(), "FillColor");
+			dataFile.Serialize_Common(object.GetOutlineColor(), "OutlineColor");
+			dataFile.Serialize_Common(object.GetOutlineThickness(), "OutlineThickness");
+			parser.CloseNode();
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	static bool Deserialize(en::DataFile& dataFile, en::Text& object, const char* name)
+	{
+		auto& parser = dataFile.GetParser();
+		if (parser.ReadNode(name))
+		{
+			enAssert(dataFile.ReadCurrentType() == en::TypeInfo<en::Text>::GetHash());
+
+			en::U32 fontID;
+			// TODO : Crash risk if invalid font id
+			dataFile.Deserialize_Common(fontID, "FontID");
+			object.SetFontID(static_cast<en::ResourceID>(fontID));
+
+			std::string str;
+			dataFile.Deserialize_Common(str, "String");
+			object.SetString(str);
+
+			en::U32 characterSize;
+			dataFile.Deserialize_Common(characterSize, "CharacterSize");
+			object.SetCharacterSize(characterSize);
+
+			en::F32 lineSpacing;
+			dataFile.Deserialize_Common(lineSpacing, "LineSpacing");
+			object.SetLineSpacing(lineSpacing);
+
+			en::F32 letterSpacing;
+			dataFile.Deserialize_Common(letterSpacing, "LetterSpacing");
+			object.SetLetterSpacing(letterSpacing);
+
+			// TODO : Style
+
+			en::Color fillColor;
+			dataFile.Deserialize_Common(fillColor, "FillColor");
+			object.SetFillColor(fillColor);
+
+			en::Color outlineColor;
+			dataFile.Deserialize_Common(outlineColor, "OutlineColor");
+			object.SetOutlineColor(outlineColor);
+
+			en::F32 outlineThickness;
+			dataFile.Deserialize_Common(outlineThickness, "OutlineThickness");
+			object.SetOutlineThickness(outlineThickness);
+
 			parser.CloseNode();
 			return true;
 		}

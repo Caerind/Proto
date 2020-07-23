@@ -520,7 +520,7 @@ F32 AudioSystem::GetCurrentMusicsVolume() const
 
 MusicID AudioSystem::PrepareMusic(const char* id, const std::string& filename)
 {
-	MusicID index(priv::StringToResourceID(id));
+	MusicID index(ResourceManager::StringToResourceID(id));
 	if (mMusicFilenames.find(index) == mMusicFilenames.end())
 	{
 		mMusicFilenames[index] = filename;
@@ -552,7 +552,7 @@ MusicPtr AudioSystem::PlayMusic(MusicID id, bool loop /*= true*/)
 
 MusicPtr AudioSystem::PlayMusic(const char* id, bool loop /*= true*/)
 {
-	return PlayMusic(priv::StringToResourceID(id), loop);
+	return PlayMusic(ResourceManager::StringToResourceID(id), loop);
 }
 
 U32 AudioSystem::GetCurrentMusicsCount() const
@@ -656,7 +656,7 @@ bool AudioSystem::IsSoundLoaded(SoundID id) const
 
 bool AudioSystem::IsSoundLoaded(const char* id) const
 {
-	return IsSoundLoaded(priv::StringToResourceID(id));
+	return IsSoundLoaded(ResourceManager::StringToResourceID(id));
 }
 
 U32 AudioSystem::GetLoadedSoundsCount() const
@@ -690,7 +690,7 @@ SoundPtr AudioSystem::PlaySound(SoundID id)
 
 SoundPtr AudioSystem::PlaySound(const char* id)
 {
-	return PlaySound(priv::StringToResourceID(id));
+	return PlaySound(ResourceManager::StringToResourceID(id));
 }
 
 U32 AudioSystem::GetCurrentSoundsCount() const
@@ -714,7 +714,7 @@ void AudioSystem::ReleaseSound(SoundID id)
 
 void AudioSystem::ReleaseSound(const char* id)
 {
-	ReleaseSound(priv::StringToResourceID(id));
+	ReleaseSound(ResourceManager::StringToResourceID(id));
 }
 
 void AudioSystem::PlaySounds()

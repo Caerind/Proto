@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Enlivengine/Math/Utilities.hpp>
-#include <Enlivengine/System/TypeInfo.hpp>
 
 // TODO : Matrix43 ?
 // TODO : constexpr

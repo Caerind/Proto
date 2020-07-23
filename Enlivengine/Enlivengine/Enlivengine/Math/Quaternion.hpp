@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Enlivengine/System/TypeInfo.hpp>
+#include <Enlivengine/Math/Utilities.hpp>
 
 // TODO : constexpr
 

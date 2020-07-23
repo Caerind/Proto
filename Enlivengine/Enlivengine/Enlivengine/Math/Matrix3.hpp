@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Enlivengine/Math/Vector3.hpp>
-#include <Enlivengine/System/TypeInfo.hpp>
 
 // TODO : constexpr
 

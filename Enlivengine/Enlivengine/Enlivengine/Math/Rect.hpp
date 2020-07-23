@@ -342,3 +342,5 @@ bool Rect<T>::operator!=(const Rect<T>& rect) const
 }
 
 } // namespace en
+
+ENLIVE_DEFINE_TYPE_INFO_TEMPLATE(en::Rect);

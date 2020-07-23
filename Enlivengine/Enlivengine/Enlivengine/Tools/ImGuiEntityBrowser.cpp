@@ -4,6 +4,8 @@
 
 #include <imgui/imgui.h>
 
+#include <Enlivengine/Core/Components.hpp>
+
 namespace en
 {
 
@@ -33,11 +35,32 @@ void ImGuiEntityBrowser::Display()
 	{
 		static constexpr char unknownEntityName[] = "<Unknown>";
 
+		static constexpr U32 entityNameMaxSize = 255;
+		static char entityNameInput[entityNameMaxSize] = "";
+
 		EntityManager& entityManager = mCurrentWorld->GetEntityManager();
-		if (ImGui::Button("New Entity"))
+		bool button = ImGui::Button("New Entity");
+		ImGui::SameLine();
+		bool input = ImGui::InputText("", entityNameInput, entityNameMaxSize, ImGuiInputTextFlags_EnterReturnsTrue);
+		if (button || input)
 		{
-			entityManager.CreateEntity();
+			Entity newEntity = entityManager.CreateEntity();
+			if (strlen(entityNameInput) > 0)
+			{
+				if (newEntity.IsValid())
+				{
+					newEntity.Add<NameComponent>(entityNameInput);
+
+					mSelectedEntities.push_back(newEntity.GetEntity());
+				}
+#ifdef ENLIVE_COMPILER_MSVC
+				strcpy_s(entityNameInput, "");
+#else
+				strcpy(entityNameInput, "");
+#endif // ENLIVE_COMPILER_MSVC
+			}
 		}
+
 		entityManager.Each([this, &entityManager](auto entityEntt)
 		{
 			en::Entity entity(entityManager, entityEntt);
@@ -122,6 +145,22 @@ void ImGuiEntityBrowser::Display()
 	{
 		ImGui::Text("No CurrentWorld for EntityBrowser");
 	}
+}
+
+bool ImGuiEntityBrowser::IsSelected(const Entity& entity) const
+{
+	if (entity.IsValid() && mCurrentWorld != nullptr && &entity.GetWorld() == mCurrentWorld)
+	{
+		const auto& entityToTest = entity.GetEntity();
+		for (const auto& ent : mSelectedEntities)
+		{
+			if (ent == entityToTest)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 void ImGuiEntityBrowser::SetCurrentWorld(World* world)

@@ -6,11 +6,6 @@ namespace en
 namespace priv
 {
 
-ResourceID StringToResourceID(const std::string& str)
-{
-	return Hash::Meow32(str.c_str());
-}
-
 BaseResource::BaseResource()
 	: mID(InvalidResourceID)
 	, mLoaded(false)
@@ -57,7 +52,7 @@ ResourceManager::ResourceManager()
 
 bool ResourceManager::Has(const std::string& str) const
 {
-	return Has(priv::StringToResourceID(str));
+	return Has(StringToResourceID(str));
 }
 
 bool ResourceManager::Has(ResourceID id) const
@@ -67,7 +62,7 @@ bool ResourceManager::Has(ResourceID id) const
 
 void ResourceManager::Release(const std::string& str)
 {
-	Release(priv::StringToResourceID(str));
+	Release(StringToResourceID(str));
 }
 
 void ResourceManager::Release(ResourceID id)
@@ -87,6 +82,11 @@ void ResourceManager::ReleaseAll()
 U32 ResourceManager::Count() const
 {
 	return static_cast<U32>(mResources.size());
+}
+
+ResourceID ResourceManager::StringToResourceID(const std::string& str)
+{
+	return Hash::Meow32(str.c_str());
 }
 
 } // namespace en

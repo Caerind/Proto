@@ -21,6 +21,8 @@ public:
 
 	virtual void Display();
 
+	bool IsSelected(const Entity& entity) const;
+
 	// TODO : Have a GetCurrentWorld more global to the engine ?
 	void SetCurrentWorld(World* world);
 	World* GetCurrentWorld();

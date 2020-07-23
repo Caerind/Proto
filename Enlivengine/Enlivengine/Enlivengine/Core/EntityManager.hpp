@@ -39,11 +39,12 @@ public:
 	World& GetWorld();
 	const World& GetWorld() const;
 
-private:
-	friend class Entity;
-
+	// TODO : Move this to private again after game jam
 	entt::registry& GetRegistry();
 	const entt::registry& GetRegistry() const;
+
+private:
+	friend class Entity;
 
 private:
 	World& mWorld;

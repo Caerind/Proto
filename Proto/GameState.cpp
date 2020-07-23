@@ -344,6 +344,65 @@ void GameState::render(sf::RenderTarget& target)
 	sf::Sprite sprite(mTexture);
 	target.draw(sprite);
 
+#ifdef ENLIVE_DEBUG
+	static bool dotInit = false;
+	static sf::CircleShape dotTransform;
+	if (!dotInit)
+	{
+		static constexpr float radius = 2.0f;
+		dotTransform.setFillColor(sf::Color::Red);
+		dotTransform.setRadius(radius);
+		dotTransform.setOrigin(sf::Vector2f(radius, radius));
+		dotInit = true;
+	}
+#endif // ENLIVE_DEBUG
+
+	{
+		ENLIVE_PROFILE_SCOPE(RenderSort);
+		mWorld.GetEntityManager().GetRegistry().sort<en::TransformComponent>([](const auto& lhs, const auto& rhs)
+		{
+			const auto& pL = lhs.transform.GetPosition();
+			const auto& pR = rhs.transform.GetPosition();
+			if (pL.z == pR.z)
+			{
+				return pL.y < pR.y;
+			}
+			return pL.z < pR.z;
+		});
+	}
+
+	{
+		ENLIVE_PROFILE_SCOPE(RenderSystem);
+		auto transformView = mWorld.GetEntityManager().View<en::TransformComponent>();
+		for (auto entt : transformView)
+		{
+			en::Entity entity(mWorld, entt);
+			if (entity.IsValid())
+			{
+				sf::RenderStates states;
+				states.transform = en::toSF(entity.Get<en::TransformComponent>().transform.GetMatrix());
+
+				if (entity.Has<en::SpriteComponent>())
+				{
+					entity.Get<en::SpriteComponent>().sprite.Render(target, states);
+				}
+				if (entity.Has<en::TextComponent>())
+				{
+					entity.Get<en::TextComponent>().text.Render(target, states);
+				}
+
+#ifdef ENLIVE_DEBUG
+				if (en::ImGuiEntityBrowser::GetInstance().IsSelected(entity))
+				{
+					sf::RenderStates states;
+					states.transform = en::toSF(entity.Get<en::TransformComponent>().transform.GetMatrix());
+					target.draw(dotTransform, states);
+				}
+#endif // ENLIVE_DEBUG
+			}
+		}
+	}
+
 	getApplication().GetWindow().applyMainView();
 }
 

@@ -13,18 +13,23 @@
 
 int main(int argc, char** argv)
 {
+	// TODO : Register engine classes in classManager & componentManager
+	en::ClassManager::Register<en::NameComponent>();
+	en::ClassManager::Register<en::TransformComponent>();
+	en::ClassManager::Register<en::SpriteComponent>();
+	en::ClassManager::Register<en::TextComponent>();
+	en::ComponentManager::Register<en::NameComponent>();
+	en::ComponentManager::Register<en::TransformComponent>();
+	en::ComponentManager::Register<en::SpriteComponent>();
+	en::ComponentManager::Register<en::TextComponent>();
+
+
 	// TODO : Find a better way to register
 	en::ClassManager::Register<TestClassA>();
 	en::ClassManager::Register<Aaa>();
 	en::ClassManager::Register<Bbb>();
 	en::ClassManager::Register<Ccc>();
 
-
-	// TODO : Register engine components in classManager & componentManager
-	en::ClassManager::Register<en::NameComponent>();
-	en::ComponentManager::Register<en::NameComponent>();
-	en::ClassManager::Register<en::TransformComponent>();
-	en::ComponentManager::Register<en::TransformComponent>();
 
 
 	{
