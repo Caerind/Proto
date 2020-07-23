@@ -197,7 +197,7 @@ void ImGuiAnimationEditor::StateMachine(AnimationStateMachine& stateMachine)
     {
         if (!stateMachine.SaveToFile(stateMachine.GetFilename()))
         {
-            enLogError(en::LogChannel::Animation, "Can't save file %s", stateMachine.GetFilename().c_str());
+            enLogError(en::LogChannel::Animation, "Can't save file {}", stateMachine.GetFilename().c_str());
         }
     }
 

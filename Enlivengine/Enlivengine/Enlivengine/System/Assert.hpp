@@ -9,7 +9,7 @@
 		if (expr) {} \
 		else \
 		{ \
-			enLogFatal(channel, "Assertion failed!\nExpr : %s\nFile : %s\nLine : %d\n", #expr, __FILE__, __LINE__); \
+			enLogFatal(channel, "Assertion failed!\nExpr : {}\nFile : {}\nLine : {}\n", #expr, __FILE__, __LINE__); \
 			::en::Debugger::Break(); \
 		}
 	#define enAssert(expr) enAssertChannel(expr, en::LogChannel::Global) 

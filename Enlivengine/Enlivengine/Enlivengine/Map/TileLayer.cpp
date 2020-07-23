@@ -140,7 +140,7 @@ bool TileLayer::Parse(ParserXml& parser)
 		}
 		else
 		{
-			enLogError(en::LogChannel::Map, "Unknown encoding %s", attribStr.c_str());
+			enLogError(en::LogChannel::Map, "Unknown encoding {}", attribStr.c_str());
 			return false;
 		}
 
@@ -160,7 +160,7 @@ bool TileLayer::Parse(ParserXml& parser)
 		}
 		else
 		{
-			enLogError(en::LogChannel::Map, "Unknown compression %s", attribStr.c_str());
+			enLogError(en::LogChannel::Map, "Unknown compression {}", attribStr.c_str());
 			return false;
 		}
 

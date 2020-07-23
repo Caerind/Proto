@@ -27,7 +27,7 @@ bool Tileset::LoadFromFile(const std::string& filename)
 	ParserXml xml;
 	if (!xml.LoadFromFile(filename))
 	{
-		enLogError(en::LogChannel::Map, "Can't open tileset file at %s", filename.c_str());
+		enLogError(en::LogChannel::Map, "Can't open tileset file at {}", filename.c_str());
 		return false;
 	}
 
@@ -61,7 +61,7 @@ bool Tileset::LoadFromFile(const std::string& filename)
 	}
 	else
 	{
-		enLogError(en::LogChannel::Map, "Invalid tileset file at %s", filename.c_str());
+		enLogError(en::LogChannel::Map, "Invalid tileset file at {}", filename.c_str());
 		return false;
 	}
 
@@ -69,16 +69,16 @@ bool Tileset::LoadFromFile(const std::string& filename)
     const std::string filepath = mPath + mImageSource;
     if (mImageTransparent != Color::Transparent)
     {
-        enLogWarning(en::LogChannel::Map, "%s : Transparent color for Tileset isn't supported yet -> Use alpha values", filepath.c_str());
+        enLogWarning(en::LogChannel::Map, "{} : Transparent color for Tileset isn't supported yet -> Use alpha values", filepath.c_str());
     }
     mTexture = ResourceManager::GetInstance().GetFromFilename<Texture>(filepath);
     if (!mTexture.IsValid())
 	{
-		enLogWarning(en::LogChannel::Map, "ResourceDependencyNeeded: %s from %s", filepath.c_str(), filename.c_str());
+		enLogWarning(en::LogChannel::Map, "ResourceDependencyNeeded: {} from {}", filepath.c_str(), filename.c_str());
         mTexture = ResourceManager::GetInstance().Create<Texture>(GetIdentifier() + "-texture", TextureLoader::FromFile(filepath));
         if (!mTexture.IsValid())
         {
-            enLogError(en::LogChannel::Map, "Can't load tileset texture : %s", filepath.c_str());
+            enLogError(en::LogChannel::Map, "Can't load tileset texture : {}", filepath.c_str());
         }
     }
 

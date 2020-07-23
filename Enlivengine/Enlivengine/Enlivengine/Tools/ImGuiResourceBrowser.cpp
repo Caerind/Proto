@@ -238,7 +238,7 @@ bool ImGuiResourceBrowser::LoadResourceInfosFromFile(const std::string& filename
 	ParserXml xml;
 	if (!xml.LoadFromFile(filename))
 	{
-		enLogError(en::LogChannel::Application, "Can't open resources file at %s", filename.c_str());
+		enLogError(en::LogChannel::Application, "Can't open resources file at {}", filename.c_str());
 		return false;
 	}
 
@@ -282,7 +282,7 @@ bool ImGuiResourceBrowser::LoadResourceInfosFromFile(const std::string& filename
 	}
 	else
 	{
-		enLogError(en::LogChannel::Application, "Invalid resources file at %s", filename.c_str());
+		enLogError(en::LogChannel::Application, "Invalid resources file at {}", filename.c_str());
 		return false;
 	}
 

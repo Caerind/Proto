@@ -31,7 +31,7 @@ bool Map::LoadFromFile(const std::string& filename)
 	ParserXml xml;
 	if (!xml.LoadFromFile(filename))
 	{
-		enLogError(en::LogChannel::Map, "Can't open file at %s", filename.c_str());
+		enLogError(en::LogChannel::Map, "Can't open file at {}", filename.c_str());
 		return false;
 	}
 
@@ -61,7 +61,7 @@ bool Map::LoadFromFile(const std::string& filename)
 		}
 		else
 		{
-			enLogError(en::LogChannel::Map, "%s maps aren't supported yet", attribStr.c_str());
+			enLogError(en::LogChannel::Map, "{} maps aren't supported yet", attribStr.c_str());
 			return false;
 		}
 
@@ -85,7 +85,7 @@ bool Map::LoadFromFile(const std::string& filename)
 		}
 		else
 		{
-			enLogWarning(en::LogChannel::Map, "Invalid renderorder %s", attribStr.c_str());
+			enLogWarning(en::LogChannel::Map, "Invalid renderorder {}", attribStr.c_str());
 		}
 
 		xml.GetAttribute("width", mSize.x);
@@ -97,7 +97,7 @@ bool Map::LoadFromFile(const std::string& filename)
 		xml.GetAttribute("hexsidelength", mHexSideLength);
 		if (mOrientation == Orientation::Hexagonal && mHexSideLength <= 0)
 		{
-			enLogWarning(en::LogChannel::Map, "Invalid hexsidelength %s", attribStr.c_str());
+			enLogWarning(en::LogChannel::Map, "Invalid hexsidelength {}", attribStr.c_str());
 		}
 
 		attribStr = "y";
@@ -114,7 +114,7 @@ bool Map::LoadFromFile(const std::string& filename)
 		{
 			if (mOrientation == Orientation::Staggered || mOrientation == Orientation::Hexagonal)
 			{
-				enLogWarning(en::LogChannel::Map, "Invalid staggeraxis %s", attribStr.c_str());
+				enLogWarning(en::LogChannel::Map, "Invalid staggeraxis {}", attribStr.c_str());
 			}
 		}
 
@@ -132,7 +132,7 @@ bool Map::LoadFromFile(const std::string& filename)
 		{
 			if (mOrientation == Orientation::Staggered || mOrientation == Orientation::Hexagonal)
 			{
-				enLogWarning(en::LogChannel::Map, "Invalid staggerindex %s", attribStr.c_str());
+				enLogWarning(en::LogChannel::Map, "Invalid staggerindex {}", attribStr.c_str());
 			}
 		}
 
@@ -155,7 +155,7 @@ bool Map::LoadFromFile(const std::string& filename)
 		if (infinite > 0)
 		{
 			// TODO : Infinite maps
-			enLogError(en::LogChannel::Map, "Infinite maps aren't supported yet for %s", mName.c_str());
+			enLogError(en::LogChannel::Map, "Infinite maps aren't supported yet for {}", mName.c_str());
 			return false;
 		}
 
@@ -179,7 +179,7 @@ bool Map::LoadFromFile(const std::string& filename)
 					if (tilesetData.firstGid <= 0)
 					{
 						validTileset = false;
-						enLogWarning(en::LogChannel::Map, "Invalid firstGid for %s", mName.c_str());
+						enLogWarning(en::LogChannel::Map, "Invalid firstGid for {}", mName.c_str());
 					}
 
 					std::string source = "";
@@ -197,14 +197,14 @@ bool Map::LoadFromFile(const std::string& filename)
 							if (!tilesetData.tileset.IsValid())
 							{
 								validTileset = false;
-								enLogError(en::LogChannel::Map, "Can't load tileset %s", source.c_str());
+								enLogError(en::LogChannel::Map, "Can't load tileset {}", source.c_str());
 							}
 						}
 					}
 					else
 					{
 						validTileset = false;
-						enLogError(en::LogChannel::Map, "Tileset inside maps aren't supported yet for %s", mName.c_str());
+						enLogError(en::LogChannel::Map, "Tileset inside maps aren't supported yet for {}", mName.c_str());
 						// TODO : Tilesets inside maps
 					}
 
@@ -243,7 +243,7 @@ bool Map::LoadFromFile(const std::string& filename)
 				}
 				else
 				{
-					enLogError(en::LogChannel::Map, "Unknown layer type %s", nodeName.c_str());
+					enLogError(en::LogChannel::Map, "Unknown layer type {}", nodeName.c_str());
 				}
 			} while (xml.NextSibling());
 			xml.CloseNode();
@@ -251,7 +251,7 @@ bool Map::LoadFromFile(const std::string& filename)
 	}
 	else
 	{
-		enLogError(en::LogChannel::Map, "Invalid map file at %s", filename.c_str());
+		enLogError(en::LogChannel::Map, "Invalid map file at {}", filename.c_str());
 		return false;
 	}
 
@@ -560,17 +560,17 @@ Vector2u Map::WorldToCoords(const Vector2f& worldPos) const
     }
     else if (mOrientation == Orientation::Isometric)
     {
-        enLogError(en::LogChannel::Map, "Isometric WorldToCoords unimplemented for %s", mName.c_str());
+        enLogError(en::LogChannel::Map, "Isometric WorldToCoords unimplemented for {}", mName.c_str());
         return Vector2u(0, 0);
     }
     else if (mOrientation == Orientation::Staggered)
     {
-        enLogError(en::LogChannel::Map, "Staggered WorldToCoords unimplemented for %s", mName.c_str());
+        enLogError(en::LogChannel::Map, "Staggered WorldToCoords unimplemented for {}", mName.c_str());
         return Vector2u(0, 0);
     }
     else if (mOrientation == Orientation::Hexagonal)
     {
-        enLogError(en::LogChannel::Map, "Hexagonal WorldToCoords unimplemented for %s", mName.c_str());
+        enLogError(en::LogChannel::Map, "Hexagonal WorldToCoords unimplemented for {}", mName.c_str());
         return Vector2u(0, 0);
     }
 

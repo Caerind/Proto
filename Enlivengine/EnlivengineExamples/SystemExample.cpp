@@ -90,27 +90,27 @@ int main()
 		en::CallOnExit callWhenScopeEnds([]() { enLogInfo(en::LogChannel::System, "CallOnExit::Call() : Scope is now closed"); });
 	}
 
-	enLogInfo(en::LogChannel::System, "ENLIVE_FUNCTION : %s", ENLIVE_FUNCTION);
-	enLogInfo(en::LogChannel::System, "ENLIVE_COMPILER_NAME : %s", ENLIVE_COMPILER_NAME);
-	enLogInfo(en::LogChannel::System, "ENLIVE_COMPILER_VERSION : %s", ENLIVE_STRINGIFY(ENLIVE_COMPILER_VERSION));
-	enLogInfo(en::LogChannel::System, "ENLIVE_COMPILER_STRING : %s", ENLIVE_COMPILER_STRING);
-	enLogInfo(en::LogChannel::System, "ENLIVE_PLATFORM_NAME : %s", ENLIVE_PLATFORM_NAME);
-	enLogInfo(en::LogChannel::System, "ENLIVE_PLATFORM_DESCRIPTION : %s", ENLIVE_PLATFORM_DESCRIPTION);
+	enLogInfo(en::LogChannel::System, "ENLIVE_FUNCTION : {}", ENLIVE_FUNCTION);
+	enLogInfo(en::LogChannel::System, "ENLIVE_COMPILER_NAME : {}", ENLIVE_COMPILER_NAME);
+	enLogInfo(en::LogChannel::System, "ENLIVE_COMPILER_VERSION : {}", ENLIVE_STRINGIFY(ENLIVE_COMPILER_VERSION));
+	enLogInfo(en::LogChannel::System, "ENLIVE_COMPILER_STRING : {}", ENLIVE_COMPILER_STRING);
+	enLogInfo(en::LogChannel::System, "ENLIVE_PLATFORM_NAME : {}", ENLIVE_PLATFORM_NAME);
+	enLogInfo(en::LogChannel::System, "ENLIVE_PLATFORM_DESCRIPTION : {}", ENLIVE_PLATFORM_DESCRIPTION);
 
 	std::cout << "TestColor" << std::endl;
 
 	enLogInfo(LogChannelClient::Gameplay1, "Test 1");
-	enLogWarning(LogChannelClient::Gameplay2, "Test 2 : %d", 3);
-	enLogError(LogChannelClient::Gameplay3, "Test 3 : %s", "azerty");
+	enLogWarning(LogChannelClient::Gameplay2, "Test 2 : {}", 3);
+	enLogError(LogChannelClient::Gameplay3, "Test 3 : {}", "azerty");
 	enLogFatal(en::LogChannel::Graphics, "Assert {} {}", __FILE__, __LINE__);
 
 	std::cout << "TestColor" << std::endl;
 		
 	/*	
-	LogInfo(en::LogChannel::System, 9, "A: %s", en::TypeInfo<A>::GetName());
-	LogInfo(en::LogChannel::System, 9, "B<A>: %s", en::TypeInfo<B<A>>::GetName());
-	LogInfo(en::LogChannel::System, 9, "B<en::U32>: %s", en::TypeInfo<B<en::U32>>::GetName());
-	LogInfo(en::LogChannel::System, 9, "B<C>: %s", en::TypeInfo<B<C>>::GetName());
+	LogInfo(en::LogChannel::System, 9, "A: {}", en::TypeInfo<A>::GetName());
+	LogInfo(en::LogChannel::System, 9, "B<A>: {}", en::TypeInfo<B<A>>::GetName());
+	LogInfo(en::LogChannel::System, 9, "B<en::U32>: {}", en::TypeInfo<B<en::U32>>::GetName());
+	LogInfo(en::LogChannel::System, 9, "B<C>: {}", en::TypeInfo<B<C>>::GetName());
 	*/
 
 	MetaEnumTest();

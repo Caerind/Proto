@@ -136,11 +136,11 @@ bool Animation::LoadFromFile(const std::string& filename)
 				mTexture = ResourceManager::GetInstance().GetFromFilename<Texture>(filepath);
 				if (!mTexture.IsValid())
 				{
-					enLogWarning(en::LogChannel::Animation, "ResourceDependencyNeeded: %s from %s", filepath.c_str(), filename.c_str());
+					enLogWarning(en::LogChannel::Animation, "ResourceDependencyNeeded: {} from {}", filepath.c_str(), filename.c_str());
 					mTexture = ResourceManager::GetInstance().Create<Texture>(GetIdentifier() + "-texture", TextureLoader::FromFile(filepath));
 					if (!mTexture.IsValid())
 					{
-						enLogError(en::LogChannel::Animation, "Can't load tileset texture : %s", filepath.c_str());
+						enLogError(en::LogChannel::Animation, "Can't load tileset texture : {}", filepath.c_str());
 					}
 				}
 			}

@@ -102,7 +102,7 @@ bool PropertyHolder::Parse(ParserXml& parser)
 			}
 			else
 			{
-				enLogError(en::LogChannel::Map, "Unknown property type %s, property ignored", typeStr.c_str());
+				enLogError(en::LogChannel::Map, "Unknown property type {}, property ignored", typeStr.c_str());
 			}
 
 		} while (parser.NextSibling("property"));

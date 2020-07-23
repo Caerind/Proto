@@ -252,7 +252,7 @@ void Window::setIcon(const std::string& icon)
 	}
 	else
 	{
-		enLogWarning(LogChannel::Application, "Can't load the icon from : %s", icon.c_str());
+		enLogWarning(LogChannel::Application, "Can't load the icon from : {}", icon.c_str());
 		mIconPath = "";
 	}
 }
@@ -534,7 +534,7 @@ void Window::setCursorTexture(const std::string& texture)
 	}
 	else
 	{
-		enLogWarning(LogChannel::Application, "Can't load cursor from : %s", texture.c_str());
+		enLogWarning(LogChannel::Application, "Can't load cursor from : {}", texture.c_str());
 		mCursorTextureData = "";
 		setCursor(Cursor::Default);
 	}

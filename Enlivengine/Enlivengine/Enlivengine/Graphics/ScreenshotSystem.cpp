@@ -32,12 +32,12 @@ bool ScreenshotSystem::SaveTexture(const sf::Texture& texture) const
 	const std::string filename = PathManager::GetInstance().GetScreenshotPath() + GetScreenshotName() + GetScreenshotFormat();
 	if (texture.copyToImage().saveToFile(filename))
 	{
-		enLogInfo(en::LogChannel::Graphics, "Screenshot saved to : %s", filename.c_str());
+		enLogInfo(en::LogChannel::Graphics, "Screenshot saved to : {}", filename.c_str());
 		return true;
 	}
 	else
 	{
-		enLogError(en::LogChannel::Graphics, "Can't save screenshot to : %s", filename.c_str());
+		enLogError(en::LogChannel::Graphics, "Can't save screenshot to : {}", filename.c_str());
 		return false;
 	}
 }
