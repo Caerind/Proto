@@ -5,7 +5,8 @@
 #ifdef ENLIVE_ENABLE_IMGUI
 
 #include <Enlivengine/Application/ImGuiToolManager.hpp>
-#include <Enlivengine/Core/World.hpp>
+
+#include <Enlivengine/Core/Entity.hpp>
 
 namespace en
 {
@@ -23,14 +24,9 @@ public:
 
 	bool IsSelected(const Entity& entity) const;
 
-	// TODO : Have a GetCurrentWorld more global to the engine ?
-	void SetCurrentWorld(World* world);
-	World* GetCurrentWorld();
-	const World* GetCurrentWorld() const;
-
 private:
-	World* mCurrentWorld;
 	std::vector<entt::entity> mSelectedEntities;
+	bool mNeedSave;
 };
 
 } // namespace en

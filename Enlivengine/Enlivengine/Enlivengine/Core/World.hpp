@@ -22,6 +22,10 @@ public:
 	const View& GetFreeCamView() const;
 #endif // ENLIVE_DEBUG
 
+	void Play();
+	void Pause();
+	bool IsPlaying() const;
+
 private:
 	EntityManager mEntityManager;
 
@@ -30,6 +34,8 @@ private:
 #ifdef ENLIVE_DEBUG
 	View mFreeCamView;
 #endif // ENLIVE_DEBUG
+
+	bool mPlaying;
 
 	ENLIVE_META_CLASS();
 };

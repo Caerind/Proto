@@ -15,8 +15,10 @@
 #include <Enlivengine/Graphics/Sprite.hpp>
 #include <Enlivengine/Graphics/Text.hpp>
 
-#include "CustomObjectEditor.hpp"
+#include <Enlivengine/Core/CustomObjectEditor.hpp>
 #include <Enlivengine/Core/ObjectEditor.hpp>
+
+//#include <Enlivengine/Core/Universe.hpp>
 #include <Enlivengine/Tools/ImGuiHelper.hpp>
 
 // en::Time
@@ -336,6 +338,13 @@ struct CustomObjectEditor<en::Transform>
 		if (ImGui::CollapsingHeader(name))
 		{
 			ImGui::Indent();
+
+			/*
+			if (en::World* world = en::Universe::GetInstance().GetCurrentWorld())
+			{
+				world->GetFreeCamView().setCenter(object.GetPosition2D());
+			}
+			*/
 
 			en::Vector3f position = object.GetPosition();
 			if (en::ObjectEditor::ImGuiEditor(position, "Position"))

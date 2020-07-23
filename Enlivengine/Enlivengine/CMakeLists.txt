@@ -169,6 +169,8 @@ set(SRC_CORE
 	Enlivengine/Core/ObjectEditorSpecialization.inl
 	Enlivengine/Core/Transform.cpp
 	Enlivengine/Core/Transform.hpp
+	Enlivengine/Core/Universe.cpp
+	Enlivengine/Core/Universe.hpp
 	Enlivengine/Core/World.cpp
 	Enlivengine/Core/World.hpp
 )

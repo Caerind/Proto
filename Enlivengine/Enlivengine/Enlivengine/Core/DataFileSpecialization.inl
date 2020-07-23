@@ -419,9 +419,16 @@ struct CustomXmlSerialization<en::Sprite>
 			enAssert(dataFile.ReadCurrentType() == en::TypeInfo<en::Sprite>::GetHash());
 
 			en::U32 textureID;
-			// TODO : Crash risk if invalid texture id
 			dataFile.Deserialize_Common(textureID, "TextureID");
-			object.SetTextureID(static_cast<en::ResourceID>(textureID));
+			const en::ResourceID textureResourceID = static_cast<en::ResourceID>(textureID);
+			if (en::ResourceManager::GetInstance().Has(textureResourceID))
+			{
+				en::TexturePtr texturePtr = en::ResourceManager::GetInstance().Get<en::Texture>(textureResourceID);
+				if (texturePtr.IsValid())
+				{
+					object.SetTexture(texturePtr.Get());
+				}
+			}
 
 			en::Recti textureRect;
 			dataFile.Deserialize_Common(textureRect, "TextureRect");
@@ -478,9 +485,16 @@ struct CustomXmlSerialization<en::Text>
 			enAssert(dataFile.ReadCurrentType() == en::TypeInfo<en::Text>::GetHash());
 
 			en::U32 fontID;
-			// TODO : Crash risk if invalid font id
 			dataFile.Deserialize_Common(fontID, "FontID");
-			object.SetFontID(static_cast<en::ResourceID>(fontID));
+			const en::ResourceID fontResourceID = static_cast<en::ResourceID>(fontID);
+			if (en::ResourceManager::GetInstance().Has(fontResourceID))
+			{
+				en::FontPtr fontPtr = en::ResourceManager::GetInstance().Get<en::Font>(fontResourceID);
+				if (fontPtr.IsValid())
+				{
+					object.SetFont(fontPtr.Get());
+				}
+			}
 
 			std::string str;
 			dataFile.Deserialize_Common(str, "String");

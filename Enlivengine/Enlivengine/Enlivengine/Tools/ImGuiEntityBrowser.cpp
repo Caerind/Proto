@@ -5,13 +5,13 @@
 #include <imgui/imgui.h>
 
 #include <Enlivengine/Core/Components.hpp>
+#include <Enlivengine/Core/Universe.hpp>
 
 namespace en
 {
 
 ImGuiEntityBrowser::ImGuiEntityBrowser()
 	: ImGuiTool()
-	, mCurrentWorld(nullptr)
 {
 }
 
@@ -31,14 +31,14 @@ const char* ImGuiEntityBrowser::GetName() const
 
 void ImGuiEntityBrowser::Display()
 {
-	if (mCurrentWorld != nullptr)
+	if (World* world = Universe::GetInstance().GetCurrentWorld())
 	{
 		static constexpr char unknownEntityName[] = "<Unknown>";
 
 		static constexpr U32 entityNameMaxSize = 255;
 		static char entityNameInput[entityNameMaxSize] = "";
 
-		EntityManager& entityManager = mCurrentWorld->GetEntityManager();
+		EntityManager& entityManager = world->GetEntityManager();
 		bool button = ImGui::Button("New Entity");
 		ImGui::SameLine();
 		bool input = ImGui::InputText("", entityNameInput, entityNameMaxSize, ImGuiInputTextFlags_EnterReturnsTrue);
@@ -104,7 +104,7 @@ void ImGuiEntityBrowser::Display()
 		en::U32 selectedEntities = static_cast<U32>(mSelectedEntities.size());
 		for (en::U32 i = 0; i < selectedEntities; )
 		{
-			Entity entity(mCurrentWorld->GetEntityManager(), mSelectedEntities[i]);
+			Entity entity(world->GetEntityManager(), mSelectedEntities[i]);
 			bool selected = true;
 			if (entity.IsValid())
 			{
@@ -149,34 +149,21 @@ void ImGuiEntityBrowser::Display()
 
 bool ImGuiEntityBrowser::IsSelected(const Entity& entity) const
 {
-	if (entity.IsValid() && mCurrentWorld != nullptr && &entity.GetWorld() == mCurrentWorld)
+	if (World* world = Universe::GetInstance().GetCurrentWorld())
 	{
-		const auto& entityToTest = entity.GetEntity();
-		for (const auto& ent : mSelectedEntities)
+		if (entity.IsValid() && &entity.GetWorld() == world && mVisible)
 		{
-			if (ent == entityToTest)
+			const auto& entityToTest = entity.GetEntity();
+			for (const auto& ent : mSelectedEntities)
 			{
-				return true;
+				if (ent == entityToTest)
+				{
+					return true;
+				}
 			}
 		}
 	}
 	return false;
-}
-
-void ImGuiEntityBrowser::SetCurrentWorld(World* world)
-{
-	mCurrentWorld = world;
-	mSelectedEntities.clear();
-}
-
-World* ImGuiEntityBrowser::GetCurrentWorld()
-{
-	return mCurrentWorld;
-}
-
-const World* ImGuiEntityBrowser::GetCurrentWorld() const
-{
-	return mCurrentWorld;
 }
 
 } // namespace en

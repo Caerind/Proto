@@ -5,6 +5,11 @@ namespace en
 
 World::World()
 	: mEntityManager(*this)
+	, mGameView()
+#ifdef ENLIVE_DEBUG
+	, mFreeCamView()
+#endif // ENLIVE_DEBUG
+	, mPlaying(false)
 {
 }
 
@@ -39,5 +44,20 @@ const View& World::GetFreeCamView() const
 	return mFreeCamView;
 }
 #endif // ENLIVE_DEBUG
+
+void World::Play()
+{
+	mPlaying = true;
+}
+
+void World::Pause()
+{
+	mPlaying = false;
+}
+
+bool World::IsPlaying() const
+{
+	return mPlaying;
+}
 
 } // namespace en

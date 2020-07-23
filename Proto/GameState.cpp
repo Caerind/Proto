@@ -6,6 +6,7 @@
 #include <Enlivengine/Graphics/SFMLWrapper.hpp>
 #include <Enlivengine/System/ClassManager.hpp>
 #include <Enlivengine/Tools/ImGuiEntityBrowser.hpp>
+#include <Enlivengine/Core/Universe.hpp>
 
 #include <imgui/imgui.h>
 
@@ -75,7 +76,7 @@ GameState::GameState(en::StateManager& manager)
 	mWorld.GetFreeCamView().setCenter(getApplication().GetWindow().getMainView().getSize() * 0.5f);
 	mWorld.GetFreeCamView().setSize(getApplication().GetWindow().getMainView().getSize());
 #endif // ENLIVE_DEBUG
-	en::ImGuiEntityBrowser::GetInstance().SetCurrentWorld(&mWorld);
+	en::Universe::GetInstance().SetCurrentWorld(&mWorld);
 
 	mElevationNoise.SetNoiseType(en::Noise::NoiseType::SimplexFractal);
 	mElevationImage.create(1024, 768);
@@ -116,6 +117,17 @@ GameState::~GameState()
 bool GameState::handleEvent(const sf::Event& event)
 {
 	ENLIVE_PROFILE_FUNCTION();
+
+	if (event.type == sf::Event::KeyPressed)
+	{
+		if (event.key.control == true && event.key.code == sf::Keyboard::S)
+		{
+			en::DataFile file;
+			file.CreateEmptyFile();
+			file.Serialize(mWorld, "World");
+			file.SaveToFile("DataFileWorld.xml");
+		}
+	}
 
 	return false;
 }
