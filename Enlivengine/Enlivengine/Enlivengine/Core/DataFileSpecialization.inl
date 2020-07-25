@@ -375,11 +375,12 @@ struct CustomXmlSerialization<en::Rect<T>>
 		if (parser.ReadNode(name))
 		{
 			enAssert(dataFile.ReadCurrentType() == en::TypeInfo<en::Rect<T>>::GetHash());
-			en::Vector2<T> vec;
-			dataFile.Serialize_Common(vec, "Min");
-			object.setMinimum(vec);
-			dataFile.Serialize_Common(vec, "Size");
-			object.setSize(vec);
+			en::Vector2<T> min;
+			dataFile.Deserialize_Common(min, "Min");
+			object.setMinimum(min);
+			en::Vector2<T> size;
+			dataFile.Deserialize_Common(size, "Size");
+			object.setSize(size);
 			parser.CloseNode();
 			return true;
 		}

@@ -18,10 +18,14 @@ int main(int argc, char** argv)
 	en::ClassManager::Register<en::TransformComponent>();
 	en::ClassManager::Register<en::SpriteComponent>();
 	en::ClassManager::Register<en::TextComponent>();
+	en::ClassManager::Register<en::RenderableComponent>();
+	en::ClassManager::Register<en::UIDComponent>();
 	en::ComponentManager::Register<en::NameComponent>();
 	en::ComponentManager::Register<en::TransformComponent>();
 	en::ComponentManager::Register<en::SpriteComponent>();
 	en::ComponentManager::Register<en::TextComponent>();
+	en::ComponentManager::Register<en::RenderableComponent>();
+	en::ComponentManager::Register<en::UIDComponent>();
 
 
 	// TODO : Find a better way to register

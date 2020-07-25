@@ -26,8 +26,13 @@ public:
 	void Pause();
 	bool IsPlaying() const;
 
+	void SetIDGenerator(U32 idGenerator);
+	U32 GetIDGenerator() const;
+	U32 CreateID();
+
 private:
 	EntityManager mEntityManager;
+	U32 mIDGenerator;
 
 	View mGameView;
 
@@ -43,5 +48,6 @@ private:
 } // namespace en
 
 ENLIVE_META_CLASS_BEGIN(en::World)
-	ENLIVE_META_CLASS_MEMBER("EntityManager", &en::World::mEntityManager)
+	ENLIVE_META_CLASS_MEMBER("EntityManager", &en::World::mEntityManager),
+	ENLIVE_META_CLASS_MEMBER("IDGenerator", &en::World::mIDGenerator)
 ENLIVE_META_CLASS_END()

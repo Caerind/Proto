@@ -385,7 +385,7 @@ void GameState::render(sf::RenderTarget& target)
 
 	{
 		ENLIVE_PROFILE_SCOPE(RenderSystem);
-		auto transformView = mWorld.GetEntityManager().View<en::TransformComponent>();
+		auto transformView = mWorld.GetEntityManager().View<en::TransformComponent, en::RenderableComponent>();
 		for (auto entt : transformView)
 		{
 			en::Entity entity(mWorld, entt);

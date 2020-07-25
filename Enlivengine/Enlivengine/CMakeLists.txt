@@ -152,6 +152,7 @@ set(SRC_APPLICATION
 source_group("Application" FILES ${SRC_APPLICATION})
 
 set(SRC_CORE
+	Enlivengine/Core/ComponentDependencyTrait.hpp
 	Enlivengine/Core/ComponentManager.cpp
 	Enlivengine/Core/ComponentManager.hpp
 	Enlivengine/Core/Components.hpp

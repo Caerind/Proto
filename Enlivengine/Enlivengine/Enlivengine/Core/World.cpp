@@ -60,4 +60,19 @@ bool World::IsPlaying() const
 	return mPlaying;
 }
 
+void World::SetIDGenerator(U32 idGenerator)
+{
+	mIDGenerator = idGenerator;
+}
+
+U32 World::GetIDGenerator() const
+{
+	return mIDGenerator;
+}
+
+U32 World::CreateID()
+{
+	return mIDGenerator++;
+}
+
 } // namespace en
