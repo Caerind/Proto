@@ -1,0 +1,5 @@
+https://www.redblobgames.com/maps/mapgen2/
+https://www.redblobgames.com/maps/mapgen4/
+http://www-cs-students.stanford.edu/~amitp/game-programming/polygon-map-generation/
+https://www.redblobgames.com/maps/terrain-from-noise/
+https://en.sfml-dev.org/forums/index.php?topic=13782.15
